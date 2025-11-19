@@ -1,4 +1,4 @@
-import './Resume.css';
+import './resume.css';
 import React, { useEffect, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
