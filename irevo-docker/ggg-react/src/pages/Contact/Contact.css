@@ -1,0 +1,133 @@
+.contact-container {
+    min-height: 62vh;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* カードレイアウトをなくす */
+.contact-card {
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.contact-title {
+    color: #3182ce;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 1rem;
+    color: #2a4365;
+    font-weight: 500;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 0.7em;
+    margin-top: 0.3em;
+    border: 1px solid #b2d8f7;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #f7fafc;
+    color: #2a4365;
+    box-sizing: border-box;
+    transition: border 0.2s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border: 1.5px solid #4299e1;
+    outline: none;
+    background: #e6f0fa;
+}
+
+.contact-btn {
+    width: 100%;
+    background: #4299e1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.8em 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.2s;
+}
+
+.contact-btn:hover {
+    background: #3182ce;
+}
+
+.contact-success {
+    color: #3182ce;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 2em 0;
+}
+
+/* MUI Select を input と同じ見た目に揃える（contact-form 内限定） */
+.contact-form .MuiFormControl-root {
+  width: 400px !important;
+  box-sizing: border-box;
+}
+
+.contact-form .MuiOutlinedInput-root,
+.contact-form .MuiSelect-root {
+  background: #f7fafc; /* input と同じ背景 */
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.contact-form .MuiOutlinedInput-notchedOutline {
+  border-color: #b2d8f7;
+}
+
+.contact-form .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
+.contact-form .MuiSelect-root:hover  {
+  border-color: #4299e1;
+}
+
+.contact-form .MuiOutlinedInput-root.Mui-focused {
+  background: #e6f0fa;
+}
+
+.contact-form .MuiSelect-select {
+  width: 400px;
+  padding: 12px 14px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: #2a4365;
+  box-sizing: border-box;
+  /* margin: 0 0 1px 0; */
+}
+
+/* アイコンとラベル色を合わせる */
+.contact-form .MuiSelect-icon {
+  color: #2a4365;
+}
+.contact-form .MuiInputLabel-root {
+  color: #2a4365;
+  font-weight: 500;
+}
+
+/* ドロップダウンの紙面も微調整 */
+.contact-form .MuiPaper-root.MuiMenu-paper {
+  border-radius: 6px;
+  overflow: hidden;
+}

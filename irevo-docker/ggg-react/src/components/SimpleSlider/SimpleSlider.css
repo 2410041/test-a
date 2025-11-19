@@ -1,0 +1,54 @@
+.image-container {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+  overflow: hidden;
+  padding: 30px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* センタースライドを目立たせる */
+.slick-center .image-container {
+  transform: scale(1.1);
+  z-index: 2;
+}
+
+.slick-center .image-container img {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+/* 非センタースライドは少し透明にする */
+.slick-slide:not(.slick-center) .image-container {
+  opacity: 0.7;
+}
+
+/* スライダー全体のスタイル調整 */
+.slick-slider {
+  margin: 20px 0;
+}
+
+.slick-dots {
+  bottom: -50px;
+}
+
+.slick-dots li button:before {
+  font-size: 12px;
+  color: #666;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #333;
+}

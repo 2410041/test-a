@@ -1,0 +1,471 @@
+.dai, .cnewreg-dai {
+  font-size: 30px;
+  text-align: center;
+  color: #0056BB;
+}
+
+.dai2, .cnewreg-dai2 {
+  background: linear-gradient(transparent 60%, #FFFF3199);
+}
+
+
+.custom-upload {
+  color: white;
+  background-color: #0056bb;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.hidden {
+  display: none;
+}
+
+.around, .cnewreg-around {
+  margin-top: 20px;
+}
+
+/* ページインジケータ内のアイコンが前面に来るように設定 */
+.step_class>img {
+  z-index: 10;
+}
+
+/* コンテナの基本スタイル */
+.container_class, .cnewreg-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 80%;
+  padding: 30px;
+  margin: auto;
+  box-sizing: border-box;
+}
+
+/* ページインジケータのレイアウト */
+.page_indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+  position: relative;
+  margin-top: 20px;
+}
+
+/* 各ステップ（円とテキスト）のスタイル */
+.page_indicator .step_class {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  /* テキストと円が線の上に表示されるように */
+}
+
+/* ステップの円のスタイル */
+.page_indicator .step_class .circle_class {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: #777;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  border: 2px solid #ccc;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  /* はみ出したコンテンツを隠す */
+}
+
+/* 円内のアイコンのスタイル */
+.page_indicator .step_class .circle_class img {
+  width: 30px;
+  /* アイコンのサイズ調整 */
+  height: 30px;
+  display: none;
+  /* デフォルトでは非表示 */
+}
+
+/* 円内の数字のスタイル */
+.page_indicator .step_class .circle_class span {
+  display: block;
+  /* デフォルトでは数字を表示 */
+}
+
+/* アクティブなステップの円のスタイル */
+.page_indicator .step_class.active_class .circle_class {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* アクティブなステップでアイコンを表示、数字を非表示 */
+.page_indicator .step_class.active_class .circle_class img {
+  display: block;
+}
+
+.page_indicator .step_class.active_class .circle_class span {
+  display: none;
+}
+
+/* 完了したステップの円のスタイル */
+.page_indicator .step_class.completed_class .circle_class {
+  background-color: #007bff;
+  /* 完了を示す色 */
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* 完了したステップでアイコンを表示、数字を非表示 */
+.page_indicator .step_class.completed_class .circle_class img {
+  display: block;
+}
+
+.page_indicator .step_class.completed_class .circle_class span {
+  display: none;
+}
+
+/* ステップテキストのスタイル */
+.page_indicator .step_text {
+  margin-top: 8px;
+  font-size: 0.9em;
+  color: #555;
+  white-space: nowrap;
+  /* テキストが改行されないように */
+}
+
+/* インジケータの線 */
+.page_indicator .line-1 {
+  position: absolute;
+  height: 2px;
+  background-color: #ccc;
+  /* 水平方向の配置: 全体の中心に配置し、自身の幅の半分を戻す */
+  left: 50%;
+  transform: translateX(-50%);
+  /* 垂直方向の配置: 円の中心に合わせる (円の高さ40px / 2 = 20px) */
+  top: 20px;
+  /* 円の高さの半分に設定 */
+  /* 線の長さ: (円の数 - 1) * (円の直径 + ステップ間のマージン) */
+  /* 2 * (40px + 60px) = 200px */
+  width: 155px;
+  z-index: 0;
+  /* 線が円の背後に来るように */
+}
+
+/* アクティブな線の色 */
+.page_indicator .line.active_class {
+  background-color: #007bff;
+}
+
+/* ステップ間の間隔 */
+.page_indicator .step_class:not(:last-child) {
+  margin-right: 60px;
+}
+
+/* リンクの装飾を解除 */
+.page_indicator a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 各フォームセクションの基本スタイル */
+.form2_section, .cnewreg-form_section {
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  padding: 30px;
+  margin: 0 auto 30px auto;
+  /* margin-bottom: 30px; */
+  display: none;
+  /* 初期状態では非表示 */
+  width: fit-content;
+  /* overflow-y: auto; */
+  /* max-height: 80vh; */
+}
+
+/* アクティブなフォームセクションのみ表示 */
+.form2_section.active_form_section, .cnewreg-form_section.cnewreg-active_form_section {
+  margin-top: 30px;
+  display: block;
+}
+
+/* フォーム行のレイアウト */
+.cnewreg-form_row {
+  display: flex;
+  align-items: flex-start;
+  /* 複数行入力のために項目を上揃えに調整 */
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  /* 小さな画面では折り返す */
+}
+
+/* フォームラベルのスタイル */
+.cnewreg-form_row label {
+  min-width: 120px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 20px;
+  /* flex-shrink: 0; ラベルが縮まないように */
+  padding-top: 10px;
+  /* 入力のpadding-topと合わせる */
+}
+
+/* 入力グループのスタイル */
+.form2_row .input_group, .cnewreg-form_row .cnewreg-input_group {
+  /* flex-grow: 1; */
+  display: flex;
+  flex-direction: column;
+  /* グループ内の入力を縦に並べる */
+}
+
+/* 設立年・創業年 の入力欄を横並びにするための修正 */
+.form2_row .input_group.date_inputs_container, .cnewreg-form_row .cnewreg-input_group.date_inputs_container {
+  flex-direction: row;
+  /* 横並びにする */
+  flex-wrap: wrap;
+  /* 画面が狭いときに折り返す */
+  align-items: center;
+  gap: 10px;
+  /* 要素間のスペース */
+}
+
+/* 日付選択のselect要素の余白をリセット */
+.form2_row .input_group.date_inputs_container select, .cnewreg-form_row .cnewreg-input_group.date_inputs_container select {
+  margin-bottom: 0;
+}
+
+/* 各種入力フィールドのスタイル */
+.cnewreg-form_row input[type="text"],
+.cnewreg-form_row input[type="number"],
+.cnewreg-form_row input[type="email"],
+.cnewreg-form_row input[type="url"],
+.cnewreg-form_row textarea,
+.cnewreg-form_row select {
+  width: 500px;
+  padding: 10px 12px;
+  border: 1px solid #007bff;
+  /* 青系統の枠線 */
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box;
+  /* パディングとボーダーを要素の合計幅と高さに含める */
+  margin-bottom: 8px;
+  /* 縦に並んだ入力間のスペース */
+}
+
+/* 入力フィールドのフォーカス時のスタイル */
+.cnewreg-form_row input[type="text"]:focus,
+.cnewreg-form_row input[type="number"]:focus,
+.cnewreg-form_row input[type="email"]:focus,
+.cnewreg-form_row input[type="url"]:focus,
+.cnewreg-form_row textarea:focus,
+.cnewreg-form_row select:focus {
+  outline: none;
+  border-color: #0056b3;
+  /* 濃いめの青 */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  /* 青系統の影 */
+}
+
+/* 小さい入力フィールドの幅 */
+.cnewreg-form_row .small_input, .cnewreg-form_row .cnewreg-small_input {
+  width: 100px;
+  /* 郵便番号など */
+  margin-right: 10px;
+}
+
+/* 住所ラベルのスタイル */
+.form2_row .name_label, .cnewreg-form_row .name_label {
+  font-size: 0.85em;
+  color: #666;
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+
+/* 日付入力selectの幅 */
+.form2_row .date_inputs_container select, .cnewreg-form_row .date_inputs_container select {
+  width: auto;
+  /* select要素が自然なサイズになるように */
+  min-width: 80px;
+}
+
+/* 日付の単位（年、月、日）のテキストスタイル */
+.form2_row .date_inputs_container span, .cnewreg-form_row .date_inputs_container span {
+  color: #555;
+  font-size: 0.95em;
+  white-space: nowrap;
+  /* "年", "月", "日" が改行されないように */
+}
+
+/* テキストエリアのサイズ変更を垂直方向に限定 */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ボタングループのレイアウト */
+.button_group {
+  display: flex;
+  justify-content: flex-end;
+  /* ボタンを右寄せにする */
+  margin-top: 40px;
+  position: relative;
+  /* 子要素の絶対配置の基準 */
+}
+
+/* 「前へ」ボタンのスタイル */
+.button_group .prev_button {
+  background-color: #6c757d;
+  color: #fff;
+  position: absolute;
+  /* 絶対配置にして、他のボタンのレイアウトに影響しないように */
+  left: 0;
+  /* 左端に配置 */
+}
+
+/* ボタンの共通スタイル */
+.button_group button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* 「前へ」ボタンのホバー効果 */
+.button_group .prev_button:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* 「次へ」ボタンのスタイル */
+.button_group .next_button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* 「次へ」ボタンのホバー効果 */
+.button_group .next_button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* 送信ボタンのコンテナスタイル */
+.submit_button_container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* 送信ボタンのスタイル */
+.submit_button_container .submit_button {
+  background-color: #28a745;
+  /* 緑色 */
+  color: #fff;
+  padding: 12px 40px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* 送信ボタンのホバー効果 */
+.submit_button_container .submit_button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.password-wrapper-2 {
+    width: 500px;
+    border: 1px solid #007bff;
+    /* 青系統の枠線 */
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    /* 縦に並んだ入力間のスペース */
+    display: flex;
+    width: 100%;
+    max-width: 500px;
+
+}
+
+.password__input-2 {
+    flex: 1;
+    outline: none;
+    appearance: none;
+    padding: 10px 0 10px 10px;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    font-size: 16px;
+}
+
+.profile-card.stylish {
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+
+.profile-title {
+  margin: 0 0 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e3a8a; /* 深めの青 */
+  border-bottom: 3px solid #3b82f6;
+  padding-bottom: .5rem;
+}
+
+.profile-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.profile-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: .75rem;
+  background: #f9fafb;
+  border-left: 4px solid #3b82f6;
+  box-shadow: 0 3px 8px rgba(0,0,0,.05);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.profile-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+}
+
+.profile-list .icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.profile-list .text {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-list .label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-list .value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+

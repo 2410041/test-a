@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact</title>
+</head>
+<body>
+  <form action="https://script.google.com/macros/s/AKfycbxIb_NIZ0tk_HNUrKNUcv4xk6EwRAw0ifkPzLA9juz0CnQ5EzqpjmJUkyTPMWDHYgNX/exec" method="post">
+    <label>
+      タイトル
+      <input type="text" name="title" required />
+    </label>
+    <br />
+
+    <label>
+      お名前
+      <input type="text" name="name" required />
+    </label>
+    <br />
+
+    <label>
+      メールアドレス
+      <input type="email" name="email" required />
+    </label>
+    <br />
+
+    <label>
+      お問い合わせ項目
+      <!-- inputタグ + datalist で選択補助（送信は name="select_p" の値） -->
+      <input type="text" name="select_p" list="inquiry-types" required />
+      <datalist id="inquiry-types">
+        <option value="技術的なお問い合わせ" />
+        <option value="利用方法についてのお問い合わせ" />
+        <option value="料金・プランについてのお問い合わせ" />
+        <option value="アカウントについてのお問い合わせ" />
+        <option value="ご意見・ご要望" />
+        <option value="その他" />
+      </datalist>
+    </label>
+    <br />
+
+    <label>
+      お問い合わせ内容
+      <!-- 指示通り input タグで作成（複数行は不可、必要なら textarea に変更） -->
+      <input type="text" name="message" required />
+    </label>
+    <br />
+
+    <button type="submit">送信</button>
+  </form>
+</body>
+</html>

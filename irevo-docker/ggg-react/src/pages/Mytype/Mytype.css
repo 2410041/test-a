@@ -1,0 +1,280 @@
+.body {
+  font-family: sans-serif;
+  padding-top: 70px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.maindai {
+  text-align: center;
+  font-size: 50px;
+  color: #333;
+  margin-bottom: 70px;
+}
+
+.container2 {
+  width: 900px;
+  background: white;
+  margin: auto;
+  margin-bottom: 30px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.question2 {
+  text-align: center;
+  font-size: 1.7rem;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  white-space: nowrap;
+}
+
+.question-number {
+  font-size: 0.9em;
+  color: #555;
+  text-align: right;
+  margin-bottom: 5px;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.option {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+  transition: transform 0.2s;
+}
+
+.option:hover {
+  transform: scale(1.1);
+}
+
+.label {
+  width: 120px;
+  text-align: center;
+  font-size: 20px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.progress-container {
+  width: 100%;
+  background: #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 10px;
+  margin-top: 30px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #007be6;
+  width: 0;
+  transition: width 0.3s;
+}
+
+#progress-text {
+  text-align: center;
+  margin-top: 13px;
+  font-size: 1.3em;
+  color: #333;
+}
+
+#chart-container {
+  margin-top: 30px;
+}
+
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .options {
+    justify-content: center;
+  }
+
+  .label {
+    width: auto;
+    font-size: 0.75em;
+  }
+}
+
+.back-button {
+  width: 80px;
+  padding: 5px;
+  border-radius: 10px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  background-color: #007be6;
+  text-align: center;
+  cursor: pointer;
+  color: white;
+  font-size: 1.2em;
+}
+
+.personaldai {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logical {
+  text-align: center;
+  color: #004aaa;
+}
+
+.organized {
+  text-align: center;
+  color: rgb(123, 255, 178);
+}
+
+.friendly {
+  text-align: center;
+  color: orange;
+}
+
+.creative {
+  text-align: center;
+  color: rgba(153, 0, 153, 0.932);
+}
+
+.competitive {
+  text-align: center;
+  color: rgb(175, 0, 0);
+}
+
+.personal {
+  margin-left: 30px;
+  font-size: 18px;
+}
+
+.image {
+  height: auto;
+  width: 520px;
+  margin-left: 160px;
+}
+
+.back_mypage {
+  text-align: center;
+  width: 200px;
+  height: auto;
+  background-color: #007be6;
+  color: white;
+  font-size: 25px;
+  padding: 5px;
+  margin: auto;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+.type-result {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+  text-align: center;
+  transition: 0.3s ease;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+/* ===== タイトル（タイプ名） ===== */
+.type-result h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* ===== 見出し部分 ===== */
+.type-result h3 {
+  font-size: 1.2rem;
+  margin-top: 20px;
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 4px;
+  display: inline-block;
+}
+
+/* ===== リスト部分 ===== */
+.type-result ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.type-result li {
+  background: #f9f9f9;
+  margin: 6px auto;
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 400px;
+  transition: background 0.3s;
+}
+
+.type-result li:hover {
+  background: #f0f0f0;
+}
+
+.type-result p {
+  margin: 8px 0;
+  line-height: 1.7;
+  color: #555;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+/* タイプごとのカラー（type-result に適用） */
+.type-result.logical {
+  box-shadow: 0 6px 18px rgba(0, 74, 170, 0.06);
+}
+
+.type-result.organized {
+  box-shadow: 0 6px 18px rgba(47, 133, 90, 0.06);
+}
+
+.type-result.friendly {
+  box-shadow: 0 6px 18px rgba(237, 137, 54, 0.06);
+}
+
+.type-result.creative {
+  box-shadow: 0 6px 18px rgba(107, 70, 193, 0.06);
+}
+
+.type-result.competitive {
+  box-shadow: 0 6px 18px rgba(197, 48, 48, 0.06);
+}
+
+/* タイトル色をタイプに合わせる（見栄え向上） */
+.type-result.logical h3 {
+  color: #004aaa;
+}
+
+.type-result.organized h3 {
+  color: #2f855a;
+}
+
+.type-result.friendly h3 {
+  color: #ed8936;
+}
+
+.type-result.creative h3 {
+  color: #6b46c1;
+}
+
+.type-result.competitive h3 {
+  color: #c53030;
+}

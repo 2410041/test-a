@@ -1,0 +1,320 @@
+.mypage_yoko {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+/* ===== カード共通スタイル ===== */
+.my_card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+
+/* ===== プロフィールカード ===== */
+.cdb-profile-card {
+    /* プロフィールカードを広げる（ユーザー要求） */
+    width: 580px;
+    text-align: center;
+    margin-top: 20px;
+    margin-left: 15px;
+    margin-bottom: 20px;
+}
+
+.cdb-profile-avatar { margin-bottom: 12px; }
+.cdb-profile-info { padding: 6px 8px; }
+.cdb-profile-list { list-style: none; padding-left: 0; margin-top: 10px; text-align: left; max-height: 160px; overflow: auto; }
+.cdb-profile-list li { font-size: 0.95rem; margin-bottom: 6px; color: #333; }
+.cdb-profile-actions { margin-top: 12px; display:flex; gap:8px; justify-content:center; }
+
+.cdb-profile-img { width: 200px; height: 200px; border-radius: 50%; margin-bottom: 18px; object-fit: cover; border: 4px solid #0056BB; margin: auto; }
+.cdb-profile-label { color: #0056BB; font-size: 1.2rem; font-weight: bold; }
+.cdb-profile-name { font-size: 1.2rem; color: #333; margin-top: 5px; }
+.cdb-profile-basic-info { text-align: left; margin-top: 12px; }
+
+.my_img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+    border: 4px solid #0056BB;
+    margin: auto;
+}
+
+.my_nic {
+    color: #0056BB;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.my_user_name {
+    font-size: 1.5rem;
+    color: #333;
+    margin-top: 5px;
+}
+
+.my_basic_info {
+    text-align: left;
+    /* テキストだけ左寄せ */
+    margin-top: 15px;
+}
+
+/* ===== 資格カード ===== */
+.my_qualification_card {
+    flex: 1;
+    width: 380px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.my_qu_title {
+    font-size: 1.6rem;
+    color: #0056BB;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #0056BB;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.my_qu_ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 1.3rem;
+}
+
+.my_qu_ul li {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.my_qu_ul li::before {
+    content: "✔";
+    color: #0056BB;
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+/* ===== タブカード（右下コンテンツ） ===== */
+.my_tab_card {
+    flex: 1;
+    margin-top: 20px;
+    margin-right: 15px;
+    margin-bottom: 20px;
+}
+
+.my_tab_header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.my_tab_button {
+    padding: 10px 15px;
+    border: none;
+    background: #e9f2fb;
+    color: #0056BB;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.my_tab_button:hover,
+.my_tab_button.active {
+    background: #0056BB;
+    color: #fff;
+}
+
+/* ===== 補助的な調整 ===== */
+.my_table {
+    margin: 0 auto;
+}
+
+.main-content {
+    text-align: center;
+}
+
+.mytype {
+    margin-top: 30px;
+    font-size: 1.6rem;
+    color: #0056BB;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #0056BB;
+    display: inline-block;
+}
+
+.main_dai {
+    margin: auto;
+    text-align: center;
+    padding: 10px;
+    font-size: 2rem;
+    color: #00326b;
+}
+
+.my_card input,
+.my_card textarea,
+.my_card form,
+.my_card table {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Dashboard panels */
+.cdb-panel { padding: 10px; }
+.cdb-chat-window { max-height: 300px; overflow: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 8px; }
+.cdb-message { margin-bottom: 6px; }
+.cdb-system { color: #666; }
+.cdb-user { color: #00326b; }
+.cdb-chat-form { display:flex; gap:8px; }
+.cdb-chat-form input { flex:1; padding:8px; }
+.cdb-chat-form button { padding:8px 12px; }
+.cdb-apps-table { width:100%; border-collapse: collapse; }
+.cdb-apps-table th, .cdb-apps-table td { border:1px solid #ddd; padding:8px; text-align:left; }
+
+/* Cards grid for dashboard */
+.cdb-cards-grid {
+    margin-top: 20px;
+}
+
+/* 上段3カラム */
+.cdb-top-row {
+    display: grid;
+    /* 2列×行で表示する（必要に応じて2段目にカードが回る） */
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 28px;
+    margin-bottom: 24px;
+    align-items: stretch; /* 各カードを同じ高さに揃える */
+}
+
+/* 下段2カラム */
+.cdb-bottom-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    gap: 28px;
+    align-items: stretch;
+}
+
+/* レスポンシブ: 幅が狭い場合は列数を落とす */
+@media (max-width: 1000px) {
+    .cdb-top-row { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+    .cdb-bottom-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+    .cdb-top-row { grid-template-columns: 1fr; }
+    .cdb-profile-card { width: 100%; margin-left: 0; }
+}
+
+.cdb-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    padding: 24px;
+    box-sizing: border-box;
+    height: 360px; /* 固定高さで全カードを揃える */
+    /* 各カードが極端に狭くならないように最小幅を指定 */
+    min-width: 320px;
+    /* 中身を中央揃えにする */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.cdb-card-title {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: #00326b;
+}
+
+.cdb-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 24px;
+}
+
+.cdb-card-body {
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.cdb-card-button {
+    align-self: center;
+    padding:12px 18px;
+    background:#0763c5;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:1rem;
+}
+
+.cdb-card-button:hover { background:#0056b3; }
+
+/* Icon placeholder styling - user can drop image paths into <img class="cdb-card-icon-img"> */
+.cdb-card-icon {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0763c5; /* default icon color (can be overridden) */
+}
+
+.cdb-card-icon-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    display: block;
+}
+
+/* SVG icon styling */
+.cdb-card-icon-svg {
+    width: 72px;
+    height: 72px;
+    display: block;
+    color: inherit; /* inherit from .cdb-card-icon color */
+}
+
+/* right-side overrides for svg icons */
+.cdb-top-row .cdb-card .cdb-card-icon-svg,
+.cdb-bottom-row .cdb-card .cdb-card-icon-svg {
+    width: 56px;
+    height: 56px;
+}
+
+/* 右側に並ぶカード（上段・下段のカード）を少し小さくする */
+.cdb-top-row .cdb-card,
+.cdb-bottom-row .cdb-card {
+    min-width: 260px; /* プロフィールより小さめ */
+    height: 320px; /* 少し低めにして右側を小さく見せる */
+    padding: 16px;
+}
+
+.cdb-top-row .cdb-card .cdb-card-icon-img,
+.cdb-bottom-row .cdb-card .cdb-card-icon-img {
+    width: 56px;
+    height: 56px;
+}
+
+.cdb-top-row .cdb-card .cdb-card-button,
+.cdb-bottom-row .cdb-card .cdb-card-button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}

@@ -1,0 +1,54 @@
+services:
+  mysql-db:
+    container_name: mysql-container
+    build: ./mysql_docker/mysql
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql_docker/mysql/initdb:/docker-entrypoint-initdb.d
+    restart: always
+  phpmyadmin:
+    container_name: phpmyadmin-container
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOSTS=mysql-db
+    ports:
+      - "8080:80"
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mysql-db
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    depends_on:
+      - mysql-db
+    restart: always
+
+  api:
+    build: ./api
+    container_name: api-container
+    working_dir: /app/api
+    volumes:
+      - ./api:/app/api
+      - /app/api/node_modules
+    ports:
+      - "3030:3030"
+    depends_on:
+      - mysql-db
+    restart: always
+
+volumes:
+  mysql_data:
+  node_modules:

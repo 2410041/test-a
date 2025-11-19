@@ -1,0 +1,132 @@
+.details { 
+  /* border: 2px solid #005bcc; */
+  margin: 0px auto 5px auto;
+  max-width: 1100px;
+  border: 2px solid #005bcc;
+  border-radius: 10px;
+}
+
+/* .radius{
+    padding: 0px;
+    margin: auto;
+} */
+
+.details-summary {
+  position: relative;
+  display: block;
+  padding: 20px;
+  color: #000;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.details-summary:hover {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.details-summary .btn {
+  position: absolute;
+  top: 25px;
+  left: 90%;
+  transform-origin: center center;
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 25px solid #005bcc;
+}
+
+/* .details-summary .btn:before,
+.details-summary .btn:after {
+  content: "";
+  background-color: #005bcc;
+  border-radius: 10px;
+  width: 18px;
+  height: 4px;
+  position: absolute;
+  top: 7px;
+  left: 0;
+  transform-origin: center center;
+} */
+
+/* .details-summary .btn:before {
+  width: 4px;
+  height: 18px;
+  top: 0;
+  left: 7px;
+} */
+
+/* btnが回転するスタイル */
+.btn.is-active {
+  transform: rotate(180deg);
+}
+
+/* または、summaryのis-activeクラスから制御する場合 */
+.details-summary.is-active .btn {
+  transform: rotate(180deg);
+}
+
+.details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.details-content {
+  padding: 20px;
+  border-top: 1px solid #005bcc;
+}
+
+.details-content p {
+  margin: 0 0 20px;
+  color: #000;
+  font-size: 18px;
+  text-align: left;
+}
+
+.details-content p:last-of-type {
+  margin: 0 0 0;
+}
+
+/* 以下の記述は不要です */
+body {
+  margin: 20px;
+}
+
+.red {
+  color: #0056BB; 
+  font-size: 2.5rem;
+  text-decoration: underline; /* 下線 */
+  text-decoration-thickness: 0.5em; /* 線の太さ */
+  text-decoration-color: #FFFF31; /* 線の色 */
+  text-underline-offset: -0.2em; /* 線の位置 */
+  text-decoration-skip-ink: none; /* 下線と文字列が重なる部分でも下線が省略されないようにする */
+  text-align: center;
+}
+
+.kensaku {
+  width: 500px;    /* 横幅を300ピクセルに */
+  height: 35px;     /* 高さを40ピクセルに */
+  font-size: 16px;  /* 文字サイズも調整可能 */
+  padding: 8px;     /* 内側の余白 */
+  box-sizing: border-box; /* paddingを含めてサイズ調整 */
+  margin-bottom: 100px;
+  border: 2px solid #0056BB; /* 青系の色 */
+  border-radius: 6px;
+}
+
+.button {
+  width: 60px;
+  height: 35px; 
+  background-color: #005bcc;  
+  color: white;  
+  border: none; 
+  border-radius: 6px; 
+}
+
+.iti {
+  text-align: center;
+}
+

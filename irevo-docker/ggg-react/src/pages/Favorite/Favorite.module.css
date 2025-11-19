@@ -1,0 +1,115 @@
+
+/* コンポーネントのルート（これを JSX 側で適用してください） */
+.favoriteRoot {
+    padding: 0 16px;
+}
+
+/* テキストエリアの高さを固定 */
+.favoriteRoot .favoriteItemDetails {
+    height: 210px;
+    width: 500px;
+}
+
+/* 修正後の .favorite-item ：スケーリングに対応した新バージョン */
+.favoriteItem {
+    background-color: #ffffff; /* 白 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* 立体感のある影 */
+    display: flex;                            /* 子要素を横並びに */
+    align-items: center;                      /* 子要素を垂直中央に */
+    border: 1px solid #dadada;                /* 薄いグレーの枠線 */
+    padding: 20px;                            /* 内側余白 */
+    border-radius: 8px;                       /* 枠の角を丸く */
+    max-width: 1000px;                        /* 最大幅を設定 */
+    height: 300px;                            /* 高さを固定 */
+    margin: 20px auto 50px;                   /* 上下・中央寄せの外余白 */
+    position: relative;  /* 子要素のスケール位置を管理するために必要 */
+    overflow: hidden;    /* スケールではみ出した内容を隠す */
+}
+
+/* スケール処理を適用するためのラッパー要素 */
+.favoriteRoot .favoriteItem > .contentWrapper {
+    width: 1000px;        /* 基準とする幅（max-widthと一致） */
+    height: 250px;        /* 基準とする高さ（固定） */
+    transform-origin: top left; /* スケーリングの基点を左上に指定 */
+    transition: transform 0.3s ease; /* 拡大縮小時の滑らかなアニメーション */
+    display: flex;        /* 子要素を横並びに */
+    align-items: center;  /* 子要素を縦中央に揃える */
+}
+
+.favoriteRoot .favoriteItem img {
+    height: auto;         /* 高さは自動で調整 */
+    max-height: 100%;     /* ラッパーの高さに合わせて最大化 */
+    width: auto;          /* 横幅は画像の比率を維持 */
+    object-fit: contain;  /* 枠内に収めてアスペクト比を保持 */
+    margin-right: 20px;   /* テキストとの間に余白 */
+}
+
+.favoriteRoot .favoriteItemDetails {
+    flex: 1;               /* 空間を可能な限り使う */
+    font-size: 20px;       /* ベースのフォントサイズ（スケーリング基準） */
+    line-height: 1.4;      /* 行間をやや広めに */
+    word-break: break-word;/* 長い単語やURLでも折り返し */
+}
+
+.favoriteRoot .favoriteItem:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.favoriteRoot .removeFavorite {
+    margin-left: auto;        /* 右端に寄せる */
+    height: 40px;
+    align-self: flex-start;   /* 上に寄せる */
+    background: none;         /* 背景なし */
+    border: none;             /* 枠線なし */
+    color: #e60000;           /* 目立つ赤 */
+    font-size: 20px;
+    cursor: pointer;          /* マウスカーソルをポインターに */
+    padding: 0.4rem 0.8rem;
+    transition: opacity 0.2s; /* ホバー時のフェード用 */
+    opacity: 0.7;
+    text-decoration: underline;
+}
+
+/* ラベル定義（dt）を左に寄せて横並びに（.favoriteRoot 内でのみ有効） */
+.favoriteRoot dt {
+    float: left;
+}
+
+.favoriteRoot dd {
+    margin-left: 100px;
+}
+
+.favoriteRoot dt::after {
+    content: "：";
+}
+
+/* ページルートで上書きするスタイル（より高い優先度でページ内部の要素に適用されます） */
+.favoriteRoot {
+    background-color: #f6fcff;  /* 薄い青 */
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.favoriteRoot h2 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 32px;
+}
+
+.favoriteRoot h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.favoriteRoot dt {
+    float: left;
+}
+
+.favoriteRoot dd {
+    margin-left: 100px;
+}
+
+.favoriteRoot dt::after {
+    content: "：";
+}

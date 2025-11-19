@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewRegistration</title>
+    <link rel="stylesheet" href="password.css">
+</head>
+<body>
+
+    <!--名前（漢字・フリガナ）、アドレス、パスワード、電話番号、生年月日、性別-->
+
+
+
+    <div class="container">
+        <div class="form-group">
+            <label for="password" class="form-label">パスワード:</label>
+
+            <!-- <input type="password" id="password" class="password-input" placeholder="パスワードを入力してください"> -->
+                <div class="password-wrapper">
+                    <input type="password" id="password" class="password__input">
+                    <button class="password__toggle"></button>
+                </div>
+            
+            
+            <div class="strength-meter">
+                <div id="strength-bar" class="strength-bar"></div>
+            </div>
+            <div id="strength-text" class="strength-text">パスワードを入力してください</div>
+        </div>
+
+        
+        <div class="requirements-box">
+            <p class="requirement-item">パスワード要件:</p>
+            <p id="req-length" class="requirement-item unfulfilled">6文字以上</p>
+            <p id="req-uppercase" class="requirement-item unfulfilled">大文字を含む</p>
+            <p id="req-number" class="requirement-item unfulfilled">数字を含む</p>
+            <p id="req-symbol" class="requirement-item unfulfilled">記号を含む</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="confirm-password" class="form-label">パスワード（確認用）:</label>
+            <div class="password-wrapper">
+                <input type="password" id="confirm-password" class="password__input">
+                <button class="password__toggle2"></button>
+            </div>
+            <!-- <input type="password" id="confirm-password" class="password-input" placeholder="もう一度入力してください"> -->
+            <div id="match-message" class="match-message"></div>
+        </div>
+
+        <button type="submit" id="submit-button" class="submit-button" disabled>アカウント登録</button>
+    </div>
+
+    <script src="https://unpkg.com/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
+    <script>
+
+        //パスワードを表示する用のコード
+        const passwordToggle = document.querySelector('.password__toggle');
+        const passwordToggleRetest = document.querySelector('.password__toggle2');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+        const reqLength = document.getElementById('req-length');
+        const reqUppercase = document.getElementById('req-uppercase');
+        const reqNumber = document.getElementById('req-number');
+        const reqSymbol = document.getElementById('req-symbol');
+        const matchMessage = document.getElementById('match-message');
+        const submitButton = document.getElementById('submit-button');
+
+        passwordToggle.addEventListener('click', (e) => {
+            const input = e.target.previousElementSibling;
+            const type = input.getAttribute('type');
+            input.setAttribute('type', type === 'password' ? 'text' : 'password');
+            passwordToggle.classList.toggle('is-visible');
+            console.log("test1");
+            
+        })
+
+        passwordToggleRetest.addEventListener('click', (e) => {
+            const input = e.target.previousElementSibling;
+            const type = input.getAttribute('type');
+            input.setAttribute('type', type === 'password' ? 'text' : 'password');
+            passwordToggle.classList.toggle('is-visible');
+            console.log("test2");
+            
+        })
+        
+        passwordInput.addEventListener('input', () => {
+            checkPasswordStrength();
+            checkPasswordMatch(); // パスワード変更時に一致チェックも実行
+        });
+        // 確認用パスワード入力時に一致をチェック
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+        // パスワード強度をチェックし、表示を更新する関数
+        
+        function checkPasswordStrength() {
+            const password = passwordInput.value; // メインのパスワードを取得
+
+            if (password === "") {
+                // パスワードが空の場合の初期表示設定
+                strengthBar.style.width = '0%';
+                strengthBar.className = 'strength-bar';
+                strengthText.textContent = 'パスワードを入力してください';
+                
+                // 全ての要件表示を未達成状態に戻す
+                reqLength.className = 'requirement-item unfulfilled';
+                reqUppercase.className = 'requirement-item unfulfilled';
+                reqNumber.className = 'requirement-item unfulfilled';
+                reqSymbol.className = 'requirement-item unfulfilled';
+                
+                // 強度スコアは未確定
+                updateSubmitButton(0, false); // 強度が0、パスワード不一致として送信ボタンを更新
+                return;
+            }
+
+            // zxcvbnライブラリを使用してパスワード強度を評価
+            const result = zxcvbn(password, []);
+            const score = result.score; // zxcvbnのスコア (0-4)
+
+            // 強度バーの幅と色を設定
+            strengthBar.style.width = ((score + 1) / 5) * 100 + '%';
+            strengthBar.className = 'strength-bar strength-' + score;
+
+            // スコアに応じたテキストメッセージを設定
+            let strengthMessage = '';
+            switch (score) {
+                case 0: strengthMessage = '非常に弱い';
+                    break;
+                case 1: strengthMessage = '弱い';
+                    break;
+                case 2: strengthMessage = '普通';
+                    break;
+                case 3: strengthMessage = '良い';
+                    break;
+                case 4: strengthMessage = '非常に強い';
+                    break;
+                default: strengthMessage = '';
+            }
+            strengthText.textContent = `強度: ${strengthMessage}`;
+
+            // --- パスワード要件のチェックと表示更新 ---
+            // 6文字以上
+            reqLength.className = password.length >= 6 ? 'requirement-item fulfilled' : 'requirement-item unfulfilled';
+            // 大文字を含む
+            reqUppercase.className = /[A-Z]/.test(password) ? 'requirement-item fulfilled' : 'requirement-item unfulfilled';
+            // 数字を含む
+            reqNumber.className = /[0-9]/.test(password) ? 'requirement-item fulfilled' : 'requirement-item unfulfilled';
+            // 記号を含む
+            reqSymbol.className = /[^A-Za-z0-9]/.test(password) ? 'requirement-item fulfilled' : 'requirement-item unfulfilled';
+            
+            // 強度チェックが完了したら、ボタンの状態を更新
+            updateSubmitButton(score, passwordInput.value === confirmPasswordInput.value);
+        }
+
+        /**
+         * パスワードが一致するかどうかをチェックし、表示を更新する関数
+         */
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (confirmPassword === "") {
+                // 確認用パスワードが空の場合
+                matchMessage.textContent = ''; // メッセージをクリア
+                matchMessage.className = 'match-message'; // クラスをリセット
+                // パスワードが一致しない状態として送信ボタンを更新
+                updateSubmitButton(zxcvbn(password).score, false); 
+                return;
+            }
+
+            if (password === confirmPassword) {
+                // パスワードが一致する場合
+                matchMessage.textContent = 'パスワードが一致しました';
+                matchMessage.className = 'match-message matched';
+                // 一致した状態で送信ボタンを更新
+                updateSubmitButton(zxcvbn(password).score, true);
+            } else {
+                // パスワードが一致しない場合
+                matchMessage.textContent = 'パスワードが一致しません';
+                matchMessage.className = 'match-message not-matched';
+                // 不一致なので送信ボタンは無効に
+                updateSubmitButton(zxcvbn(password).score, false);
+            }
+        }
+
+        function updateSubmitButton(score, passwordsMatch) {
+            // スコアが3以上パスワードが一致していればボタンを有効
+            if (score >= 3 && passwordsMatch) {
+                submitButton.disabled = false; // ボタンを有効化
+            } else {
+                submitButton.disabled = true; // ボタンを無効化
+            }
+        }
+
+        // ページ読み込み時に初期状態を設定
+        // これがないと、パスワードが空でもボタンが有効になる場合があるため
+        //　なんでこうなるかは不明やけどとりまこれでうごいます
+        updateSubmitButton(0, false); 
+    </script>
+</body>
+</html>

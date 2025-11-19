@@ -1,0 +1,11 @@
+/* このファイルは絶対に最後に読み込んでください */
+
+
+body{
+    background-color: #fff;
+    /* margin: 0;
+    padding: 0; */
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+}

@@ -1,0 +1,85 @@
+/* アコーディオン1つの要素 */
+.accordion-item {
+  border: 2px solid #005bcc;
+  margin: 0px auto 5px auto;
+  max-width: 1100px;
+  border-radius: 10px;
+}
+
+/* アコーディオンのタイトルの部分 */
+.accordion-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 開いたときにタイトルのところに下線が出る */
+.open {
+  border-bottom: 1px solid #005bcc;
+}
+
+/* Qのマーク */
+/* ↓ デザイン変になってたらいじってね */
+.question {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 40px;
+  height: 35px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 24px;
+  font-weight: normal;
+  border: 2px solid #005bcc;
+  background-color: #005bcc;
+  border-radius: 5px;
+}
+
+/* 三角 */
+.triangle {
+  color: #005bcc;
+  font-size: 28px;
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+/* 三角の動き */
+.accordion-header.open .triangle {
+  transform: rotate(90deg); /* ▶を下向きに（右→下） */
+}
+
+/* 中身の部分 */
+.accordion-content {
+  display: flex;
+  align-items: baseline;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* Aのマーク */
+/* ↓ デザイン変になってたらいじってね */
+.answer {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 40px;
+  height: 35px;
+  padding-bottom: 5px;
+  color: #005bcc;
+  background-color: white;
+  font-size: 24px;
+  font-weight: normal;
+  border: 2px solid #005bcc;
+  border-radius: 5px;
+  margin: 20px 0 0 20px;
+}
+
+/* 文字 */
+.accordion-inner {
+  padding: 0 20px;
+  font-size: 18px;
+}

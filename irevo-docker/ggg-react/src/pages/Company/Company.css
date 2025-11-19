@@ -1,0 +1,374 @@
+/* 既存のスタイルを確認・修正 */
+
+/* bodyとhtmlのマージン・パディングをリセット */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* containerの修正 */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw; /* 追加: 全幅を確保 */
+    max-width: 100%; /* 追加: はみ出し防止 */
+}
+
+/* myMainの修正 */
+#myMain {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* 追加: 横スクロール防止 */
+}
+
+/* header-filtersの修正 */
+.header-filters {
+    display: flex;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    gap: 10px;
+    align-items: center;
+    width: 100%; /* 追加 */
+    margin: 0; /* 追加 */
+    box-sizing: border-box; /* 追加 */
+}
+
+.dropdown-wrapper {
+    flex-shrink: 0; /* ドロップダウンが縮まないようにする */
+}
+
+.dropdown {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 180px; /* 地域と職種の幅を統一 */
+    width: 180px; /* 固定幅で統一 */
+    box-sizing: border-box; /* 追加 */
+}
+/* margin-left: auto; 検索ボックスを右に寄せる */
+
+.content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    width: 100%; /* 追加 */
+    margin: 0; /* 追加 */
+    padding: 0; /* 追加 */
+}
+
+.left-panel {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    margin: 0; /* 追加 */
+    box-sizing: border-box; /* 追加 */
+}
+
+.company-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.company-card:hover {
+    background-color: #f0f0f0;
+}
+
+.company-card.selected {
+    background-color: #ffffcc; /* 選択されたカードの背景色 */
+    border-color: #ffeb3b;
+}
+
+.company-card .label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.company-card .text-content {
+    margin-bottom: 5px;
+}
+
+.right-panel {
+    flex: 2; /* 右パネルは左パネルの2倍の幅 */
+    padding: 20px;
+    background-color: #fff;
+    overflow-y: auto;
+    margin: 0; /* 追加 */
+    box-sizing: border-box; /* 追加 */
+}
+
+/* company-detail-cardの修正 */
+.company-detail-card {
+    border: 1px solid #ddd;
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 0; /* 追加 */
+    width: 100%; /* 追加 */
+    box-sizing: border-box; /* 追加 */
+}
+
+/* ヘッダー部分 - 会社名とロゴ */
+.company-header {
+    background: #0056BB;
+    color: white;
+    padding: 24px;
+    position: relative;
+}
+
+.company-header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.company-logo {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 0.8em;
+    flex-shrink: 0;
+}
+
+/* ロゴ画像がはみ出したりつぶれないように調整 */
+.company-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.company-title {
+    flex: 1;
+}
+
+.company-name {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+}
+
+.company-industry {
+    font-size: 1em;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* メインコンテンツ部分 */
+.company-content {
+    padding: 20px;
+    margin: 0; /* 追加 */
+    width: 100%; /* 追加 */
+    box-sizing: border-box; /* 追加 */
+}
+
+/* 基本情報セクション */
+.company-section {
+    margin-bottom: 32px;
+}
+
+.section_title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #4070ff;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px 20px;
+    margin-bottom: 20px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.detail-value {
+    color: #333;
+    line-height: 1.6;
+}
+
+.detail-value a {
+    color: #4070ff;
+    text-decoration: none;
+}
+
+.detail-value a:hover {
+    text-decoration: underline;
+}
+
+.detail-value br {
+    margin-bottom: 4px;
+}
+
+/* 会社写真セクション */
+.company-photos {
+    margin-bottom: 32px;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.company-photo {
+    aspect-ratio: 16/10;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 0.9em;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.company-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* マップセクション */
+.company-map-section {
+    margin-bottom: 32px;
+}
+
+.map-container {
+    height: 300px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 1em;
+    margin-top: 16px;
+}
+
+/* 住所情報を地図の下に表示 */
+.address-info {
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 12px;
+    border-left: 4px solid #4070ff;
+}
+
+.address-info .detail-label {
+    color: #4070ff;
+    font-weight: 600;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .company-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .company-logo {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .company-name {
+        font-size: 1.5em;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .detail-label {
+        font-size: 0.9em;
+        margin-bottom: 4px;
+    }
+    
+    .photo-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .map-container {
+        height: 250px;
+    }
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 0 10px;
+}
+
+.search-form label {
+    width: 250px;
+}
+
+.search-form input {
+    width: 100%;
+    height: 34px;
+    padding: 1px 5px 1px 8px;
+    border: 1px solid #999999;
+    box-sizing: border-box;
+    color: #000;
+    outline: none;
+}
+
+.search-form button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    max-width: 140px;
+    height: 34px;
+    border: none;
+    background-color: #4070ff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.search-form button::before {
+    width: 14px;
+    height: 14px;
+    margin-right: 5px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z' fill='%23fff'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    content: '';
+}

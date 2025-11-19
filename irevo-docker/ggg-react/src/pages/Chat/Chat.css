@@ -1,0 +1,176 @@
+/* --------------------- 基本設定 --------------------- */
+
+.app-container {
+  display: flex;          /* 横に並べる */
+  height: 100vh;          /* 高さを画面全体に */
+}
+
+/* ------------------ 左側：チャット一覧 ------------------ */
+.chat-list {
+  width: 280px;                         /* 幅を固定 */
+  background-color: #ffffff;           /* 背景白 */
+  border-right: 1px solid #ccc;        /* 右に区切り線 */
+  display: flex;
+  flex-direction: column;              /* 縦に並べる */
+}
+
+.chat-list-header {
+  padding: 16px;                       /* 内側の余白 */
+  font-weight: bold;                  /* 太字 */
+  border-bottom: 1px solid #ccc;      /* 下線 */
+  background-color: #f9f9f9;          /* 薄い背景 */
+}
+
+.chat-list-item {
+  padding: 14px 16px;                  /* 上下左右の余白 */
+  cursor: pointer;                    /* マウスをのせるとポインターになる */
+  border-bottom: 1px solid #eee;      /* 下線 */
+  transition: background-color 0.2s;   /* ホバー時の色変化にアニメーション */
+}
+
+.chat-list-item:hover {
+  background-color: #f0f0f0;          /* マウスホバー時の色 */
+}
+
+.chat-list-item.selected {
+  background-color: #e6f4ff;          /* 選択中の背景色 */
+  font-weight: bold;                  /* 太字で強調 */
+}
+
+/* ------------------ 右側：チャット画面 ------------------ */
+.chat-container {
+  flex: 1;                              /* 残り全体を使用 */
+  display: flex;
+  flex-direction: column;              /* 上から下に並べる */
+  background: white;                   /* 背景白 */
+}
+
+.chat-header {
+  padding: 16px;                       /* 余白 */
+  border-bottom: 1px solid #ccc;      /* 下線 */
+  background-color: white;
+  text-align: center;                 /* 中央揃え */
+  font-weight: bold;                  /* 太字 */
+}
+
+.chat-messages {
+  flex: 0.8;                             /* 高さを残り全体に */
+  padding: 16px;
+  overflow-y: auto;                   /* 縦にスクロールできる */
+  background-color: #f8f8f8;          /* メッセージ背景 */
+}
+
+.message-block {
+  display: flex;                      /* 横並び */
+  margin-bottom: 12px;               /* 下に余白 */
+}
+
+.message {
+  padding: 10px 14px;                /* メッセージの内側の余白 */
+  border-radius: 16px;               /* 丸みをつける */
+  /* max-width: 75%;                    最大幅 */
+  word-wrap: break-word;            /* 長い単語で折り返し */
+  position: relative;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ユーザーとボットのメッセージ位置 */
+.user {
+  justify-content: flex-end;         /* 右寄せ */
+}
+
+.bot {
+  justify-content: flex-start;       /* 左寄せ */
+}
+
+/* ユーザーとボットのメッセージの色 */
+.user .message {
+  background-color: #0084ff;         /* 青色背景 */
+  color: white;                      /* 文字色白 */
+  border-bottom-right-radius: 4px;   /* 角の調整 */
+}
+
+.bot .message {
+  background-color: #f1f0f0;         /* グレー背景 */
+  border-bottom-left-radius: 4px;    /* 角の調整 */
+}
+
+.time {
+  font-size: 10px;                   /* 小さい文字 */
+  color: #888;                       /* 薄い文字色 */
+  margin-top: 4px;
+}
+
+/* ボットのアイコン */
+.chatIcon {
+  width: 28px;
+  height: 28px;
+  background-color: #87cefa;         /* 水色背景 */
+  border-radius: 50%;                /* 丸くする */
+  margin-right: 8px;                 /* 右に余白 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;                 /* 太字 */
+  font-size: 14px;
+  color: white;
+}
+
+/* ------------------ 入力欄 ------------------ */
+.chat-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;        /* 上に線 */
+  background-color: white;
+}
+
+.chat-input input {
+  flex: 1;                           /* 横幅最大に */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;              /* 丸みのある入力欄 */
+  font-size: 16px;
+}
+
+.chat-input button {
+  margin-left: 10px;                /* 左に余白 */
+  padding: 10px 20px;
+  background-color: #4CAF50;        /* 緑色背景 */
+  color: white;
+  border: none;
+  border-radius: 20px;              /* 丸み */
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.chat-input button:hover {
+  background-color: #45a049;        /* ホバー時の色 */
+}
+
+/* ------------------ スマホ対応（レスポンシブ） ------------------ */
+@media screen and (max-width: 770px) {
+  .app-container {
+    flex-direction: column;          /* スマホでは縦並びに */
+  }
+
+  .chat-list {
+    width: 100%;                     /* 横幅いっぱい */
+    height: 200px;                   /* 高さ固定 */
+    border-right: none;              /* 右の線は不要 */
+    border-bottom: 1px solid #ccc;   /* 下線を追加 */
+    flex-direction: row;             /* 横並びにする */
+    /* overflow-x: auto;                横にスクロールできる */
+  }
+
+  .chat-list-item {
+    flex: 1;                         /* 同じ幅にする */
+    text-align: center;             /* 文字を中央揃え */
+    border-bottom: none;
+    border-right: 1px solid #eee;   /* 右の線 */
+  }
+
+  .chat-container {
+    height: calc(100vh - 200px);     /* リストの分を引いた高さ */
+  }
+}

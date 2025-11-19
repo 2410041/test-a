@@ -1,0 +1,73 @@
+.cap-container {
+  max-width: 1000px;
+  margin: 48px auto;
+  background: #fff;
+  padding: 20px 24px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+.cap-title {
+  margin: 0 0 16px 0;
+  font-size: 1.6rem;
+  color: #1f3c88;
+}
+.cap-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.cap-input, .cap-select {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.cap-table_wrap { overflow-x: auto; }
+.cap-table { width: 100%; border-collapse: collapse; }
+.cap-table th, .cap-table td { padding: 10px 12px; border-bottom: 1px solid #eef2f7; text-align: left; }
+.cap-table thead th { background: #f8fafc; color: #374151; font-weight: 600; }
+.cap-loading { padding: 40px; text-align: center; color: #6b7280; }
+.cap-error { padding: 10px; background: #fff3f2; color: #b02a37; border-radius: 6px; margin-bottom: 12px; }
+.cap-button { background: #0b63d6; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+.cap-button:hover { opacity: 0.95; }
+
+@media (max-width: 640px) {
+  .cap-container { padding: 12px; margin: 20px; }
+  .cap-title { font-size: 1.2rem; }
+  .cap-input { width: 100%; }
+}
+
+/* モーダル */
+.cap-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.cap-modal {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 760px;
+  width: 95%;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(2,6,23,0.2);
+  position: relative;
+}
+.cap-modal-close {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+.cap-modal-title { margin: 0 0 12px 0; color: #0b3f91; }
+.cap-modal-body p { margin: 6px 0; }
+.cap-modal-profile { margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 6px; }
+.cap-modal-actions { margin-top: 16px; display:flex; gap:8px; justify-content:flex-end; }
+

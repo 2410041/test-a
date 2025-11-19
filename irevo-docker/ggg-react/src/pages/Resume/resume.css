@@ -1,0 +1,158 @@
+.r_main_right{
+    float: right;
+    width: 50%;
+    height: 1000px;
+}
+
+.r_main_left{
+    float: left;
+    /* background-color: brown; */
+    width: 50%;
+    height: 10000px;
+}
+
+.r_photo{
+    position: absolute;
+    top: 50px;
+    left: 435px;
+    text-align:center;
+    width:30mm;
+    height:40mm;
+    border-width:0.2mm 0.2mm 0.2mm 0.2mm;
+    border-style:solid solid solid solid;
+}
+
+.r_title{
+    position:absolute;
+    top:16.5mm;
+    left:10mm;
+    width:30mm;
+    height:6mm;
+}
+
+.r_day{
+    position:absolute;
+    top:16.5mm;
+    left:11mm;
+    width:100mm;
+    height:4mm;
+    text-align:right;
+}
+
+.furi {
+    font-size: 7pt;
+    font-family: MS 明朝
+}
+
+.pic {
+    font-size: 7pt;
+    font-family: MS 明朝
+}
+
+.sex {
+    font-size: 8pt;
+    font-family: MS 明朝
+}
+
+.idx {
+    font-size: 8pt;
+    font-family: MS 明朝;
+    line-height: 9pt
+}
+
+.kenko {
+    font-size: 18pt;
+    font-family: MS 明朝
+}
+
+.text {
+    font-size: 12pt;
+    font-family: MS 明朝
+}
+
+.textlist {
+    font-size: 12pt;
+    font-family: MS 明朝;
+    line-height: 9.1mm
+}
+
+.textlist3 {
+    font-size: 9pt;
+    font-family: MS 明朝;
+    line-height: 5.0mm
+}
+
+.textlist2 {
+    font-size: 11pt;
+    font-family: MS 明朝;
+    line-height: 9.1mm
+}
+
+.texthide {
+    font-size: 11pt;
+    font-family: MS 明朝;
+    line-height: 9.1mm;
+    color: white
+}
+
+.shimei {
+    font-size: 24pt;
+    font-family: MS 明朝;
+    letter-spacing: 2pt
+}
+
+.furix {
+    font-size: 10pt;
+    font-family: MS 明朝
+}
+
+.furix2 {
+    font-size: 7pt;
+    font-family: MS 明朝
+}
+
+.adr {
+    font-size: 12pt;
+    font-family: MS 明朝
+}
+
+.textl {
+    font-size: 14pt;
+    font-family: MS 明朝
+}
+
+.base10 {
+    font-size: 10pt;
+    color: white
+}
+
+.base14 {
+    font-size: 14pt;
+    color: white
+}
+
+.furix3 {
+    font-size: 7pt;
+    letter-spacing: 9pt;
+    font-family: MS 明朝
+}
+
+.mail {
+    font-size: 9pt;
+    font-family: Times New Roman
+}
+
+.furix_n{
+    font-size: 8pt;
+    font-family: MS 明朝
+}
+
+#capture{
+    position: relative;
+    height: 1000px;
+}
+
+.capture_btn_center{
+    width: 100%;
+    text-align: center;
+}

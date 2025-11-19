@@ -1,0 +1,78 @@
+/* ResumeBot styles: white background with blue accent */
+:root{
+  --bg: #ffffff;
+  --text: #0f1724;
+  --muted: #7b8a9e;
+  --primary: #1976d2; /* blue accent */
+  --card-border: rgba(25,118,210,0.06);
+  --card-shadow: 0 6px 18px rgba(20,32,60,0.08);
+}
+
+.rb-page{
+  background: var(--bg);
+  min-height: 100vh;
+  padding: 40px 16px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  font-family: "Inter", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--text);
+}
+
+.rb-card{
+  width:100%;
+  max-width:800px;
+  background:var(--bg);
+  border-radius:12px;
+  box-shadow:var(--card-shadow);
+  padding:20px;
+  box-sizing:border-box;
+  border:1px solid var(--card-border);
+}
+
+.rb-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.rb-badge{
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#e6f0ff,#cfe6ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.rb-title{font-size:20px;font-weight:700;color:var(--primary)}
+.rb-sub{font-size:13px;color:#556779}
+
+.rb-textarea{
+  width:100%;
+  min-height:140px;
+  resize:vertical;
+  padding:12px 14px;
+  border-radius:8px;
+  border:1px solid rgba(15,76,129,0.08);
+  box-shadow: inset 0 1px 2px rgba(16,24,40,0.02);
+  font-size:14px;line-height:1.5;box-sizing:border-box;outline:none;
+}
+
+.rb-controls{display:flex;gap:10px;margin-top:12px;align-items:center}
+
+.rb-primary{background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:600;box-shadow:0 6px 14px rgba(25,118,210,0.16)}
+.rb-primary[disabled]{background:#9cc0f0;cursor:not-allowed;box-shadow:none}
+
+.rb-secondary{background:transparent;color:var(--primary);border:1px solid rgba(25,118,210,0.12);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+
+.rb-reply{margin-top:16px;padding:14px;border-radius:8px;background:#f7fbff;border:1px solid rgba(25,118,210,0.06);min-height:100px;white-space:pre-wrap;color:var(--text)}
+
+.rb-hint{font-size:13px;color:var(--muted)}
+
+.rb-error{margin-top:12px;color:#d93025;font-weight:600}
+
+@keyframes rb-spin{to{transform:rotate(360deg)}}
+.rb-spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;animation:rb-spin 1s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}

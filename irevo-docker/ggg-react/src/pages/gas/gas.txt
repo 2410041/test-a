@@ -1,0 +1,43 @@
+const DOC_ID = "1Unaw5XyLhQJwBhpc_yzJW6AtzUj8Rip-LSmka1558uU";
+const GEMINI_API_KEY = "AIzaSyA4Rm9LqyyyuHMeK_poYxqDwmsPsblerBI"; // Google AI Studioで取得したAPIキー
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const inputText = data.text || "";
+
+    // Google Document の本文を取得
+    const doc = DocumentApp.openById(DOC_ID);
+    const maxLength = 1000;
+    const bodyText = doc.getBody().getText().slice(0, maxLength);
+
+    // AIに渡すプロンプトを作成
+    const prompt = `次の内容を要約してください:\n\n【ドキュメント内容】\n${bodyText}\n\n【ユーザー入力】\n${inputText}`;
+
+    // Gemini API呼び出し
+    const response = UrlFetchApp.fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + GEMINI_API_KEY, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }]
+      }),
+      muteHttpExceptions: true
+    });
+
+    const result = JSON.parse(response.getContentText());
+    Logger.log(result); // 追加
+
+    const summary = result?.candidates?.[0]?.content?.parts?.[0]?.text || "要約を取得できませんでした。";
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ result: "success", message: summary + bodyText + inputText + prompt})
+    ).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ result: "error", message: error.message })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}

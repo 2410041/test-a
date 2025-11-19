@@ -1,0 +1,511 @@
+/* 共通コンポーネント */
+.card {
+    background: #fff;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    background: #e2e8f0;
+}
+
+
+.btn:hover {
+    background: #cbd5e0;
+}
+
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+
+.btn-primary {
+    margin-top: 0.5rem;
+    width: 100%;
+    background-color: #4299e1;
+    color: white;
+}
+
+.input {
+    border: 1px solid #cbd5e0;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+
+.calendar-box {
+    border: 1px solid #cbd5e0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    background: #fff;
+}
+
+/* JobChat UI 全体 */
+.jobchat-container {
+    display: flex;
+    height: 100%;
+    background-color: #f0f6ff;
+    color: #1a202c;
+    overflow: hidden; /* 追加: 全体スクロール防止 */
+}
+
+
+/* 左サイドバー */
+.sidebar-left {
+    width: 20%;
+    border-right: 1px solid #cbd5e0;
+    background-color: #ebf8ff;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+
+.sidebar-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.125rem;
+    margin-top: 0.7rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1.1rem; /* 見出し下の線と本文の間隔 */
+    border-bottom: 1px solid rgba(2, 6, 23, 0.308); /* 薄い下線 */
+}
+
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+
+.search-icon {
+    color: #4a5568;
+}
+
+
+.company-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* 企業一覧リストの点（デフォルトのリストマーカー）を消す */
+    list-style: none;
+    padding-left: 0;
+}
+
+
+.company-item {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+
+.company-item:hover {
+    background-color: #bee3f8;
+}
+
+
+.company-item.active {
+    background-color: #90cdf4;
+}
+
+/* チャットエリア */
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: #fff;
+    padding-bottom: 0;
+    min-height: 0; /* flex子要素の高さ制御 */
+    height: auto; 
+    box-sizing: border-box;
+}
+
+
+.chat-header {
+    padding: 1rem;
+    border-bottom: 1px solid #cbd5e0;
+    background: #fff;
+}
+
+
+.chat-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+
+.chat-messages2 {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    padding-bottom: 200px; /* 必要に応じて入力欄の高さに合わせて調整 */
+}
+
+
+.message3 {
+    display: flex;
+    width: 100%;       /* ← 追加: 親幅いっぱいにして justify を効かせる */
+    box-sizing: border-box;
+}
+
+/* バブル内のレイアウトを縦方向にして時刻を末尾に配置 */
+.bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    border-radius: 1rem;
+    max-width: 60%;
+    box-sizing: border-box;
+}
+
+/* 左バブルは左寄せ、右バブルは右寄せ（時刻含む） */
+.bubble-left {
+    background-color: #ebf8ff;
+    align-items: flex-start;
+}
+
+.bubble-right {
+    background-color: #4299e1;
+    color: #fff;
+    align-items: flex-end; /* 内部要素を右寄せ */
+}
+
+/* 共通タイムスタイル */
+.timestamp {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    line-height: 1;
+}
+
+/* 左メッセージの時刻（目立たせない） */
+.bubble-left .timestamp {
+    color: #4a5568;
+    align-self: flex-start;
+}
+
+/* 右メッセージの時刻（バブル内で右寄せ・白系） */
+.bubble-right .timestamp {
+    color: rgba(255,255,255,0.85);
+    align-self: flex-end;
+}
+
+/* 既存の timestamp-right クラスが使われている場合の互換調整 */
+.timestamp-right {
+    color: rgba(255,255,255,0.85);
+}
+
+
+.message-left {
+    justify-content: flex-start;
+}
+
+
+.message-right {
+    justify-content: flex-end;
+}
+
+
+.bubble {
+    padding: 0.75rem;
+    border-radius: 1rem;
+    max-width: 60%;
+    display: inline-block; /* inline-block にして margin:auto を効かせる */
+    box-sizing: border-box;
+}
+
+
+.bubble-left {
+    background-color: #ebf8ff;
+}
+
+
+.bubble-right {
+    background-color: #4299e1;
+    color: white;
+    margin-left: auto; /* 右寄せ */
+    text-align: left;
+}
+
+
+.timestamp {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    color: #4a5568;
+}
+
+
+.timestamp-right {
+    color: #e2e8f0;
+}
+
+
+.chat-input2 {
+    border-top: 1px solid #cbd5e0;
+    padding: 0.75rem; /* 下のpaddingを0に */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    box-shadow: none; /* 影があれば消す */
+    position: absolute;
+    bottom:0;
+    width: 55%; /* チャットエリアの幅に合わせる */
+
+}
+
+
+.send-btn {
+    background-color: #4299e1;
+    color: white;
+}
+
+
+/* 右サイドバー */
+.sidebar-right {
+    width: 25%;
+    border-left: 1px solid #cbd5e0;
+    background-color: #f0f6ff;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100vh;
+    overflow-y: auto; /* ここで右側だけスクロール可能 */
+    position: relative;
+    box-sizing: border-box; /* 追加: パディング込みで高さ制御 */
+}
+
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+
+.file-list {
+    color: #2b6cb0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.file-list-inline {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+}
+
+.file-item-inline {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+
+.memo-box {
+    width: 100%;
+    height: 6rem;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 0.5rem;
+}
+
+/* react-calendar カスタムデザイン */
+.custom-calendar {
+    border: 1px solid #4299e1;
+    border-radius: 0.75rem;
+    background: #f7fafc;
+    font-family: inherit;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(66, 153, 225, 0.08);
+}
+
+.custom-calendar .react-calendar__tile--active {
+    background: #0077d8;
+    color: #fff; /* ここが選択日の文字色 */
+    border-radius: 0.5rem;
+}
+
+.custom-calendar .react-calendar__tile--now {
+    background: #bee3f8;
+    color: #2b6cb0;
+    border-radius: 0.5rem;
+}
+
+.custom-calendar .react-calendar__tile {
+    padding: 0.5em 0;
+    font-size: 1rem;
+}
+
+.custom-calendar .react-calendar__navigation button {
+    color: #4299e1;
+    font-weight: bold;
+    background: none;
+    border: none;
+}
+
+/* react-calendarのナビゲーション（年月変更部分）を中央揃えにする */
+.custom-calendar .react-calendar__navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* 土曜日を青色、日曜日を赤色にする */
+.custom-calendar .react-calendar__month-view__days__day--weekend {
+    color: #e53e3e; /* 日曜日を赤 */
+}
+.custom-calendar .react-calendar__month-view__days__day--weekend:nth-child(7n+6) {
+    color: #4299e1; /* 土曜日を青 */
+}
+
+/* react-calendarの曜日（日・月・火...）を中央揃えにする */
+.custom-calendar .react-calendar__month-view__weekdays {
+    display: flex;
+}
+.custom-calendar .react-calendar__month-view__weekdays__weekday {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.5em 0;
+}
+
+/* react-calendarの曜日下の破線（デフォルトのborder）を消す */
+.custom-calendar .react-calendar__month-view__weekdays__weekday {
+    border-bottom: none;
+}
+
+/* 次月・前月の日付（react-calendar__tile--neighboringMonth）を薄い色にする */
+.custom-calendar .react-calendar__tile--neighboringMonth {
+    color: #a0aec0;
+    opacity: 0.6;
+}
+
+/* 曜日表示の色を変更（日曜：赤、土曜：青、他：標準色） */
+.custom-calendar .react-calendar__month-view__weekdays__weekday {
+    color: #2d3748; /* 平日は標準色（ダークグレー） */
+}
+
+/* 日曜日（最初の曜日）を赤色に */
+.custom-calendar .react-calendar__month-view__weekdays__weekday:last-child {
+    color: #e53e3e;
+}
+
+/* 土曜日（最後の曜日）を青色に */
+.custom-calendar .react-calendar__month-view__weekdays__weekday:nth-last-child(2) {
+    color: #4299e1;
+}
+
+/* この画面（Testchat）だけで全体スクロールを防止 */
+body.no-scroll, #root.no-scroll {
+    height: 100vh;
+    overflow: hidden !important;
+}
+
+.btn2 {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #4299e1;
+    color: white;
+}
+
+.btn2:hover {
+    background-color: #3182ce;
+    color: white;
+}
+
+/* クリック可能な要素のカーソルをポインタに変更 */
+.btn,
+.btn-icon,
+.btn2,
+.company-item,
+.company-list li,
+.chat-list-item,
+.file-item,
+.file-item-inline,
+.message3,
+.option,
+.back-button,
+.answer-btn {
+  cursor: pointer;
+}
+
+/* 無効状態は禁止カーソルに */
+[disabled],
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* テキスト入力や textarea は既定のカーソルのままにするため指定しない */
+
+/* タブ関連のスタイル */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tab-btn:hover {
+  background: rgba(66,153,225,0.06);
+}
+
+.tab-btn.active {
+  background: #a0c4e2;
+  color: #fff;
+  border-color: #7197bb;
+}
+
+/* タブパネルの調整 */
+.tab-panel {
+  display: block;
+}
+

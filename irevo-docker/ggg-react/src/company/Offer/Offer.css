@@ -1,0 +1,405 @@
+        /* ページインジケータ内のアイコンが前面に来るように設定 */
+        .offer-step .offer-circle img {
+            z-index: 10;
+        }
+
+        /* コンテナの基本スタイル */
+        .offer-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 70%;
+            padding: 30px;
+            margin: auto;
+            box-sizing: border-box;
+            margin-top: 60px;
+        }
+
+        /* ページインジケータのレイアウト */
+        .offer-page_indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* 各ステップ（円とテキスト）のスタイル */
+        .offer-page_indicator .offer-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            /* テキストと円が線の上に表示されるように */
+        }
+
+        /* ステップの円のスタイル */
+        .offer-page_indicator .offer-step .offer-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #777;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            border: 2px solid #ccc;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            /* はみ出したコンテンツを隠す */
+        }
+
+        /* 円内のアイコンのスタイル */
+        .offer-page_indicator .offer-step .offer-circle img {
+            width: 30px;
+            /* アイコンのサイズ調整 */
+            height: 30px;
+            display: none;
+            /* デフォルトでは非表示 */
+        }
+
+        /* 円内の数字のスタイル */
+        .offer-page_indicator .offer-step .offer-circle span {
+            display: block;
+            /* デフォルトでは数字を表示 */
+        }
+
+        /* アクティブなステップの円のスタイル */
+        .offer-page_indicator .offer-step.offer-active_class .offer-circle {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        /* アクティブなステップでアイコンを表示、数字を非表示 */
+        .offer-page_indicator .offer-step.offer-active_class .offer-circle img {
+            display: block;
+        }
+
+        .offer-page_indicator .offer-step.offer-active_class .offer-circle span {
+            display: none;
+        }
+
+        /* 完了したステップの円のスタイル */
+        .offer-page_indicator .offer-step.offer-completed_class .offer-circle {
+            background-color: #007bff;
+            /* 完了を示す色 */
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        /* 完了したステップでアイコンを表示、数字を非表示 */
+        .offer-page_indicator .offer-step.offer-completed_class .offer-circle img {
+            display: block;
+        }
+
+        .offer-page_indicator .offer-step.offer-completed_class .offer-circle span {
+            display: none;
+        }
+
+        /* ステップテキストのスタイル */
+        .offer-page_indicator .offer-step_text {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #555;
+            white-space: nowrap;
+            /* テキストが改行されないように */
+        }
+
+        /* インジケータの線 */
+        .offer-page_indicator .offer-line {
+            position: absolute;
+            height: 2px;
+            background-color: #ccc;
+            /* 水平方向の配置: 全体の中心に配置し、自身の幅の半分を戻す */
+            left: 50%;
+            transform: translateX(-50%);
+            /* 垂直方向の配置: 円の中心に合わせる (円の高さ40px / 2 = 20px) */
+            top: 20px;
+            /* 円の高さの半分に設定 */
+            /* 線の長さ: (円の数 - 1) * (円の直径 + ステップ間のマージン) */
+            /* 2 * (40px + 60px) = 200px */
+            width: 700px;
+            z-index: 0;
+            /* 線が円の背後に来るように */
+        }
+
+        /* アクティブな線の色 */
+        .offer-page_indicator .offer-line.offer-active_class {
+            background-color: #007bff;
+        }
+
+        /* ステップ間の間隔 */
+        .offer-page_indicator .offer-step:not(:last-child) {
+            margin-right: 60px;
+        }
+
+        /* リンクの装飾を解除 */
+        .offer-page_indicator a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 各フォームセクションの基本スタイル */
+        .offer-form_section {
+            /* border: 1px solid #dcdcdc;
+            border-radius: 6px; */
+            padding: 30px;
+            margin: 0 auto 30px auto;
+            /* margin-bottom: 30px; */
+            display: none;
+            /* 初期状態では非表示 */
+            width: fit-content;
+        }
+
+        /* アクティブなフォームセクションのみ表示 */
+        .offer-form_section.offer-active_form_section {
+            display: block;
+        }
+
+        /* フォーム行のレイアウト */
+        .offer-form_row {
+            display: flex;
+            align-items: flex-start;
+            /* 複数行入力のために項目を上揃えに調整 */
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            /* 小さな画面では折り返す */
+        }
+
+        /* フォームラベルのスタイル */
+        .offer-form_row label {
+            min-width: 190px;
+            font-weight: bold;
+            margin-right: 20px;
+            /* flex-shrink: 0; ラベルが縮まないように */
+            padding-top: 10px;
+            /* 入力のpadding-topと合わせる */
+        }
+
+        /* 入力グループのスタイル */
+        .offer-form_row .offer-input_group {
+            /* flex-grow: 1; */
+            display: flex;
+            flex-direction: column;
+            /* グループ内の入力を縦に並べる */
+        }
+
+        /* 設立年・創業年 の入力欄を横並びにするための修正 */
+        .offer-form_row .offer-input_group.offer-date_inputs_container {
+            flex-direction: row;
+            /* 横並びにする */
+            flex-wrap: wrap;
+            /* 画面が狭いときに折り返す */
+            align-items: center;
+            gap: 10px;
+            /* 要素間のスペース */
+        }
+
+        /* 日付選択のselect要素の余白をリセット */
+        .offer-form_row .offer-input_group.offer-date_inputs_container select {
+            margin-bottom: 0;
+        }
+
+        /* 各種入力フィールドのスタイル */
+        .offer-form_row input[type="text"],
+        .offer-form_row input[type="number"],
+        .offer-form_row input[type="email"],
+        .offer-form_row input[type="url"],
+        .offer-form_row textarea,
+        .offer-form_row select {
+            width: 500px;
+            padding: 10px 12px;
+            border: 1px solid #007bff;
+            /* 青系統の枠線 */
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            /* パディングとボーダーを要素の合計幅と高さに含める */
+            margin-bottom: 8px;
+            /* 縦に並んだ入力間のスペース */
+        }
+
+        /* 入力フィールドのフォーカス時のスタイル */
+        .offer-form_row input[type="text"]:focus,
+        .offer-form_row input[type="number"]:focus,
+        .offer-form_row input[type="email"]:focus,
+        .offer-form_row input[type="url"]:focus,
+        .offer-form_row textarea:focus,
+        .offer-form_row select:focus {
+            outline: none;
+            border-color: #0056b3;
+            /* 濃いめの青 */
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+            /* 青系統の影 */
+        }
+
+        /* 小さい入力フィールドの幅 */
+        .offer-form_row .offer-small_input {
+            width: 70px;
+            /* 郵便番号など */
+            margin-right: 10px;
+        }
+
+        .offer-form_row .offer-middle_input {
+            width: 100px;
+            /* 郵便番号など */
+            margin-right: 10px;
+        }
+
+        /* 住所ラベルのスタイル */
+        .offer-form_row .offer-address_label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 5px;
+        }
+
+        /* 日付入力selectの幅 */
+        .offer-form_row .offer-date_inputs_container select {
+            width: auto;
+            /* select要素が自然なサイズになるように */
+            min-width: 80px;
+        }
+
+        /* 日付の単位（年、月、日）のテキストスタイル */
+        .offer-form_row .offer-date_inputs_container span {
+            color: #555;
+            font-size: 0.95em;
+            white-space: nowrap;
+            /* "年", "月", "日" が改行されないように */
+        }
+
+        /* 勤務時間（時/分 と 区切り）を横並びにするスタイル */
+        .offer-input_group.offer-time_range {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .offer-time_block {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .offer-time_separator {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .offer-time_colon {
+            font-weight: bold;
+        }
+
+        /* テキストエリアのサイズ変更を垂直方向に限定 */
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* ボタングループのレイアウト */
+        .offer-button_group {
+            display: flex;
+            justify-content: flex-end;
+            /* ボタンを右寄せにする */
+            margin-top: 40px;
+            position: relative;
+            /* 子要素の絶対配置の基準 */
+        }
+
+        /* 「前へ」ボタンのスタイル */
+        .offer-button_group .offer-prev_button {
+            background-color: #6c757d;
+            color: #fff;
+            position: absolute;
+            /* 絶対配置にして、他のボタンのレイアウトに影響しないように */
+            left: 0;
+            /* 左端に配置 */
+        }
+
+        /* ボタンの共通スタイル */
+        .offer-button_group button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        /* 「前へ」ボタンのホバー効果 */
+        .offer-button_group .offer-prev_button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* 「次へ」ボタンのスタイル */
+        .offer-button_group .offer-next_button {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* 「次へ」ボタンのホバー効果 */
+        .offer-button_group .offer-next_button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* 送信ボタンのコンテナスタイル */
+        .offer-submit_button_container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* 送信ボタンのスタイル */
+        .offer-submit_button_container .offer-submit_button {
+            background-color: #28a745;
+            /* 緑色 */
+            color: #fff;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        /* 送信ボタンのホバー効果 */
+        .offer-submit_button_container .offer-submit_button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .offer-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            color: #333;
+            padding: 10px;
+        }
+
+        /* 共通のアップロードボタン */
+        .custom-upload {
+            color: white;
+            background-color: #0056bb;
+            padding: 8px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+        }
+        .hidden { display: none; }
+
+        /* 画像プレビュー */
+        .offer-image-preview_wrap { margin-top: 10px; }
+        .offer-image-preview { max-width: 160px; max-height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .offer-image-row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+        .offer-image-item { display:flex; flex-direction:column; gap:8px; }
