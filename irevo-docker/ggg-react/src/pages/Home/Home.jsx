@@ -18,13 +18,13 @@ function Home() {
             </div>
 
             <div className='Home_button'>
-            <a href="Login"><div className='job_button'>仕事探しの方はこちら</div></a>
-            <a href="C_Login"><div className='company_button'>企業の方はこちら</div></a>
+                <a href="Login"><div className='job_button'>仕事探しの方はこちら</div></a>
+                <a href="C_Login"><div className='company_button'>企業の方はこちら</div></a>
             </div>
 
             <div className='function'>
                 <div className="function2">
-                    <img src="irevo-docker/ggg-react/public/images/AI面接 - 1.png" className='img_left' />
+                    <img src="../../../public/images/AI面接 - 1.png" className='img_left' />
                     <div>
                         <p className="index_title">AI面接練習</p>
                         <p className="index_p">
@@ -42,10 +42,10 @@ function Home() {
                         </p>
                     </div>
                     {/* <img src="./images/AI面接 - 2.png" alt="" className="img_right" /> */}
-                    <img src="irevo-docker/ggg-react/public/images/AI面接 - 2.png" alt="" className="img_right"/>
+                    <img src="../../../public/images/AI面接 - 2.png" alt="" className="img_right" />
                 </div>
                 <div className="function2">
-                    <img src="irevo-docker/ggg-react/public/images/AI面接 - 3.png" className='img_left' />
+                    <img src="../../../public/images/AI面接 - 3.png" className='img_left' />
                     <div>
                         <p className="index_title">資格リスト</p>
                         <p className="index_p">
@@ -63,10 +63,10 @@ function Home() {
                             地元就職や引越し先での求人探しにも便利です。
                         </p>
                     </div>
-                    <img src="irevo-docker/ggg-react/public/images/AI面接 - 4.png" alt="" className="img_right" />
+                    <img src="../../../public/images/AI面接 - 4.png" alt="" className="img_right" />
                 </div>
                 <div className="function2">
-                    <img src="irevo-docker/ggg-react/public/images/AI面接-5.png" className='img_left' />
+                    <img src="../../../public/images/AI面接-5.png" className='img_left' />
                     <div>
                         <p className="index_title">自己診断</p>
                         <p className="index_p">
