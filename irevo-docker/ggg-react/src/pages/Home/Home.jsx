@@ -24,7 +24,7 @@ function Home() {
 
             <div className='function'>
                 <div className="function2">
-                    <img src="./AI面接 - 1.png" className='img_left' />
+                    <img src="/images/aimen-1.png" className='img_left' />
                     <div>
                         <p className="index_title">AI面接練習</p>
                         <p className="index_p">
@@ -42,10 +42,10 @@ function Home() {
                         </p>
                     </div>
                     {/* <img src="./images/AI面接 - 2.png" alt="" className="img_right" /> */}
-                    <img src="./AI面接 - 2.png" alt="" className="img_right" />
+                    <img src="/images/aimen-2.png" alt="" className="img_right" />
                 </div>
                 <div className="function2">
-                    <img src="./AI面接 - 3.png" className='img_left' />
+                    <img src="/images/aimen-3.png" className='img_left' />
                     <div>
                         <p className="index_title">資格リスト</p>
                         <p className="index_p">
@@ -63,10 +63,10 @@ function Home() {
                             地元就職や引越し先での求人探しにも便利です。
                         </p>
                     </div>
-                    <img src="./AI面接 - 4.png" alt="" className="img_right" />
+                    <img src="/images/aimen-4.png" alt="" className="img_right" />
                 </div>
                 <div className="function2">
-                    <img src="./AI面接-5.png" className='img_left' />
+                    <img src="/images/aimen-5.png" className='img_left' />
                     <div>
                         <p className="index_title">自己診断</p>
                         <p className="index_p">
