@@ -1,5 +1,12 @@
 FROM node:18
-WORKDIR /app/api
-COPY ./ /app/api
+
+WORKDIR /app
+
+COPY package*.json ./
 RUN npm install
+
+COPY . .
+
+EXPOSE 3030
+
 CMD ["node", "server.js"]
