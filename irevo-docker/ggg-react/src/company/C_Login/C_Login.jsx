@@ -40,7 +40,7 @@ export default function Login() {
       // APIへログインリクエスト
       // 企業向けログインは /company/login を使う
       const res = await axios.post(
-        "http://localhost:3030/company/login",
+        "http://15.152.5.110:3030/company/login",
         { email, password },
         { withCredentials: true }
       );

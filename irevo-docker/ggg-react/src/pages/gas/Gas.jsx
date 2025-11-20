@@ -6,7 +6,7 @@ function App() {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/summary", {
+      const res = await fetch("http://15.152.5.110:5001/api/summary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

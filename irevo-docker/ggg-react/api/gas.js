@@ -30,5 +30,5 @@ app.post("/api/summary", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://15.152.5.110:${PORT}`);
 });

@@ -29,7 +29,7 @@ export default function JobChatUI() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:3030/log/whoami", { withCredentials: true });
+                const res = await axios.get("http://15.152.5.110:3030/log/whoami", { withCredentials: true });
                 if (res.data.loggedIn) {
                     setUser(res.data.user);
                 }
@@ -67,7 +67,7 @@ export default function JobChatUI() {
         const fetchCompanies = async () => {
             if (!user?.id) return;
             try {
-                const res = await axios.get("http://localhost:3030/chat/userChat/companies", {
+                const res = await axios.get("http://15.152.5.110:3030/chat/userChat/companies", {
                     params: { user_id: user.id },
                 });
                 const companies = Array.isArray(res.data)
@@ -121,7 +121,7 @@ export default function JobChatUI() {
         const fetchHistory = async () => {
             setLoadingHistory(true);
             try {
-                const res = await axios.get("http://localhost:3030/chat/userChat/history", {
+                const res = await axios.get("http://15.152.5.110:3030/chat/userChat/history", {
                     params: {
                         user_id: user.id,
                         Companies_id: selectedCompany.id
@@ -154,7 +154,7 @@ export default function JobChatUI() {
 
         try {
             // サーバーにメッセージ送信（現行 API 仕様に合わせる）
-            await axios.post("http://localhost:3030/chat/userChat/message", {
+            await axios.post("http://15.152.5.110:3030/chat/userChat/message", {
                 user_id: user.id,
                 Companies_id: selectedCompany.id,
                 message_text: newMessage,
@@ -162,7 +162,7 @@ export default function JobChatUI() {
                 sender_type: "user"
             });
             // 送信後、履歴を再取得
-            const res = await axios.get("http://localhost:3030/chat/userChat/history", {
+            const res = await axios.get("http://15.152.5.110:3030/chat/userChat/history", {
                 params: {
                     user_id: user.id,
                     Companies_id: selectedCompany.id
@@ -212,7 +212,7 @@ export default function JobChatUI() {
             if (!user?.id || !selectedCompany?.id) return;
             try {
                 // --- ここでDBから予定を取得 ---
-                const res = await axios.get('http://localhost:3030/calendar/calendarEvent', {
+                const res = await axios.get('http://15.152.5.110:3030/calendar/calendarEvent', {
                     params: { user_id: user.id, Companies_id: selectedCompany.id }
                 });
                 // --- DBの結果をカレンダー表示用オブジェクトに変換 ---
@@ -261,7 +261,7 @@ export default function JobChatUI() {
         }
 
         try {
-            await axios.post('http://localhost:3030/calendar/calendarEvent', {
+            await axios.post('http://15.152.5.110:3030/calendar/calendarEvent', {
                 user_id: user.id,
                 Companies_id: selectedCompany.id,
                 event_date: dateStr,
@@ -305,7 +305,7 @@ export default function JobChatUI() {
         }
 
         try {
-            await axios.post('http://localhost:3030/calendar/companyMemo', {
+            await axios.post('http://15.152.5.110:3030/calendar/companyMemo', {
                 user_id: user.id,
                 Companies_id: selectedCompany.id,
                 memo_text: memo,
@@ -525,7 +525,7 @@ export default function JobChatUI() {
                                 <Button className="btn2" onClick={handleSaveMemo}>メモを保存</Button>
                                 <Button className="btn" onClick={async () => {
                                     if (!user?.id || !selectedCompany?.id) return;
-                                    await axios.get("http://localhost:3030/calendar/companyMemo", {
+                                    await axios.get("http://15.152.5.110:3030/calendar/companyMemo", {
                                         params: {
                                             user_id: user.id,
                                             Companies_id: selectedCompany.id,

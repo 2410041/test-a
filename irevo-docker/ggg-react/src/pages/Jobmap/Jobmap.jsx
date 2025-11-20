@@ -87,7 +87,7 @@ export default function JobMap() {
     (async () => {
       try {
         // クエリパラメータを追加（work_locationを空文字で送信）
-        const res = await axios.get('http://localhost:3030/company/Jobmap', {
+        const res = await axios.get('http://15.152.5.110:3030/company/Jobmap', {
           params: {
             work_location: '' // 空の場合は全件取得
           }

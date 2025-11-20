@@ -36,7 +36,7 @@ export default function Login() {
 
     try {
       const res = await axios.post(
-        "http://localhost:3030/log/login",
+        "http://15.152.5.110:3030/log/login",
         { email, password },
         { withCredentials: true } // セッションCookie対応
       );

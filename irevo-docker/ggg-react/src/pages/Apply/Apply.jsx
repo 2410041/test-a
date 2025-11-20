@@ -46,7 +46,7 @@ export default function ApplyPage() {
 
         if (!company && id) {
             // state が無ければ ID で取得
-            axios.get(`http://localhost:3030/company/${id}`)
+            axios.get(`http://15.152.5.110:3030/company/${id}`)
                 .then(res => setCompany(res.data))
                 .catch(() => { });
         }
@@ -63,7 +63,7 @@ export default function ApplyPage() {
 
     const handleApply = async () => {
         try {
-            await axios.post('http://localhost:3030/apply', { companyId: company.id, email: emailInput, contact: contactInput }, { withCredentials: true });
+            await axios.post('http://15.152.5.110:3030/apply', { companyId: company.id, email: emailInput, contact: contactInput }, { withCredentials: true });
             alert('応募しました');
         } catch (e) {
             alert('応募に失敗しました');

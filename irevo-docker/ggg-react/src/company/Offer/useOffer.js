@@ -260,7 +260,7 @@ function useOffer() {
             try {
                 const formData = new FormData(multiStepForm);
                 // 例: サーバー側で受け取るエンドポイントを '/newOffer' にしています。必要に応じて変更してください。
-                const res = await axios.post('http://localhost:3030/newOffer', formData, {
+                const res = await axios.post('http://15.152.5.110:3030/newOffer', formData, {
                     withCredentials: true,
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });

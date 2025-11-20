@@ -61,7 +61,7 @@ export default function Contact() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:3030/log/whoami", {
+                const res = await axios.get("http://15.152.5.110:3030/log/whoami", {
                     withCredentials: true
                 });
                 if (res.data.loggedIn) {
@@ -91,7 +91,7 @@ export default function Contact() {
         }
 
         try {
-            const res = await axios.post('http://localhost:3030/gas/contact', {
+            const res = await axios.post('http://15.152.5.110:3030/gas/contact', {
                 uName: form.uName,
                 email: form.email,
                 title: form.title,

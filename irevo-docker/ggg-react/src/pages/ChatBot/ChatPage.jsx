@@ -111,14 +111,14 @@ export default function ChatAPIPage() {
 
             // VOICEVOX APIで音声合成用クエリ作成
             const queryRes = await superagent
-                .post('http://localhost:50021/audio_query')
+                .post('http://15.152.5.110:50021/audio_query')
                 .query({ speaker: speakerId, text: response })
 
             if (!queryRes) return
 
             // VOICEVOX APIで音声合成
             const voiceRes = await superagent
-                .post('http://localhost:50021/synthesis')
+                .post('http://15.152.5.110:50021/synthesis')
                 .query({ speaker: speakerId })
                 .send(queryRes.body)
                 .responseType('blob')

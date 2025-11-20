@@ -43,7 +43,7 @@ function Dashboard() {
         const fetchUser = async () => {
             try {
                 // まず企業セッションを確認
-                const resCompany = await axios.get('http://localhost:3030/company/whoami', { withCredentials: true });
+                const resCompany = await axios.get('http://15.152.5.110:3030/company/whoami', { withCredentials: true });
                 if (!mounted) return;
                 if (resCompany.data?.loggedIn) {
                     setUser({ company: resCompany.data.company });
@@ -51,7 +51,7 @@ function Dashboard() {
                 }
 
                 // 企業でなければ通常ユーザーの whoami を確認
-                const resUser = await axios.get('http://localhost:3030/log/whoami', { withCredentials: true });
+                const resUser = await axios.get('http://15.152.5.110:3030/log/whoami', { withCredentials: true });
                 if (!mounted) return;
                 if (resUser.data?.loggedIn) setUser(resUser.data.user);
                 else setUser(null);

@@ -9,7 +9,7 @@ import Map from '../../pages/Map/Map.jsx'; // Mapコンポーネントをイン�
 export default function Company() {
     const navigate = useNavigate(); // 追加：navigate を定義
     const [items, setItems] = useState([]);
-    const [URL, setSearchURL] = useState('http://localhost:3030/company/company'); // 検索URLを保存するstate
+    const [URL, setSearchURL] = useState('http://15.152.5.110:3030/company/company'); // 検索URLを保存するstate
     // console.log(URL, setSearchURL);
     const [filters, setFilters] = useState({
         prefecture: '',
@@ -33,7 +33,7 @@ export default function Company() {
         console.log('検索条件:', { prefecture, job, employee_size, salary, keyword });
 
         // URL に employee_size と salary（および keyword）を含める
-        const URL = `http://localhost:3030/company/company_filter?prefecture=${encodeURIComponent(prefecture)}&job=${encodeURIComponent(job)}&employee_size=${encodeURIComponent(employee_size)}&salary=${encodeURIComponent(salary)}&keyword=${encodeURIComponent(keyword)}`;
+        const URL = `http://15.152.5.110:3030/company/company_filter?prefecture=${encodeURIComponent(prefecture)}&job=${encodeURIComponent(job)}&employee_size=${encodeURIComponent(employee_size)}&salary=${encodeURIComponent(salary)}&keyword=${encodeURIComponent(keyword)}`;
 
         console.log(URL);
 
@@ -64,14 +64,14 @@ export default function Company() {
     // // --- チャットに追加ボタンのonClick例 ---
     // const handleAddChat = async () => {
     //     // 1. チャット開始API
-    //     await axios.post("http://localhost:3030/user/user_chat/start", {
+    //     await axios.post("http://15.152.5.110:3030/user/user_chat/start", {
     //         user_id: user.id,
     //         Companies_id: selectedCompany.id
     //     });
     // 2. 企業一覧再取得（Testchat.jsx側で管理している場合は、
     //    追加後にTestchat.jsxの企業一覧取得useEffectが走るようにしてください）
     //    ここで直接setCompaniesする場合は、下記のように取得できます。
-    //    const res = await axios.get("http://localhost:3030/user_chat/companies", {
+    //    const res = await axios.get("http://15.152.5.110:3030/user_chat/companies", {
     //        params: { user_id: user.id }
     //    });
     //    setCompanies(res.data.map(c => ({ id: c.id, name: c.name })));
@@ -84,7 +84,7 @@ export default function Company() {
         const fetchDetail = async () => {
             if (!selectedCompany?.id) return;
             try {
-                const res = await axios.get('http://localhost:3030/company/company_detail', { params: { company_id: selectedCompany.id } });
+                const res = await axios.get('http://15.152.5.110:3030/company/company_detail', { params: { company_id: selectedCompany.id } });
                 const data = res.data || {};
                 // マージして selectedCompany を更新（photo_2 / photo_3 等が含まれる想定）
                 setSelectedCompany(prev => ({ ...(prev || {}), ...data }));
@@ -367,7 +367,7 @@ export default function Company() {
                                             onClick={async () => {
                                                 try {
                                                     // ユーザー情報取得
-                                                    const userRes = await axios.get("http://localhost:3030/log/whoami", { withCredentials: true });
+                                                    const userRes = await axios.get("http://15.152.5.110:3030/log/whoami", { withCredentials: true });
                                                     if (!userRes.data.loggedIn) {
                                                         alert("ログインしてください");
                                                         return;
@@ -375,7 +375,7 @@ export default function Company() {
                                                     const user = userRes.data.user;
 
                                                     // 既存チャット企業を取得
-                                                    const companiesRes = await axios.get("http://localhost:3030/user/user_chat/companies", {
+                                                    const companiesRes = await axios.get("http://15.152.5.110:3030/user/user_chat/companies", {
                                                         params: { user_id: user.id },
                                                     });
                                                     const existingCompanies = companiesRes.data.map(c => c.id);
@@ -386,7 +386,7 @@ export default function Company() {
                                                     }
                                                     
                                                     // チャット追加API呼び出し
-                                                    await axios.post('http://localhost:3030/user/user_chat/start', {
+                                                    await axios.post('http://15.152.5.110:3030/user/user_chat/start', {
                                                         user_id: user.id,
                                                         Companies_id: selectedCompany.id,
                                                         // message_text: ''  // 初期メッセージ（空でもOK）

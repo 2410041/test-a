@@ -45,7 +45,7 @@ router.put('/:id', async (req, res) => {
 router.get('/user_chat/companies', async (req, res) => {
     try {
         // クエリパラメータ（URLの?以降の情報）からuser_idを取得
-        // 例: http://localhost:3030/user/user_chat/companies?user_id=3
+        // 例: http://15.152.5.110:3030/user/user_chat/companies?user_id=3
         // → user_id には 3 が入る
         const { user_id } = req.query;
 
@@ -86,7 +86,7 @@ router.get('/user_chat/companies', async (req, res) => {
 router.post('/user_chat/start', async (req, res) => {
     try {
         // クエリパラメータから「ユーザーID」と「企業ID」を取得
-        // 例: http://localhost:3030/user/user_chat/start?user_id=5&Companies_id=3
+        // 例: http://15.152.5.110:3030/user/user_chat/start?user_id=5&Companies_id=3
         // → user_id = 5, Companies_id = 3
         const { user_id, Companies_id } = req.body;
 
@@ -140,7 +140,7 @@ router.post('/user_chat/start', async (req, res) => {
 router.post('/user_chat/message', async (req, res) => {
     try {
         // クエリパラメータから「ユーザーID」「企業ID」「メッセージ本文」を取得
-        // 例: http://localhost:3030/user/user_chat/message?user_id=5&Companies_id=3&message_text=こんにちは
+        // 例: http://15.152.5.110:3030/user/user_chat/message?user_id=5&Companies_id=3&message_text=こんにちは
         const { user_id, Companies_id, message_text, sender_type } = req.body;
 
         // メッセージ送信時刻として保存するため
@@ -176,7 +176,7 @@ router.post('/user_chat/message', async (req, res) => {
 router.get('/user_chat/history', async (req, res) => {
     try {
         // クエリパラメータ（URLの?以降）から user_id と Companies_id を取得
-        // 例: http://localhost:3030/user/user_chat/history?user_id=5&Companies_id=3
+        // 例: http://15.152.5.110:3030/user/user_chat/history?user_id=5&Companies_id=3
         // → user_id = 5, Companies_id = 3
         const { user_id, Companies_id } = req.query;
 

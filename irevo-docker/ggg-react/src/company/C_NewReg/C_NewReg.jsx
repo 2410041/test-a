@@ -34,7 +34,7 @@ const C_Newreg = () => {
     });
 
     try {
-      const res = await axios.post('http://localhost:3030/newUser', {
+      const res = await axios.post('http://15.152.5.110:3030/newUser', {
         company_name: name1,
         representative_name: representative,
         phone_number: phone,

@@ -5,7 +5,7 @@ function Test() {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/users')
+        axios.get('http://15.152.5.110:3001/users')
             .then(response => {
                 setItems(response.data);
             })

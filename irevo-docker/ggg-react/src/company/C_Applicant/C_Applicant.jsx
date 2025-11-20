@@ -19,7 +19,7 @@ const C_Applicant = () => {
     let mounted = true;
     const fetchApplicants = async () => {
       try {
-        const res = await axios.get('http://localhost:3030/applicants', { withCredentials: true });
+        const res = await axios.get('http://15.152.5.110:3030/applicants', { withCredentials: true });
         if (!mounted) return;
         // サーバーから来る行は application_id, user fields, etc. を含む
         const rows = Array.isArray(res.data) ? res.data : (res.data.applicants || []);
@@ -67,7 +67,7 @@ const C_Applicant = () => {
     if (!selectedApplicant) return;
     const id = selectedApplicant.id;
     try {
-      const res = await axios.patch(`http://localhost:3030/applicants/${id}`, { status: modalStatus }, { withCredentials: true });
+      const res = await axios.patch(`http://15.152.5.110:3030/applicants/${id}`, { status: modalStatus }, { withCredentials: true });
       // 更新成功したらローカル state を更新
       setApplicants(prev => prev.map(a => a.id === id ? { ...a, status: modalStatus } : a));
       setSelectedApplicant(prev => prev ? { ...prev, status: modalStatus } : prev);

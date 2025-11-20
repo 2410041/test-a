@@ -18,7 +18,7 @@ export default function HamburgerMenu() {
     let mounted = true;
     const checkLogin = async () => {
       try {
-        const response = await axios.get('http://localhost:3030/log/whoami', {
+        const response = await axios.get('http://15.152.5.110:3030/log/whoami', {
           withCredentials: true  // この設定が重要
         });
         if (!mounted) return;
@@ -43,7 +43,7 @@ export default function HamburgerMenu() {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3030/log/logout', {}, { withCredentials: true });
+      await axios.post('http://15.152.5.110:3030/log/logout', {}, { withCredentials: true });
     } catch (err) {
       console.error('logout error:', err);
       // 失敗してもクライアント側はログアウト扱いにする

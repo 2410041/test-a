@@ -72,7 +72,7 @@ function Mypage() {
         const fetchPersonality = async () => {
             try {
                 // 変更: サーバー側の /chart/:userId に合わせて取得（返り値は配列 row を想定）
-                const res = await axios.get(`http://localhost:3030/chart/chart/${user.id}`, { withCredentials: true });
+                const res = await axios.get(`http://15.152.5.110:3030/chart/chart/${user.id}`, { withCredentials: true });
                 console.log('[Mypage] chart GET response:', res.data);
 
                 // 安全に rows を取り出す
@@ -131,7 +131,7 @@ function Mypage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:3030/log/whoami", {
+                const res = await axios.get("http://15.152.5.110:3030/log/whoami", {
                     withCredentials: true
                 });
                 if (res.data.loggedIn) {
@@ -154,7 +154,7 @@ function Mypage() {
     // チャート描画
     useEffect(() => {
         if (!user?.id) return;
-        axios.get(`http://localhost:3030/chart/chart/${user.id}`)
+        axios.get(`http://15.152.5.110:3030/chart/chart/${user.id}`)
             .then(res => {
                 const chartData = Array.isArray(res.data) && res.data.length > 0 ? res.data[0].chart_text : null;
                 console.log("チャートデータ取得成功:", chartData);

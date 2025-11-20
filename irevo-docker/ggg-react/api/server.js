@@ -8,7 +8,7 @@ const session = require('express-session');
 // → フロントエンド（Reactなど）とバックエンド（Express）が別ポートで動くため、
 //   CORS設定を行わないと通信がブロックされてしまう。
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://15.152.5.110:3000',
     // Cookieや認証情報を送受信するための設定
     credentials: true,
     // 許可するHTTPメソッド                                      
@@ -55,7 +55,7 @@ const connectAndStartServer = async () => {
         // DB接続試行
         // → MySQLへの接続は時間がかかるため、非同期関数で安全に処理を待つ必要がある
         const db = await mysql.createConnection({
-            // host: 'localhost', // Docker環境ならmysql-db
+            // host: '15.152.5.110', // Docker環境ならmysql-db
             host: 'mysql-db',
             user: 'S4rTqi7D',
             password: 'p3A46MdV',
@@ -125,7 +125,7 @@ const connectAndStartServer = async () => {
         // サーバー起動（DBとルート設定が完了してから起動）
         // → APIサーバーが3030番ポートで待ち受けるように設定
         app.listen(3030, () => {
-            console.log('API server running on http://localhost:3030');
+            console.log('API server running on http://15.152.5.110:3030');
         });
 
     } catch (err) {

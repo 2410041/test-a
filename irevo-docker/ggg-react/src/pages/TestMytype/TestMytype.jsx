@@ -290,7 +290,7 @@ export default function Mytype() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:3030/log/whoami", {
+                const res = await axios.get("http://15.152.5.110:3030/log/whoami", {
                     withCredentials: true,
                 });
                 if (res.data.loggedIn) {
@@ -313,7 +313,7 @@ export default function Mytype() {
         if (showChart && user) {
             const personalityType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
             const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
-            axios.post(`http://localhost:3030/chartServer/chart/${user.id}`, {
+            axios.post(`http://15.152.5.110:3030/chartServer/chart/${user.id}`, {
                 user_id: user.id,
                 chart_score: totalScore,
                 chart_title: personalityType,

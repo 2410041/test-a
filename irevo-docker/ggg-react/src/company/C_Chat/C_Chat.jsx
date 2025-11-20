@@ -29,7 +29,7 @@ export default function JobChatUI() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:3030/log/whoami", { withCredentials: true });
+                const res = await axios.get("http://15.152.5.110:3030/log/whoami", { withCredentials: true });
                 if (res.data.loggedIn) {
                     setUser(res.data.user);
                 }
@@ -63,7 +63,7 @@ export default function JobChatUI() {
     // ユーザーIDが取得できたら企業一覧を取得
     useEffect(() => {
         if (!user?.id) return;
-        axios.get("http://localhost:3030/chat/companyChat/users", {
+        axios.get("http://15.152.5.110:3030/chat/companyChat/users", {
             params: { Companies_id: user.company_id }
         })
             .then(res => {
@@ -109,7 +109,7 @@ export default function JobChatUI() {
         const fetchHistory = async () => {
             setLoadingHistory(true);
             try {
-                const res = await axios.get("http://localhost:3030/chat/userChat/history", {
+                const res = await axios.get("http://15.152.5.110:3030/chat/userChat/history", {
                     params: {
                         user_id: user.id,
                         Companies_id: selectedCompany.id
@@ -142,7 +142,7 @@ export default function JobChatUI() {
 
         try {
             // サーバーにメッセージ送信（現行 API 仕様に合わせる）
-            await axios.post("http://localhost:3030/chat/companyChat/message", {
+            await axios.post("http://15.152.5.110:3030/chat/companyChat/message", {
                 user_id: user.id,
                 Companies_id: selectedCompany.id,
                 message_text: newMessage,
@@ -150,7 +150,7 @@ export default function JobChatUI() {
                 sender_type: "company"
             });
             // 送信後、履歴を再取得
-            const res = await axios.get("http://localhost:3030/user/user_chat/history", {
+            const res = await axios.get("http://15.152.5.110:3030/user/user_chat/history", {
                 params: { user_id: user.id, Companies_id: selectedCompany.id }
             });
             setCompanyMessages(prev => ({
@@ -189,7 +189,7 @@ export default function JobChatUI() {
         if (!user?.id || !selectedCompany?.id) return;
         const memo = companyMemos[selectedCompany.id] || "";
         try {
-            await axios.post('http://localhost:3030/calendar/company_memo', {
+            await axios.post('http://15.152.5.110:3030/calendar/company_memo', {
                 user_id: user.id,
                 Companies_id: selectedCompany.id,
                 memo_text: memo
@@ -311,7 +311,7 @@ export default function JobChatUI() {
                             <Button className="btn2" onClick={handleSaveMemo}>メモを保存</Button>
                             <Button className="btn" onClick={() => {
                                 if (!user?.id || !selectedCompany?.id) return;
-                                axios.get("http://localhost:3030/company_memo", {
+                                axios.get("http://15.152.5.110:3030/company_memo", {
                                     params: { user_id: user.id, Companies_id: selectedCompany.id }
                                 }).then(res => {
                                     setCompanyMemos(prev => ({ ...prev, [selectedCompany.id]: res.data?.memo_text || "" }));

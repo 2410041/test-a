@@ -66,7 +66,7 @@ const Data = ({ user }) => {
         try {
             const payload = { ...currentInfo, originalEmail: user && user.u_Email ? user.u_Email : undefined };
 
-            const res = await fetch('http://localhost:3030/user/user_update', {
+            const res = await fetch('http://15.152.5.110:3030/user/user_update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include', // ← セッション（クッキー）を送るため必須
