@@ -3,13 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- ホスト: mysql-db
--- 生成日時: 2025 年 12 月 03 日 04:57
+-- 生成日時: 2025 年 11 月 12 日 16:05
 -- サーバのバージョン： 9.5.0
 -- PHP のバージョン: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
+SET time_zone = "+09:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -74,34 +74,6 @@ INSERT INTO `ApplicationProcess` (`id`, `job_id`, `application_method`, `selecti
 -- --------------------------------------------------------
 
 --
--- テーブルの構造 `Applications`
---
-
-CREATE TABLE `Applications` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `job_id` int DEFAULT NULL,
-  `applied_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '新規',
-  `resume_link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `resume_file` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `read_flag` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- テーブルのデータのダンプ `Applications`
---
-
-INSERT INTO `Applications` (`id`, `user_id`, `job_id`, `applied_at`, `status`, `resume_link`, `resume_file`, `note`, `read_flag`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2025-11-13 11:44:16', '不採用', 'https://example.com/resume/1.pdf', NULL, NULL, 0, '2025-11-13 11:44:16', '2025-11-13 13:58:27'),
-(2, 2, 1, '2025-11-13 11:44:16', '新規', NULL, NULL, NULL, 0, '2025-11-13 11:44:16', '2025-11-13 13:55:18');
-
--- --------------------------------------------------------
-
---
 -- テーブルの構造 `Benefits`
 --
 
@@ -162,7 +134,6 @@ CREATE TABLE `calendarEvents` (
   `Companies_id` int NOT NULL,
   `event_date` date NOT NULL,
   `event_text` text NOT NULL,
-  `event_detail` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -170,31 +141,23 @@ CREATE TABLE `calendarEvents` (
 -- テーブルのデータのダンプ `calendarEvents`
 --
 
-INSERT INTO `calendarEvents` (`id`, `user_id`, `Companies_id`, `event_date`, `event_text`, `event_detail`, `created_at`) VALUES
-(22, 1, 1, '2025-10-30', '面接練習', '', '2025-10-22 18:15:27'),
-(23, 1, 1, '2025-10-30', '面接練習本番', '', '2025-10-22 20:08:26'),
-(24, 1, 1, '2025-10-30', 'ああ', '', '2025-10-22 20:13:45'),
-(25, 1, 1, '2025-10-30', '12 : 00 からインターン', '', '2025-10-22 20:15:13'),
-(26, 1, 1, '2025-10-30', '内定式', '', '2025-10-22 20:57:28'),
-(27, 1, 1, '2025-10-31', 'ハロウィン', '', '2025-10-22 21:42:03'),
-(28, 1, 9, '2025-11-15', '最終面接', '', '2025-11-13 00:00:53'),
-(29, 1, 1, '2025-10-30', '履歴書提出', '', '2025-11-13 01:49:24');
+INSERT INTO `calendarEvents` (`id`, `user_id`, `Companies_id`, `event_date`, `event_text`, `created_at`) VALUES
+(22, 1, 1, '2025-10-30', '面接練習', '2025-10-23 03:15:27'),
+(23, 1, 1, '2025-10-30', '面接練習本番', '2025-10-23 05:08:26'),
+(24, 1, 1, '2025-10-30', 'ああ', '2025-10-23 05:13:45'),
+(25, 1, 1, '2025-10-30', '12 : 00 からインターン', '2025-10-23 05:15:13'),
+(26, 1, 1, '2025-10-30', '内定式', '2025-10-23 05:57:28'),
+(27, 1, 1, '2025-10-31', 'ハロウィン', '2025-10-23 06:42:03');
 
 -- --------------------------------------------------------
 
---
--- テーブルの構造 `career_information`
---
-
-CREATE TABLE `career_information` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `training_content` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `part_time_experience` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `internship_experience` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
+CREATE TABLE career_information (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  training_content VARCHAR(255),
+  part_time_experience VARCHAR(255),
+  internship_experience VARCHAR(255)
+);
 
 --
 -- テーブルの構造 `chart`
@@ -437,8 +400,8 @@ INSERT INTO `Conditions` (`id`, `user_id`, `category`, `value`, `preference`) VA
 CREATE TABLE `Contact` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `uName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uName` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `time` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -460,20 +423,20 @@ INSERT INTO `Contact` (`id`, `user_id`, `uName`, `email`, `title`, `message`, `t
 
 CREATE TABLE `corporations` (
   `id` int NOT NULL,
-  `company_name` varchar(255) NOT NULL,
-  `representative_name` varchar(255) NOT NULL,
-  `phone_number` varchar(20) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `companies_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `representative_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone_number` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- テーブルのデータのダンプ `corporations`
 --
 
-INSERT INTO `corporations` (`id`, `company_name`, `representative_name`, `phone_number`, `email`, `password`, `companies_id`) VALUES
-(1, '楽天グループ株式会社', '小林', '012046587934', 'a', 'a', 2);
+INSERT INTO `corporations` (`id`, `company_name`, `representative_name`, `phone_number`, `email`, `password`) VALUES
+(1, 'irevo株式会社', '小野', '0624513798', 'irevo@example.com', '$2b$10$6yZq09s1gnNc9nqiJq4pP.CfOHIAD5ZmHzHkDahksKvYmlMRtE9mS'),
+(2, '楽天株式会社', '小林', '012046587934', 'rakuten@example.com', '$2b$10$si5XnQry0C21prxufEuVj..RqtC0MLy0f2NTn4.wriTgwl1k0nTSG');
 
 -- --------------------------------------------------------
 
@@ -504,22 +467,16 @@ INSERT INTO `C_History` (`id`, `user_id`, `Research_Details`, `Timee`, `Internsh
 
 -- --------------------------------------------------------
 
---
--- テーブルの構造 `desired_conditions`
---
-
-CREATE TABLE `desired_conditions` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `important_factors` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `company_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `desired_location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `desired_job` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `preferred_language` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `other` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
+CREATE TABLE desired_conditions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    important_factors VARCHAR(255),
+    company_type VARCHAR(255),
+    desired_location VARCHAR(255),
+    desired_job VARCHAR(255),
+    preferred_language VARCHAR(255),
+    other VARCHAR(255)
+);
 
 --
 -- テーブルの構造 `JobConditions`
@@ -674,74 +631,6 @@ INSERT INTO `JobRequirements` (`id`, `job_id`, `required_skills`, `preferred_ski
 -- --------------------------------------------------------
 
 --
--- テーブルの構造 `job_offers`
---
-
-CREATE TABLE `job_offers` (
-  `id` int NOT NULL,
-  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `photo_1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `photo_2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `photo_3` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postal_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_input` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_kana` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `establishment_year` int DEFAULT NULL,
-  `establishment_month` int DEFAULT NULL,
-  `establishment_day` int DEFAULT NULL,
-  `capital_input` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `employees_input` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `business_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `homepage_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `job_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `job_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `employment_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `recruitment_count` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `required_skills` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `preferred_skills` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `education_age_restrictions` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `work_location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `work_start_hour` int DEFAULT NULL,
-  `work_start_minute` int DEFAULT NULL,
-  `work_end_hour` int DEFAULT NULL,
-  `work_end_minute` int DEFAULT NULL,
-  `work_break` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `shift_system` tinyint(1) DEFAULT NULL,
-  `overtime_exists` tinyint(1) DEFAULT '0',
-  `overtime_average` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `weekly_holiday` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `paid_leave` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `long_leave` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `salary_min` int DEFAULT NULL,
-  `salary_max` int DEFAULT NULL,
-  `salary_raise` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `bonus` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `transport_allowance` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `allowances` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `probation` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `social_insurance` tinyint(1) DEFAULT NULL,
-  `social_insurance_detail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `welfare_systems` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `training_exists` int DEFAULT NULL,
-  `training_detail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `application_method` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `selection_flow` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `interview_location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `examination` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- テーブルのデータのダンプ `job_offers`
---
-
-INSERT INTO `job_offers` (`id`, `company_name`, `logo`, `photo_1`, `photo_2`, `photo_3`, `postal_code`, `address_input`, `address_kana`, `establishment_year`, `establishment_month`, `establishment_day`, `capital_input`, `employees_input`, `business_content`, `homepage_url`, `job_title`, `job_description`, `employment_type`, `recruitment_count`, `required_skills`, `preferred_skills`, `education_age_restrictions`, `work_location`, `work_start_hour`, `work_start_minute`, `work_end_hour`, `work_end_minute`, `work_break`, `shift_system`, `overtime_exists`, `overtime_average`, `weekly_holiday`, `paid_leave`, `long_leave`, `salary_min`, `salary_max`, `salary_raise`, `bonus`, `transport_allowance`, `allowances`, `probation`, `social_insurance`, `social_insurance_detail`, `welfare_systems`, `training_exists`, `training_detail`, `application_method`, `selection_flow`, `interview_location`, `examination`) VALUES
-(1, 'irevo株式会社', NULL, NULL, NULL, NULL, '0624513798', '大阪府大阪市阿倍野区阪南町', 'おおさかふおおさかしあべのくはんなんちょう', 2001, 8, 13, '500万円', '50名', 'あ', NULL, 'Webエンジニア', 'あ', '正社員', '若干名', 'あ', NULL, NULL, '大阪府', 8, 0, 17, 0, '50分', NULL, 0, '月平均５時間', '完全週休2日制', '有給あり、入社後６か月から', '0', 180000, 220000, '年１回', '年２回、業績により変動', '支給／２万', '役職手当、技術手当', '0', 0, NULL, 'あ', 1, NULL, 'あ', 'あ', NULL, 0),
-(2, 'テスト', '1763601861418_3.png', NULL, NULL, NULL, 'テスト', 'テスト', 'テスト', 2012, 9, 13, 'テスト', 'テスト', 'テスト', NULL, 'テスト', 'テスト', 'テスト', NULL, 'テスト', NULL, NULL, 'テスト', 10, 0, 14, 30, 'テスト', NULL, 0, 'テスト', 'テスト', 'テスト', '0', 100000, 200000, 'テスト', 'テスト', 'テスト', 'テスト', '0', 0, NULL, 'テスト', 1, NULL, 'テスト', 'テスト', 'テスト', 0);
-
--- --------------------------------------------------------
-
---
 -- テーブルの構造 `Memo`
 --
 
@@ -750,15 +639,8 @@ CREATE TABLE `Memo` (
   `user_id` int NOT NULL,
   `Companies_id` int NOT NULL,
   `memo_text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `create_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `create_at` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- テーブルのデータのダンプ `Memo`
---
-
-INSERT INTO `Memo` (`id`, `user_id`, `Companies_id`, `memo_text`, `create_at`) VALUES
-(1, 1, 9, 'zoom_install', '2025-11-14 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -781,33 +663,28 @@ CREATE TABLE `skill` (
 --
 
 INSERT INTO `skill` (`id`, `user_id`, `skill_type`, `skill_name`, `experience`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Framework', 'React', '3 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(2, 1, 'Database', 'MySQL', '2 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(3, 1, 'Cloud', 'AWS', '1 year', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(4, 2, 'Tools', 'Docker', '2 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(5, 2, 'Other', 'Git', '4 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(6, 3, 'Framework', 'Angular', '1 year', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(7, 3, 'Database', 'PostgreSQL', '3 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(8, 4, 'Cloud', 'Azure', '2 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(9, 4, 'Tools', 'Kubernetes', '1 year', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(10, 5, 'Other', 'Linux', '5 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55'),
-(11, 5, 'Framework', 'Vue.js', '2 years', '2025-09-23 20:05:55', '2025-09-23 20:05:55');
+(1, 1, 'Framework', 'React', '3 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(2, 1, 'Database', 'MySQL', '2 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(3, 1, 'Cloud', 'AWS', '1 year', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(4, 2, 'Tools', 'Docker', '2 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(5, 2, 'Other', 'Git', '4 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(6, 3, 'Framework', 'Angular', '1 year', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(7, 3, 'Database', 'PostgreSQL', '3 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(8, 4, 'Cloud', 'Azure', '2 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(9, 4, 'Tools', 'Kubernetes', '1 year', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(10, 5, 'Other', 'Linux', '5 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55'),
+(11, 5, 'Framework', 'Vue.js', '2 years', '2025-09-24 05:05:55', '2025-09-24 05:05:55');
 
--- --------------------------------------------------------
 
---
--- テーブルの構造 `skillPR`
---
-
-CREATE TABLE `skillPR` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `program` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `framework` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `database_system` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cloud_platform` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `development_tool` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE skillPR (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    program VARCHAR(100),
+    framework VARCHAR(100),
+    database_system VARCHAR(100),
+    cloud_platform VARCHAR(100),
+    development_tool VARCHAR(100)
+);
 
 -- --------------------------------------------------------
 
@@ -827,12 +704,7 @@ CREATE TABLE `User` (
   `u_Address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `u_Password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `u_Email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `Employment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  -- 以下小野が追加エラーの際はゆるして
-  `AddressHuri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `oldAddress` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `oldAddressHuri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `oldAddressContact` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `Employment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -859,231 +731,31 @@ CREATE TABLE `user_chat` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
   `Companies_id` int NOT NULL,
-  `sender_type` enum('user','company') COLLATE utf8mb4_unicode_ci NOT NULL,
   `message_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `time` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 --
 -- テーブルのデータのダンプ `user_chat`
 --
 
-INSERT INTO `user_chat` (`id`, `user_id`, `Companies_id`, `sender_type`, `message_text`, `time`) VALUES
-(1, 1, 1, 'user', 'こんにちは、御社の求人に興味があります。', '2025-10-23 04:57:55'),
-(2, 1, 2, 'user', '面接の日程を調整したいです。', '2025-10-23 04:59:37'),
-(3, 2, 1, 'user', 'ポジションについて詳しく教えてください。', '2023-10-03 09:15:00'),
-(4, 2, 3, 'user', '応募書類を送付しました。ご確認ください。', '2023-10-04 16:45:00'),
-(5, 3, 2, 'user', '面接のフィードバックをいただけますか？', '2023-10-05 11:20:00'),
-(6, 3, 3, 'user', '次のステップについて教えてください。', '2023-10-06 13:50:00'),
-(7, 4, 1, 'user', '御社の企業文化について知りたいです。', '2023-10-07 15:10:00'),
-(8, 4, 2, 'user', '面接の準備についてアドバイスをお願いします。', '2023-10-08 10:40:00'),
-(9, 5, 3, 'user', '求人情報の更新を教えてください。', '2023-10-09 12:30:00'),
-(10, 5, 1, 'user', '面接の日程を再調整したいです。', '2023-10-10 14:00:00'),
-(11, 1, 27, 'user', '', '2025-11-13 00:48:00'),
-(12, 1, 27, 'user', 'よろしくお願いします', '2025-11-12 15:48:30'),
-(13, 1, 27, 'user', 'あ', '2025-11-12 15:49:00'),
-(14, 1, 27, 'user', 's', '2025-11-13 00:57:48'),
-(15, 1, 9, 'user', '', '2025-11-13 08:59:50'),
-(16, 1, 9, 'user', 'よろしくお願いします', '2025-11-13 09:00:38'),
-(17, 1, 9, 'user', 'sss', '2025-11-13 16:13:24'),
-(18, 1, 1, 'user', 'a', '2025-12-01 13:57:19'),
-(19, 1, 1, 'user', 'a', '2025-12-01 14:14:14'),
-(20, 1, 2, 'user', 'k', '2025-12-01 14:14:21'),
-(21, 1, 2, 'user', 's', '2025-12-01 14:14:48'),
-(22, 1, 1, 'company', 'あ', '2025-12-01 16:29:45'),
-(23, 1, 1, 'company', 's', '2025-12-01 16:30:43'),
-(24, 1, 1, 'user', 'リガ島', '2025-12-01 16:50:57');
+INSERT INTO `user_chat` (`id`, `user_id`, `Companies_id`, `message_text`, `time`) VALUES
+(1, 1, 1, 'こんにちは、御社の求人に興味があります。', '2025-10-23 04:57:55'),
+(2, 1, 2, '面接の日程を調整したいです。', '2025-10-23 04:59:37'),
+(3, 2, 1, 'ポジションについて詳しく教えてください。', '2023-10-03 09:15:00'),
+(4, 2, 3, '応募書類を送付しました。ご確認ください。', '2023-10-04 16:45:00'),
+(5, 3, 2, '面接のフィードバックをいただけますか？', '2023-10-05 11:20:00'),
+(6, 3, 3, '次のステップについて教えてください。', '2023-10-06 13:50:00'),
+(7, 4, 1, '御社の企業文化について知りたいです。', '2023-10-07 15:10:00'),
+(8, 4, 2, '面接の準備についてアドバイスをお願いします。', '2023-10-08 10:40:00'),
+(9, 5, 3, '求人情報の更新を教えてください。', '2023-10-09 12:30:00'),
+(10, 5, 1, '面接の日程を再調整したいです。', '2023-10-10 14:00:00'),
+(11, 1, 27, '', '2025-11-13 00:48:00'),
+(12, 1, 27, 'よろしくお願いします', '2025-11-12 15:48:30'),
+(13, 1, 27, 'あ', '2025-11-12 15:49:00'),
+(14, 1, 27, 's', '2025-11-13 00:57:48');
 
-CREATE TABLE program (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    skill TEXT,
-    years_of_experience TEXT
-);
-
-CREATE TABLE framework (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    skill TEXT,
-    years_of_experience TEXT
-);
-
-CREATE TABLE databasePR (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    skill TEXT,
-    years_of_experience TEXT
-);
-
-CREATE TABLE  Cloud_Platform(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    skill TEXT,
-    years_of_experience TEXT
-);
-
-CREATE TABLE  tool (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    skill TEXT,
-    years_of_experience TEXT
-);
-
-CREATE TABLE  Other_ExperiencePR (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    skill TEXT,
-    years_of_experience TEXT
-);
-
-CREATE TABLE Research_Contentrch (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-Research TEXT,
-Content TEXT
-);
-
-CREATE TABLE part_time (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-part_time TEXT
-);
-
-CREATE TABLE Intern (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-Intern TEXT
-);
-
-CREATE TABLE prioritize (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-prioritize TEXT
-);
-
-CREATE TABLE Desired_Company_Type (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-Desired_Company_Type TEXT
-);
-
-CREATE TABLE Location (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-Location TEXT
-);
-
-CREATE TABLE JobType (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-Location TEXT
-);
-
-CREATE TABLE Industry (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-Industry TEXT
-);
-
-CREATE TABLE DesiredSkill (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-DesiredSkill TEXT
-);
-
-CREATE TABLE DesiredOther (
-id INT AUTO_INCREMENT PRIMARY KEY,
-user_id INT,
-DesiredOther TEXT
-);
-
-CREATE TABLE `Applications` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `job_id` int DEFAULT NULL,
-  `applied_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '新規',
-  `resume_link` text COLLATE utf8mb4_unicode_ci,
-  `resume_file` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `note` text COLLATE utf8mb4_unicode_ci,
-  `read_flag` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- テーブルのデータのダンプ `Applications`
---
-
-INSERT INTO `Applications` (`id`, `user_id`, `job_id`, `applied_at`, `status`, `resume_link`, `resume_file`, `note`, `read_flag`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2025-11-13 11:44:16', '不採用', 'https://example.com/resume/1.pdf', NULL, NULL, 0, '2025-11-13 11:44:16', '2025-11-13 13:58:27'),
-(2, 2, 1, '2025-11-13 11:44:16', '新規', NULL, NULL, NULL, 0, '2025-11-13 11:44:16', '2025-11-13 13:55:18');
-
-CREATE TABLE `job_offers` (
-  `id` int NOT NULL,
-  `company_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `photo_1` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `photo_2` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `photo_3` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `postal_code` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_input` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address_kana` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `establishment_year` int DEFAULT NULL,
-  `establishment_month` int DEFAULT NULL,
-  `establishment_day` int DEFAULT NULL,
-  `capital_input` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `employees_input` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `business_content` text COLLATE utf8mb4_unicode_ci,
-  `homepage_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `job_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `job_description` text COLLATE utf8mb4_unicode_ci,
-  `employment_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `recruitment_count` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `required_skills` text COLLATE utf8mb4_unicode_ci,
-  `preferred_skills` text COLLATE utf8mb4_unicode_ci,
-  `education_age_restrictions` text COLLATE utf8mb4_unicode_ci,
-  `work_location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `work_start_hour` int DEFAULT NULL,
-  `work_start_minute` int DEFAULT NULL,
-  `work_end_hour` int DEFAULT NULL,
-  `work_end_minute` int DEFAULT NULL,
-  `work_break` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `shift_system` tinyint(1) DEFAULT NULL,
-  `overtime_exists` tinyint(1) DEFAULT '0',
-  `overtime_average` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `weekly_holiday` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `paid_leave` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `long_leave` text COLLATE utf8mb4_unicode_ci,
-  `salary_min` int DEFAULT NULL,
-  `salary_max` int DEFAULT NULL,
-  `salary_raise` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `bonus` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `transport_allowance` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `allowances` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `probation` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `social_insurance` tinyint(1) DEFAULT NULL,
-  `social_insurance_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `welfare_systems` text COLLATE utf8mb4_unicode_ci,
-  `training_exists` int DEFAULT NULL,
-  `training_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `application_method` text COLLATE utf8mb4_unicode_ci,
-  `selection_flow` text COLLATE utf8mb4_unicode_ci,
-  `interview_location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `examination` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- テーブルのデータのダンプ `job_offers`
---
-
-INSERT INTO `job_offers` (`id`, `company_name`, `logo`, `photo_1`, `photo_2`, `photo_3`, `postal_code`, `address_input`, `address_kana`, `establishment_year`, `establishment_month`, `establishment_day`, `capital_input`, `employees_input`, `business_content`, `homepage_url`, `job_title`, `job_description`, `employment_type`, `recruitment_count`, `required_skills`, `preferred_skills`, `education_age_restrictions`, `work_location`, `work_start_hour`, `work_start_minute`, `work_end_hour`, `work_end_minute`, `work_break`, `shift_system`, `overtime_exists`, `overtime_average`, `weekly_holiday`, `paid_leave`, `long_leave`, `salary_min`, `salary_max`, `salary_raise`, `bonus`, `transport_allowance`, `allowances`, `probation`, `social_insurance`, `social_insurance_detail`, `welfare_systems`, `training_exists`, `training_detail`, `application_method`, `selection_flow`, `interview_location`, `examination`) VALUES
-(1, 'irevo株式会社', NULL, NULL, NULL, NULL, '0624513798', '大阪府大阪市阿倍野区阪南町', 'おおさかふおおさかしあべのくはんなんちょう', 2001, 8, 13, '500万円', '50名', 'あ', NULL, 'Webエンジニア', 'あ', '正社員', '若干名', 'あ', NULL, NULL, '大阪府', 8, 0, 17, 0, '50分', NULL, 0, '月平均５時間', '完全週休2日制', '有給あり、入社後６か月から', '0', 180000, 220000, '年１回', '年２回、業績により変動', '支給／２万', '役職手当、技術手当', '0', 0, NULL, 'あ', 1, NULL, 'あ', 'あ', NULL, 0),
-(2, 'テスト', '1763601861418_3.png', NULL, NULL, NULL, 'テスト', 'テスト', 'テスト', 2012, 9, 13, 'テスト', 'テスト', 'テスト', NULL, 'テスト', 'テスト', 'テスト', NULL, 'テスト', NULL, NULL, 'テスト', 10, 0, 14, 30, 'テスト', NULL, 0, 'テスト', 'テスト', 'テスト', '0', 100000, 200000, 'テスト', 'テスト', 'テスト', 'テスト', '0', 0, NULL, 'テスト', 1, NULL, 'テスト', 'テスト', 'テスト', 0);
-
---
-
--- ここより上にデータテーブルを入れる
 -- --------------------------------------------------------
 
 --
@@ -1091,42 +763,43 @@ INSERT INTO `job_offers` (`id`, `company_name`, `logo`, `photo_1`, `photo_2`, `p
 -- (実際のビューを参照するには下にあります)
 --
 CREATE TABLE `ViewCompanyTable` (
-`allowances` text
-,`application_method` text
-,`benefits_system` text
-,`bonus_info` varchar(255)
-,`c_name` varchar(255)
-,`capital` decimal(10,0)
-,`company_detail_description` text
-,`description` text
-,`education_age_requirements` text
-,`employee_count` int
-,`employment_type` varchar(255)
-,`founded_year` int
-,`holidays` varchar(255)
-,`homepage_url` varchar(255)
-,`id` int
-,`insurance` varchar(255)
-,`interview_location` text
-,`job_id` int
-,`JobDescription` text
-,`location` varchar(255)
-,`logo` varchar(255)
-,`number_of_hires` int
-,`overtime_info` varchar(255)
-,`photo` varchar(255)
-,`preferred_skills` text
-,`required_skills` text
-,`salary` int
-,`selection_flow` text
-,`title` varchar(255)
-,`training` tinyint(1)
-,`training_details` text
-,`transportation` varchar(255)
-,`trial_period` tinyint(1)
-,`trial_period_conditions` text
-,`work_hours` varchar(255)
-,`work_location` varchar(255)
+  `id` INT,
+  `c_name` VARCHAR(255),
+  `location` VARCHAR(255),
+  `founded_year` INT,
+  `capital` DECIMAL(10,0),
+  `employee_count` INT,
+  `description` TEXT,
+  `homepage_url` VARCHAR(255),
+  `company_detail_description` TEXT,
+  `logo` VARCHAR(255),
+  `photo` VARCHAR(255),
+  `job_id` INT,
+  `title` VARCHAR(255),
+  `employment_type` VARCHAR(255),
+  `number_of_hires` INT,
+  `JobDescription` TEXT,
+  `salary` INT,
+  `salary_max` INT,
+  `bonus_info` VARCHAR(255),
+  `transportation` VARCHAR(255),
+  `allowances` TEXT,
+  `trial_period` TINYINT(1),
+  `trial_period_conditions` TEXT,
+  `work_location` VARCHAR(255),
+  `work_hours` VARCHAR(255),
+  `overtime_info` VARCHAR(255),
+  `holidays` VARCHAR(255),
+  `required_skills` TEXT,
+  `preferred_skills` TEXT,
+  `education_age_requirements` TEXT,
+  `application_method` TEXT,
+  `selection_flow` TEXT,
+  `interview_location` TEXT,
+  `insurance` VARCHAR(255),
+  `benefits_system` TEXT,
+  `training` TINYINT(1),
+  `training_details` TEXT
 );
 
 --
@@ -1140,16 +813,6 @@ ALTER TABLE `ApplicationProcess`
   ADD PRIMARY KEY (`id`);
 
 --
--- テーブルのインデックス `Applications`
---
-ALTER TABLE `Applications`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `job_id` (`job_id`),
-  ADD KEY `status` (`status`),
-  ADD KEY `applied_at` (`applied_at`);
-
---
 -- テーブルのインデックス `Benefits`
 --
 ALTER TABLE `Benefits`
@@ -1161,12 +824,6 @@ ALTER TABLE `Benefits`
 ALTER TABLE `calendarEvents`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_user_company_date` (`user_id`,`Companies_id`,`event_date`);
-
---
--- テーブルのインデックス `career_information`
---
-ALTER TABLE `career_information`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- テーブルのインデックス `chart`
@@ -1212,8 +869,7 @@ ALTER TABLE `Contact`
 --
 ALTER TABLE `corporations`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `fk_corporations_companies` (`companies_id`);
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- テーブルのインデックス `C_History`
@@ -1221,12 +877,6 @@ ALTER TABLE `corporations`
 ALTER TABLE `C_History`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
-
---
--- テーブルのインデックス `desired_conditions`
---
-ALTER TABLE `desired_conditions`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- テーブルのインデックス `JobConditions`
@@ -1249,12 +899,6 @@ ALTER TABLE `JobRequirements`
   ADD KEY `job_id` (`job_id`);
 
 --
--- テーブルのインデックス `job_offers`
---
-ALTER TABLE `job_offers`
-  ADD PRIMARY KEY (`id`);
-
---
 -- テーブルのインデックス `Memo`
 --
 ALTER TABLE `Memo`
@@ -1266,12 +910,6 @@ ALTER TABLE `Memo`
 ALTER TABLE `skill`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
-
---
--- テーブルのインデックス `skillPR`
---
-ALTER TABLE `skillPR`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- テーブルのインデックス `User`
@@ -1299,12 +937,6 @@ ALTER TABLE `ApplicationProcess`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- テーブルの AUTO_INCREMENT `Applications`
---
-ALTER TABLE `Applications`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- テーブルの AUTO_INCREMENT `Benefits`
 --
 ALTER TABLE `Benefits`
@@ -1314,13 +946,7 @@ ALTER TABLE `Benefits`
 -- テーブルの AUTO_INCREMENT `calendarEvents`
 --
 ALTER TABLE `calendarEvents`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
-
---
--- テーブルの AUTO_INCREMENT `career_information`
---
-ALTER TABLE `career_information`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- テーブルの AUTO_INCREMENT `chart`
@@ -1362,19 +988,13 @@ ALTER TABLE `Contact`
 -- テーブルの AUTO_INCREMENT `corporations`
 --
 ALTER TABLE `corporations`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- テーブルの AUTO_INCREMENT `C_History`
 --
 ALTER TABLE `C_History`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- テーブルの AUTO_INCREMENT `desired_conditions`
---
-ALTER TABLE `desired_conditions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- テーブルの AUTO_INCREMENT `JobConditions`
@@ -1395,28 +1015,16 @@ ALTER TABLE `JobRequirements`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- テーブルの AUTO_INCREMENT `job_offers`
---
-ALTER TABLE `job_offers`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- テーブルの AUTO_INCREMENT `Memo`
 --
 ALTER TABLE `Memo`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- テーブルの AUTO_INCREMENT `skill`
 --
 ALTER TABLE `skill`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- テーブルの AUTO_INCREMENT `skillPR`
---
-ALTER TABLE `skillPR`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- テーブルの AUTO_INCREMENT `User`
@@ -1428,7 +1036,7 @@ ALTER TABLE `User`
 -- テーブルの AUTO_INCREMENT `user_chat`
 --
 ALTER TABLE `user_chat`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 -- --------------------------------------------------------
 
@@ -1460,12 +1068,6 @@ ALTER TABLE `Conditions`
 --
 ALTER TABLE `Contact`
   ADD CONSTRAINT `Contact_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`id`);
-
---
--- テーブルの制約 `corporations`
---
-ALTER TABLE `corporations`
-  ADD CONSTRAINT `fk_corporations_companies` FOREIGN KEY (`companies_id`) REFERENCES `Companies` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- テーブルの制約 `C_History`
