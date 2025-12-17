@@ -236,7 +236,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
     try {
         console.log(`[REQ] ${req.method} ${req.url}`);
-    } catch (error) {}
+    } catch (error) { }
     next();
 });
 
@@ -282,12 +282,12 @@ const connectAndStartServer = async () => {
         console.log('DB接続成功');
 
         // ルート読み込み（DB接続後）
-        const cServer = require('./Routes/cServer.js');
+        const cServer = require('./Routes/CServer.js');
         const logServer = require('./Routes/logServer.js');
         const uServer = require('./Routes/uServer.js');
         const calendarServer = require('./Routes/calendarServer.js');
         const gasServer = require('./Routes/gasServer.js');
-        const locationServer = require('./Routes/locationServer');
+        const locationServer = require('./Routes/locationServer.js');
         const chartServer = require('./Routes/chartServer.js');
         const cUserServer = require('./Routes/C_UserServer.js');
         const chatServer = require('./Routes/chatServer.js');
@@ -297,7 +297,7 @@ const connectAndStartServer = async () => {
         const newUserServer = require('./Routes/C_UserServer.js');
         const newOfferServer = require('./Routes/newOfferServer.js');
         const jobOfferServer = require('./cRoutes/jobOfferServer.js');
-        const contactServer = require('./Routes/contactServer');
+        const contactServer = require('./Routes/contactServer.js');
 
         app.use('/company', cServer);
         app.use('/log', logServer);
