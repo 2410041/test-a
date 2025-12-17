@@ -282,22 +282,24 @@ const connectAndStartServer = async () => {
         console.log('DB接続成功');
 
         // ルート読み込み（DB接続後）
-        const cServer = require('./Routes/CServer.js');
+        // Routes
+        const cServer = require('./Routes/cServer.js');
         const logServer = require('./Routes/logServer.js');
         const uServer = require('./Routes/uServer.js');
         const calendarServer = require('./Routes/calendarServer.js');
         const gasServer = require('./Routes/gasServer.js');
         const locationServer = require('./Routes/locationServer.js');
         const chartServer = require('./Routes/chartServer.js');
-        const cUserServer = require('./Routes/C_UserServer.js');
+        const cUserServer = require('./Routes/C_UserServer.js'); // ← これは大文字でOK
         const chatServer = require('./Routes/chatServer.js');
-        const clogServer = require('./cRoutes/clogServer.js');
         const myServer = require('./Routes/mypageServer.js');
-        const applicantsServer = require('./cRoutes/applicantServer.js');
-        const newUserServer = require('./Routes/C_UserServer.js');
         const newOfferServer = require('./Routes/newOfferServer.js');
-        const jobOfferServer = require('./cRoutes/jobOfferServer.js');
         const contactServer = require('./Routes/contactServer.js');
+
+        // cRoutes
+        const clogServer = require('./cRoutes/clogServer.js');
+        const applicantsServer = require('./cRoutes/applicantServer.js');
+        const jobOfferServer = require('./cRoutes/jobOfferServer.js');
 
         app.use('/company', cServer);
         app.use('/log', logServer);
