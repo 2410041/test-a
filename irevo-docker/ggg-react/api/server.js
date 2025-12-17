@@ -236,7 +236,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
     try {
         console.log(`[REQ] ${req.method} ${req.url}`);
-    } catch (e) {}
+    } catch (error) {}
     next();
 });
 
