@@ -11,12 +11,12 @@ function Faq() {
   return (
     <>
       <HamburgerMenu />
-      <p class="red">よくあるご質問（FAQ）</p>
+      <p className="red">よくあるご質問（FAQ）</p>
       <br/>
-      <div class="iti">
-          <input class="kensaku" type="text" />
-          <input class="button" type="button" value="検索" />
-      </div>
+      {/* <div className="iti">
+          <input className="kensaku" type="text" />
+          <input className="button" type="button" value="検索" />
+      </div> */}
       <Accordion /> {/* 奥田が書いたやつ */}
     </>
   )

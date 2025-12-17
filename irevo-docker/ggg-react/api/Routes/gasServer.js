@@ -19,8 +19,8 @@ router.post('/contact', async (req, res) => {
             });
         }
 
-        //  bodyから uName email title message select_p を取得
-        const { uName, email, title, message, select_p } = req.body;
+        //  params から uName email title message select_p を取得
+        const { uName, email, title, message, select_p } = req.params;
         const time = new Date();
         const formattedTime = time.toISOString().slice(0, 19).replace('T', ' ');
 

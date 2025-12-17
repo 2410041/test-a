@@ -1,8 +1,7 @@
 // 必要なライブラリ・コンポーネントのインポート
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Paperclip, Send, FileText, Search } from "lucide-react";
-import Calendar from "react-calendar";
+import { Paperclip, Send, FileText } from "lucide-react";
 import "./C_Chat.css";
 import HamburgerMenu from "../../components/C_Header/C_Header";
 
@@ -22,18 +21,23 @@ const Input = ({ className, ...props }) => (
 );
 
 export default function JobChatUI() {
-    // ユーザー情報の状態管理
+
+    //  ログイン企業の情報取得
     const [user, setUser] = useState(null);
     const [userLoading, setUserLoading] = useState(true);
-    // 初回マウント時にログインユーザー情報を取得
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://15.152.5.110:3030/log/whoami", { withCredentials: true });
-                if (res.data.loggedIn) {
-                    setUser(res.data.user);
+                const response = await axios.get("http://localhost:3030/company/whoami", {
+                    withCredentials: true
+                });
+
+                if (response.data.loggedIn) {
+                    setUser(response.data.company); // company をセット
                 }
-            } catch (err) {
+            } catch (error) {
+                console.error("whoami error:", error);
                 setUser(null);
             } finally {
                 setUserLoading(false);
@@ -42,7 +46,7 @@ export default function JobChatUI() {
         fetchUser();
     }, []);
 
-    // この画面のみスクロール禁止
+    // スクロール禁止
     useEffect(() => {
         document.body.classList.add("no-scroll");
         document.getElementById("root")?.classList.add("no-scroll");
@@ -52,215 +56,210 @@ export default function JobChatUI() {
         };
     }, []);
 
-    // 添付ファイル一覧
-    const [allFiles, setAllFiles] = useState([
-        { name: "履歴書" },
-        { name: "ES" },
-        { name: "ポートフォリオ" }
-    ]);
-    // チャット可能な企業一覧
-    const [companies, setCompanies] = useState([]);
-    // ユーザーIDが取得できたら企業一覧を取得
+    // 応募者一覧
+    const [users, setUsers] = useState([]);
+
+    // 会話相手選択
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    // 応募者一覧を取得
     useEffect(() => {
         if (!user?.id) return;
-        axios.get("http://15.152.5.110:3030/chat/companyChat/users", {
-            params: { Companies_id: user.company_id }
+        axios.get("http://localhost:3030/chat/companyChat/users", {
+            params: { Companies_id: user.id }
         })
-            .then(res => {
-                // name, company_name, c_name など複数候補で取得
-                const companies = Array.isArray(res.data)
-                    ? res.data.map(c => ({
+            .then((res) => {
+                const fetched = Array.isArray(res.data)
+                    ? res.data.map((c) => ({
                         id: c.id,
                         name: c.u_nick || `${c.u_Fname} ${c.u_Lname}`
                     }))
                     : [];
-                setCompanies(companies);
+
+                setUsers(fetched);
+
+                // ★ ここで最初のユーザーを自動選択 ★
+                if (fetched.length > 0 && !selectedUser) {
+                    setSelectedUser(fetched[0]);
+                }
+
             })
-            .catch(() => setCompanies([]));
+            .catch((err) => {
+                console.error("応募者一覧取得エラー:", err);
+                setUsers([]);
+            });
     }, [user]);
 
-    // 選択中の企業
-    const [selectedCompany, setSelectedCompany] = useState(null);
-    // 企業一覧が取得できたら最初の企業を自動選択
-    useEffect(() => {
-        if (companies.length > 0 && !selectedCompany) {
-            setSelectedCompany(companies[0]);
-        }
-    }, [companies, selectedCompany]);
-
-    // 企業ごとのメッセージ履歴管理
+    // チャット履歴
     const [companyMessages, setCompanyMessages] = useState({});
-    // 新規メッセージ入力欄
-    const [newMessage, setNewMessage] = useState("");
-    // 履歴取得中フラグ
     const [loadingHistory, setLoadingHistory] = useState(false);
-    // 添付ファイル（送信前）
-    const [attachedFiles, setAttachedFiles] = useState([]);
 
-    // ここに追加：相手ごとのメモを管理
-    const [companyMemos, setCompanyMemos] = useState({});
+    const messages = selectedUser ? (companyMessages[selectedUser.id] || []) : [];
 
-    // 選択中企業のメッセージ一覧
-    const messages = selectedCompany ? (companyMessages[selectedCompany.name] || []) : [];
-
-    // 企業選択時に履歴を取得
+    // チャット履歴取得
     useEffect(() => {
-        if (!user?.id || !selectedCompany?.id) return;
+        if (!user?.id || !selectedUser?.id) return;
+
         const fetchHistory = async () => {
             setLoadingHistory(true);
             try {
-                const res = await axios.get("http://15.152.5.110:3030/chat/userChat/history", {
+                const res = await axios.get("http://localhost:3030/chat/userChat/history", {
                     params: {
-                        user_id: user.id,
-                        Companies_id: selectedCompany.id
+                        user_id: selectedUser.id, // 応募者
+                        Companies_id: user.id    // 企業ID
                     }
                 });
-                console.log("Fetched history:", res.data);
-                // DB履歴をcompanyMessagesに反映
-                setCompanyMessages(prev => ({
+
+                setCompanyMessages((prev) => ({
                     ...prev,
-                    [selectedCompany.name]: res.data || []
+                    [selectedUser.id]: res.data || []
                 }));
-            } catch (e) {
-                // エラー時は空
-                setCompanyMessages(prev => ({
-                    ...prev,
-                    [selectedCompany.name]: []
-                }));
+            } catch (err) {
+                console.error("history error:", err);
             }
             setLoadingHistory(false);
         };
         fetchHistory();
-    }, [selectedCompany, user]);
+    }, [selectedUser, user]);
 
-    // メッセージ送信処理
+    // メッセージ送信
+    const [newMessage, setNewMessage] = useState("");
+    const [attachedFiles, setAttachedFiles] = useState([]);
+
     const handleSendMessage = async () => {
-        // メッセージまたはファイルが空、またはユーザー情報・企業未選択時は送信しない
-        if ((!newMessage.trim() && attachedFiles.length === 0) || !user?.id || !selectedCompany?.id) return;
-
-        const timestamp = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        if (!newMessage.trim() || !user?.id || !selectedUser?.id) return;
 
         try {
-            // サーバーにメッセージ送信（現行 API 仕様に合わせる）
-            await axios.post("http://15.152.5.110:3030/chat/companyChat/message", {
-                user_id: user.id,
-                Companies_id: selectedCompany.id,
+            await axios.post("http://localhost:3030/chat/companyChat/message", {
+                user_id: selectedUser.id,
+                Companies_id: user.id,
                 message_text: newMessage,
-                time: timestamp,
                 sender_type: "company"
             });
-            // 送信後、履歴を再取得
-            const res = await axios.get("http://15.152.5.110:3030/user/user_chat/history", {
-                params: { user_id: user.id, Companies_id: selectedCompany.id }
+
+            // 再取得
+            const response = await axios.get("http://localhost:3030/chat/userChat/history", {
+                params: {
+                    user_id: selectedUser.id,
+                    Companies_id: user.id
+                }
             });
-            setCompanyMessages(prev => ({
+
+            setCompanyMessages((prev) => ({
                 ...prev,
-                [selectedCompany.name]: res.data || []
+                [selectedUser.id]: response.data || []
             }));
-        } catch (e) {
-            // サーバーエラー時はローカルで履歴追加
-            setCompanyMessages(prev => ({
-                ...prev,
-                [selectedCompany.name]: [...(prev[selectedCompany.name] || []), {
-                    id: (prev[selectedCompany.name]?.length || 0) + 1,
-                    text: newMessage,
-                    side: "right",
-                    time: timestamp,
-                    status: "送信失敗（ローカル保存）",
-                    files: attachedFiles.map(f => f.name)
-                }]
-            }));
+
+        } catch (err) {
+            console.error("send error:", err);
         }
-        // 添付ファイル一覧に追加
-        setAllFiles(prev => [...prev, ...attachedFiles.map((f) => ({ name: f.name }))]);
-        // 入力欄・添付ファイルをリセット
+
         setNewMessage("");
         setAttachedFiles([]);
     };
 
-    // ファイル添付時の処理
-    const handleAttachFile = (event) => {
-        const files = Array.from(event.target.files);
+    // 添付ファイル
+    const handleAttachFile = (e) => {
+        const files = Array.from(e.target.files);
         setAttachedFiles([...attachedFiles, ...files]);
     };
 
-    // メモ保存（現状サーバー API が無い場合はローカルのみで保持）
+    // メモ
+    const [companyMemos, setCompanyMemos] = useState({});
+
     const handleSaveMemo = async () => {
-        if (!user?.id || !selectedCompany?.id) return;
-        const memo = companyMemos[selectedCompany.id] || "";
+        if (!selectedUser?.id || !user?.id) return;
+
+        const memo = companyMemos[selectedUser.id] || "";
+
         try {
-            await axios.post('http://15.152.5.110:3030/calendar/company_memo', {
-                user_id: user.id,
-                Companies_id: selectedCompany.id,
+            await axios.post("http://localhost:3030/calendar/company_memo", {
+                user_id: selectedUser.id,
+                Companies_id: user.id,
                 memo_text: memo
             });
         } catch (e) {
-            console.warn('company_memo API が未実装のためローカル保存のみです');
+            console.warn("メモ保存API未実装のためローカル保存のみ");
         }
     };
 
-    // --- 画面描画 ---
+    // 時刻フォーマット
+    const formatTime = (rawTime) => {
+        if (!rawTime) return "";
+
+        const msgTime = new Date(rawTime);
+        const now = new Date();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const diff = now - msgTime;
+
+        return diff < oneDay
+            ? msgTime.toLocaleTimeString("ja-JP", {
+                hour: "2-digit",
+                minute: "2-digit",
+            })
+            : msgTime.toLocaleString("ja-JP", {
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+    };
+
     return (
         <>
             <HamburgerMenu />
             <div className="jobchat-container">
-                {/* --- 左サイドバー: 企業一覧 --- */}
+
+                {/* 左：応募者一覧 */}
                 <div className="sidebar-left">
                     <h2 className="sidebar-title">応募者一覧</h2>
                     <ul className="company-list">
-                        {companies.map((company, idx) => (
+                        {users.map((app) => (
                             <li
-                                className={`company-item ${selectedCompany && selectedCompany.id === company.id ? 'active' : ''}`}
-                                data-company-id={company.id}
-                                key={company.id + '-' + idx}
-                                onClick={() => setSelectedCompany(company)}
-                                aria-current={selectedCompany && selectedCompany.id === company.id}
+                                key={app.id}
+                                className={`company-item ${selectedUser?.id === app.id ? "active" : ""}`}
+                                onClick={() => setSelectedUser(app)}
                             >
-                                {company.name}
+                                {app.name}
                             </li>
                         ))}
                     </ul>
                 </div>
 
-                {/* --- チャットエリア --- */}
+                {/* 中央：チャット */}
                 <div className="chat-area">
                     <Card className="chat-header">
-                        <h2 className="chat-title">{selectedCompany ? `${selectedCompany.name}` : "応募者を選択してください"}</h2>
+                        <h2 className="chat-title">
+                            {selectedUser ? `${selectedUser.name}` : "応募者を選択してください"}
+                        </h2>
                     </Card>
 
-                    {/* --- メッセージ表示エリア --- */}
-                    <div className="chat-messages2" role="log" aria-live="polite">
+                    <div className="chat-messages2" role="log">
                         {loadingHistory ? (
-                            <div>履歴を読み込み中...</div>
+                            <div>読み込み中...</div>
                         ) : (
-                            messages.map((msg, idx) => (
-                                <div key={msg.id || idx} className={`message3 message-${msg.side || (msg.user === "demo_user" ? "right" : "left")}`}>
-                                    <div className={`bubble bubble-${msg.side || (msg.user === "demo_user" ? "right" : "left")}`}>
-                                        {/* メッセージ本文 */}
-                                        {(msg.text || msg.message_text) && <div>{msg.text || msg.message_text}</div>}
-                                        {/* 添付ファイルリスト */}
-                                        {msg.files && msg.files.length > 0 && (
-                                            <ul className="file-list-inline">
-                                                {msg.files.map((file, fidx) => (
-                                                    <li key={fidx} className="file-item-inline">
-                                                        <FileText size={14} /> {typeof file === "string" ? file : file.name}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                        {/* タイムスタンプ・既読など */}
-                                        <div className={`timestamp ${(msg.side || (msg.user === "demo_user" ? "right" : "left")) === "right" ? "timestamp-right" : ""}`}>
-                                            {msg.status || ""} {msg.time}
+                            messages.map((msg, item) => {
+
+                                const formattedTime = formatTime(msg.time);
+
+                                return (
+                                    <div
+                                        key={item}
+                                        className={`message3 message-${msg.sender_type === "company" ? "right" : "left"}`}
+                                    >
+                                        <div className={`bubble bubble-${msg.sender_type === "company" ? "right" : "left"}`}>
+                                            <div>{msg.message_text}</div>
+
+                                            <div className="timestamp">{formattedTime}</div>
                                         </div>
                                     </div>
-                                </div>
-                            ))
+                                );
+                            })
                         )}
                     </div>
 
-                    {/* --- 入力エリア --- */}
+                    {/* メッセージ入力 */}
                     <div className="chat-input2">
-                        {/* ファイル添付ボタン（非表示inputと連動） */}
                         <input
                             type="file"
                             id="file-upload"
@@ -268,17 +267,15 @@ export default function JobChatUI() {
                             multiple
                             onChange={handleAttachFile}
                         />
-                        <Button
-                            className="btn-icon"
-                            aria-label="添付"
+
+                        <button
+                            className="btn btn-icon"
                             onClick={() => document.getElementById("file-upload").click()}
                         >
                             <Paperclip />
-                        </Button>
+                        </button>
 
-                        {/* メッセージ入力欄 */}
                         <Input
-                            aria-label="メッセージ入力"
                             placeholder="メッセージを入力..."
                             className="flex-1"
                             value={newMessage}
@@ -286,38 +283,29 @@ export default function JobChatUI() {
                             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                         />
 
-                        {/* 送信ボタン */}
-                        <Button className="btn-icon send-btn" aria-label="送信" onClick={handleSendMessage}>
+                        <Button className="btn-icon send-btn" onClick={handleSendMessage}>
                             <Send />
                         </Button>
                     </div>
                 </div>
 
+                {/* 右：メモ */}
                 <div className="sidebar-right">
-                    <div className="tab-panel" role="tabpanel">
+                    <div className="tab-panel">
                         <h3 className="section-title">メモ</h3>
-                        {/* ここで選択日を表示 */}
                         <textarea
                             className="memo-box"
                             placeholder="メモを入力..."
-                            value={selectedCompany ? (companyMemos[selectedCompany.id] || "") : ""}
-                            onChange={e => {
-                                if (!selectedCompany) return;
-                                const v = e.target.value;
-                                setCompanyMemos(prev => ({ ...prev, [selectedCompany.id]: v }));
-                            }}
+                            value={selectedUser ? companyMemos[selectedUser.id] || "" : ""}
+                            onChange={(e) =>
+                                selectedUser &&
+                                setCompanyMemos((prev) => ({
+                                    ...prev,
+                                    [selectedUser.id]: e.target.value
+                                }))
+                            }
                         />
-                        <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-                            <Button className="btn2" onClick={handleSaveMemo}>メモを保存</Button>
-                            <Button className="btn" onClick={() => {
-                                if (!user?.id || !selectedCompany?.id) return;
-                                axios.get("http://15.152.5.110:3030/company_memo", {
-                                    params: { user_id: user.id, Companies_id: selectedCompany.id }
-                                }).then(res => {
-                                    setCompanyMemos(prev => ({ ...prev, [selectedCompany.id]: res.data?.memo_text || "" }));
-                                }).catch(() => { });
-                            }}>メモを取得</Button>
-                        </div>
+                        <Button className="btn2" onClick={handleSaveMemo}>メモを保存</Button>
                     </div>
                 </div>
             </div>

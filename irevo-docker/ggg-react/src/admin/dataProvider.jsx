@@ -1,15 +1,16 @@
 // このファイルは「APIサーバー」とやりとりするための共通関数セットです。
 // 例えば「ユーザー一覧を取得」「企業情報を取得」「新しいデータを作る」などを簡単に呼び出せます。
 
-// APIサーバーのURL（自分のパソコンで動かす場合は15.152.5.110）
-const apiUrl = 'http://15.152.5.110:3030';
+// APIサーバーのURL（自分のパソコンで動かす場合はlocalhost）
+const apiUrl = 'http://localhost:3030';
 const mockData = {};
 
 const resourceMap = {
-  // ↓ 修正 (/user/user → /user)
-  users: '/user/userGet',               
+  users: '/user',  
   companies: '/company/company',
   locations: '/location/location',
+  contacts: '/contact/contact',  // 追加
+  contactReplies: '/contact/reply',  // 追加
 };
 
 function ensureSlash(p) { return p.startsWith('/') ? p : '/' + p; }

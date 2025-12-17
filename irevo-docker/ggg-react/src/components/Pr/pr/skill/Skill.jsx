@@ -12,7 +12,10 @@ const skillData = [
     { value: '実務 5年以上', text: '実務 5年以上' }
 ];
 
-const Skill = () => {
+// 変更点: props から user を受け取り、id のみ取得する
+const Skill = ({ user }) => {
+    const userId = user?.id ?? null; // TabNav から渡された user の id（存在しなければ null ）
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [registeredSkills, setRegisteredSkills] = useState([]);
     const [editingSkills, setEditingSkills] = useState([]);
@@ -22,6 +25,52 @@ const Skill = () => {
         // 初期表示時や registeredSkills が変更されたときに編集用スキルを同期
         setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
     }, [registeredSkills, isEditMode]); // isEditModeが切り替わったときも同期
+
+    // userId がある場合、サーバから program を取得して初期表示する
+    useEffect(() => {
+        if (!userId) return;
+        const fetchPrograms = async () => {
+            try {
+                // 送信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/userprogram?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) {
+                    console.error('program取得失敗', resp.status);
+                    return;
+                }
+                const data = await resp.json();
+                const programs = data && data.programs ? data.programs : [];
+
+                // programs を [{ language, duration }, ...] の形に正規化
+                const normalized = programs.map(p => {
+                    if (typeof p === 'string') {
+                        // JSON文字列ならパースを試みる
+                        try {
+                            const parsed = JSON.parse(p);
+                            if (Array.isArray(parsed)) return parsed[0] || { language: '', duration: '' };
+                            if (parsed && typeof parsed === 'object') return { language: parsed.language ?? '', duration: parsed.duration ?? '' };
+                        } catch (e) {
+                            // カンマ区切り (language,duration) の簡易処理
+                            const parts = p.split(',');
+                            return { language: (parts[0] || '').trim(), duration: (parts[1] || '').trim() };
+                        }
+                    }
+                    if (p && typeof p === 'object') return { language: p.language ?? '', duration: p.duration ?? '' };
+                    return { language: '', duration: '' };
+                });
+
+                // 表示用の登録スキルと、編集時に使う配列の両方を設定
+                setRegisteredSkills(normalized);
+                setEditingSkills(JSON.parse(JSON.stringify(normalized)));
+            } catch (err) {
+                console.error('program取得エラー', err);
+            }
+        };
+        fetchPrograms();
+    }, [userId]);
 
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
@@ -60,11 +109,52 @@ const Skill = () => {
         setEditingSkills(updatedSkills);
     };
 
-    const handleRegister = () => {
-        const currentSkills = [];
-        editingSkills.forEach(skill => {
-            currentSkills.push({ language: skill.language, duration: skill.duration });
-        });
+    const handleRegister = async () => {
+        // 編集中のデータを currentSkills に整形
+        const currentSkills = editingSkills.map(skill => ({ language: skill.language, duration: skill.duration }));
+
+        // フロントは必ず POST 送信する（空配列の場合は削除をサーバに指示）
+        const payload = { user_id: userId };
+
+        if (currentSkills.length > 0) {
+            // 既存の送信フォーマットを維持（互換性のため skill/years を送る）
+            payload.skill = currentSkills.map(s => s.language).join(',');
+            payload.years = currentSkills.map(s => s.duration).join(',');
+            // 併せて programs 配列も付ける（サーバは両方に対応済み）
+            payload.programs = currentSkills;
+        } else {
+            // 空データ送信でサーバ側が該当 user_id のレコードを削除するようにする
+            payload.programs = [];   // サーバ側の空判定に一致させる
+            payload.skill = '';
+            payload.years = '';
+        }
+
+        console.log('registering skills for userId:', userId, payload);
+
+        if (!userId) {
+            console.warn('userIdが無いため送信しません');
+            return;
+        }
+
+        try {
+            // 送信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/userprogram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            } else {
+                console.log('保存成功:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
+
+        // UI側は currentSkills に合わせて更新（空なら表示は空になる）
         setRegisteredSkills(currentSkills);
         setIsEditMode(false);
     };
@@ -74,7 +164,7 @@ const Skill = () => {
     };
 
     return (
-        <div className="experience-container">
+        <div className="experience-container" data-user-id={userId}>
             <div className={`section-header ${isEditMode ? 'edit-mode' : 'display-mode'}`}>
                 <div className="section-title">
                     プログラミング言語経験
@@ -88,7 +178,6 @@ const Skill = () => {
             {!isEditMode ? (
                 <div className="display-mode">
                     <ul className="skill-list">
-                        {/* {console.log(registeredSkills)}                         */}
                         {registeredSkills.length === 0 ? (
                             <li>スキルはまだ登録されていません。</li>
                         ) : (

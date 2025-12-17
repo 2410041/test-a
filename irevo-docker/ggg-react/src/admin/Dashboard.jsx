@@ -9,6 +9,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import SecurityIcon from '@mui/icons-material/Security';
 import EmailIcon from '@mui/icons-material/Email';
 import StorageIcon from '@mui/icons-material/Storage';
+import React, { useState, useEffect } from 'react';
 
 const managementTiles = [
   { icon: <PeopleIcon fontSize="large" />, label: 'ユーザー管理', href: '/Admin/users', desc: 'ユーザー情報の編集・削除' },
@@ -25,6 +26,10 @@ const systemTiles = [
   { icon: <EmailIcon fontSize="large" />, label: 'メール設定', href: '/Admin/mail', desc: 'メール配信・テンプレート' },
   { icon: <StorageIcon fontSize="large" />, label: 'データベース管理', href: '/Admin/database', desc: 'バックアップ・復元' },
 ];
+
+const contactTiles = [
+    { icon: <SettingsIcon fontSize="large" />, label: 'お問い合わせ一覧', href: '/Admin/contactus', desc: 'お問い合わせ返信' },
+]
 
 const cardSx = {
   height: 220,
@@ -120,7 +125,7 @@ export default function Dashboard() {
         </Box>
         
         {/* システム設定 */}
-        <Typography sx={sectionTitleSx}>
+        {/* <Typography sx={sectionTitleSx}>
           システム設定・運用
         </Typography>
         <Box sx={{ 
@@ -159,6 +164,52 @@ export default function Dashboard() {
                   }}
                 >
                   設定
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </Box> */}
+
+        {/* システム設定 */}
+        <Typography sx={sectionTitleSx}>
+          お問い合わせ
+        </Typography>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+          gap: 3,
+        }}>
+          {contactTiles.map((tile) => (
+            <Card key={tile.label} sx={cardSx}>
+              <CardContent sx={cardContentSx}>
+                <Box>
+                  <Box sx={{ mb: 2, color: '#757575' }}>{tile.icon}</Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, color: '#333333', fontSize: '1.1rem' }}>
+                    {tile.label}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 2, color: '#666666', fontSize: '0.875rem', lineHeight: 1.4 }}>
+                    {tile.desc}
+                  </Typography>
+                </Box>
+                <Button 
+                  variant="outlined" 
+                  href={tile.href} 
+                  size="small"
+                  sx={{ 
+                    borderColor: '#757575',
+                    color: '#757575',
+                    '&:hover': { 
+                      borderColor: '#424242',
+                      color: '#424242',
+                      backgroundColor: '#f5f5f5'
+                    },
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    px: 2,
+                    alignSelf: 'center',
+                  }}
+                >
+                  開く
                 </Button>
               </CardContent>
             </Card>

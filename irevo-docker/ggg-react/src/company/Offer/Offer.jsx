@@ -1,7 +1,8 @@
 import './Offer.css';
-import useOffer from'./useOffer';
+import useOffer from './useOffer';
 import HamburgerMenu from '../../components/C_Header/C_Header';
 import React, { useState, useRef, useEffect } from 'react';
+import axios from "axios";
 
 function Offer() {
 
@@ -13,14 +14,16 @@ function Offer() {
     const [photosPreviews, setPhotosPreviews] = useState([null, null, null]);
     const photosRefs = useRef([null, null, null]);
 
+    
+
     // input の change ハンドラ（React 側はプレビューのみ管理。実際の送信は useOffer 側で FormData を作る）
-    const handleLogoChange = (e) => {
-        const f = e.target.files && e.target.files[0];
+    const handleLogoChange = (event) => {
+        const file = event.target.files && event.target.files[0];
         if (logoRef.current) {
-            try { URL.revokeObjectURL(logoRef.current); } catch (e) {}
+            try { URL.revokeObjectURL(logoRef.current); } catch (error) { }
         }
-        if (f) {
-            const url = URL.createObjectURL(f);
+        if (file) {
+            const url = URL.createObjectURL(file);
             logoRef.current = url;
             setLogoPreview(url);
         } else {
@@ -29,29 +32,35 @@ function Offer() {
         }
     };
 
-    const handlePhotoChange = (idx) => (e) => {
-        const f = e.target.files && e.target.files[0];
+    const handlePhotoChange = (index) => (event) => {
+        const file = event.target.files && event.target.files[0];
         const newPreviews = [...photosPreviews];
-        if (photosRefs.current[idx]) {
-            try { URL.revokeObjectURL(photosRefs.current[idx]); } catch (e) {}
+        if (photosRefs.current[index]) {
+            try { URL.revokeObjectURL(photosRefs.current[index]); } catch (error) { }
         }
-        if (f) {
-            const url = URL.createObjectURL(f);
-            photosRefs.current[idx] = url;
-            newPreviews[idx] = url;
+        if (file) {
+            const url = URL.createObjectURL(file);
+            photosRefs.current[index] = url;
+            newPreviews[index] = url;
         } else {
-            photosRefs.current[idx] = null;
-            newPreviews[idx] = null;
+            photosRefs.current[index] = null;
+            newPreviews[index] = null;
         }
         setPhotosPreviews(newPreviews);
     };
 
     useEffect(() => {
         return () => {
-            if (logoRef.current) try { URL.revokeObjectURL(logoRef.current); } catch (e) {}
-            photosRefs.current.forEach(p => { if (p) try { URL.revokeObjectURL(p); } catch (e) {} });
+            if (logoRef.current) try { URL.revokeObjectURL(logoRef.current); } catch (error) { }
+            photosRefs.current.forEach((previewUrl) => { if (previewUrl) try { URL.revokeObjectURL(previewUrl); } catch (error) { } });
         }
     }, []);
+
+    
+
+
+    // フォーム状態は useOffer フックで送信されるため、ローカルで保持する state は不要
+    // (未使用の処理を削除)
 
     return (
         <>
@@ -121,41 +130,41 @@ function Offer() {
                             </div>
                         </div>
 
-                            {/* ロゴアップロード */}
-                            <div className="offer-form_row">
-                                <label>ロゴ</label>
-                                <div className="offer-input_group">
-                                    <label className="custom-upload">ロゴを選択
-                                        <input type="file" name="logo" accept="image/*" className="hidden" onChange={handleLogoChange} />
-                                    </label>
-                                    {logoPreview && (<div className="offer-image-preview_wrap"><img src={logoPreview} alt="logo preview" className="offer-image-preview" /></div>)}
-                                </div>
+                        {/* ロゴアップロード */}
+                        <div className="offer-form_row">
+                            <label>ロゴ</label>
+                            <div className="offer-input_group">
+                                <label className="custom-upload">ロゴを選択
+                                    <input type="file" name="logo" accept="image/*" className="hidden" onChange={handleLogoChange} />
+                                </label>
+                                {logoPreview && (<div className="offer-image-preview_wrap"><img src={logoPreview} alt="logo preview" className="offer-image-preview" /></div>)}
                             </div>
+                        </div>
 
-                            {/* 会社画像（3枚） */}
-                            <div className="offer-form_row">
-                                <label>会社画像</label>
-                                <div className="offer-input_group offer-image-row">
-                                    <div className="offer-image-item">
-                                        <label className="custom-upload">外観写真
-                                            <input type="file" name="photo_1" accept="image/*" className="hidden" onChange={handlePhotoChange(0)} />
-                                        </label>
-                                        {photosPreviews[0] && <img src={photosPreviews[0]} alt="photo1" className="offer-image-preview" />}
-                                    </div>
-                                    <div className="offer-image-item">
-                                        <label className="custom-upload">社内風景
-                                            <input type="file" name="photo_2" accept="image/*" className="hidden" onChange={handlePhotoChange(1)} />
-                                        </label>
-                                        {photosPreviews[1] && <img src={photosPreviews[1]} alt="photo2" className="offer-image-preview" />}
-                                    </div>
-                                    <div className="offer-image-item">
-                                        <label className="custom-upload">作業環境
-                                            <input type="file" name="photo_3" accept="image/*" className="hidden" onChange={handlePhotoChange(2)} />
-                                        </label>
-                                        {photosPreviews[2] && <img src={photosPreviews[2]} alt="photo3" className="offer-image-preview" />}
-                                    </div>
+                        {/* 会社画像（3枚） */}
+                        <div className="offer-form_row">
+                            <label>会社画像</label>
+                            <div className="offer-input_group offer-image-row">
+                                <div className="offer-image-item">
+                                    <label className="custom-upload">外観写真
+                                        <input type="file" name="photo_1" accept="image/*" className="hidden" onChange={handlePhotoChange(0)} />
+                                    </label>
+                                    {photosPreviews[0] && <img src={photosPreviews[0]} alt="photo1" className="offer-image-preview" />}
+                                </div>
+                                <div className="offer-image-item">
+                                    <label className="custom-upload">社内風景
+                                        <input type="file" name="photo_2" accept="image/*" className="hidden" onChange={handlePhotoChange(1)} />
+                                    </label>
+                                    {photosPreviews[1] && <img src={photosPreviews[1]} alt="photo2" className="offer-image-preview" />}
+                                </div>
+                                <div className="offer-image-item">
+                                    <label className="custom-upload">作業環境
+                                        <input type="file" name="photo_3" accept="image/*" className="hidden" onChange={handlePhotoChange(2)} />
+                                    </label>
+                                    {photosPreviews[2] && <img src={photosPreviews[2]} alt="photo3" className="offer-image-preview" />}
                                 </div>
                             </div>
+                        </div>
 
                         <div className="offer-form_row">
                             <label>所在地</label>
@@ -168,7 +177,7 @@ function Offer() {
                                 <input type="text" id="address_kana" name="address_kana" placeholder="住所ふりがな" />
                             </div>
                         </div>
-                    
+
                         <div className="offer-form_row">
                             <label>設立年・創業年 (任意)</label>
                             <div className="offer-input_group offer-date_inputs_container">
@@ -407,7 +416,7 @@ function Offer() {
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <div className="offer-button_group">
                         <button type="button" className="offer-prev_button" id="prev_button"> &lt;&lt; 前へ </button>

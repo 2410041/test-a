@@ -41,49 +41,52 @@ import C_NewReg from'./company/C_NewReg/C_NewReg.jsx';
 import C_Chat from './company/C_Chat/C_Chat.jsx';
 import C_Aplicant from './company/C_Applicant/C_Applicant.jsx';
 import TestMytype from './pages/TestMytype/TestMytype.jsx';
+import ContactListPage from './admin/pages/ContactListPage';
+import C_Userlist from './company/C_Userlist/C_Userlist.jsx';
 
 function App() {
-
   return (
-    <>
-      {<BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/Company" element={<Company />} />
-          <Route path="/Mypage" element={<Mypage />}/>
-          <Route path="/Faq" element={<Faq />}/>
-          <Route path="/Chat" element={<Chat />}/>
-          <Route path="/Resumeform" element={<Resumeform />}/>
-          <Route path="/Offer" element={<Offer />}/>
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Map" element={<Map />} />
-          <Route path="/Mytype" element={<Mytype />}/>
-          <Route path="/Test" element={<Test />} />
-          <Route path="/About" element={<About />} />
-          <Route path="/Terms" element={<Terms />} />
-          <Route path="/Privacy" element={<Privacy />} />
-          <Route path="/Favorite" element={<Favorite />} />
-          <Route path="/Resume" element={<Resume />} />
-          <Route path="/NewReg" element={<NewReg />} />
-          <Route path="/chat-api" element={<ChatAPIPage />} /> 
-          <Route path="/Testchat" element={<TestChat />} /> 
-          <Route path="/Jobmap" element={<Jobmap />} />
-          <Route path="/Admin/*" element={<GggAdmin />} />
-          <Route path="/Contact" element={<Contact />} />
-          <Route path="/Gas" element={<Gas />} />
-          <Route path="/apply/:id" element={<ApplyPage />} />
-          <Route path="/apply" element={<ApplyPage />} /> {/* id なしでも対応させたい場合 */}
-          <Route path="/ResumeBot" element={<ResumeBot />} />
-          <Route path="/C_Login" element={<C_Login />} />
-          <Route path="/C_Dashboard" element={<C_Dashboard />} />
-          <Route path="/C_NewReg" element={<C_NewReg />} />
-          <Route path="/C_Chat" element={<C_Chat />} />
-          <Route path="/C_Applicant" element={<C_Aplicant />} />
-          <Route path="/TestMytype" element={<TestMytype />} />
-        </Routes>
-      </BrowserRouter>}
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Company" element={<Company />} />
+        <Route path="/Mypage" element={<Mypage />}/>
+        <Route path="/Faq" element={<Faq />}/>
+        <Route path="/Chat" element={<Chat />}/>
+        <Route path="/Resumeform" element={<Resumeform />}/>
+        <Route path="/Offer" element={<Offer />}/>
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Map" element={<Map />} />
+        <Route path="/Mytype" element={<Mytype />}/>
+        <Route path="/Test" element={<Test />} />
+        <Route path="/About" element={<About />} />
+        <Route path="/Terms" element={<Terms />} />
+        <Route path="/Privacy" element={<Privacy />} />
+        <Route path="/Favorite" element={<Favorite />} />
+        <Route path="/Resume" element={<Resume />} />
+        <Route path="/NewReg" element={<NewReg />} />
+        <Route path="/chat-api" element={<ChatAPIPage />} /> 
+        <Route path="/Testchat" element={<TestChat />} /> 
+        <Route path="/Jobmap" element={<Jobmap />} />
+        <Route path="/Admin/*" element={<GggAdmin />} />
+        <Route path="/Contact" element={<Contact />} />
+        <Route path="/Gas" element={<Gas />} />
+        <Route path="/apply/:id" element={<ApplyPage />} />
+        <Route path="/apply" element={<ApplyPage />} /> {/* id なしでも対応させたい場合 */}
+        <Route path="/ResumeBot" element={<ResumeBot />} />
+        <Route path="/C_Login" element={<C_Login />} />
+        <Route path="/C_Dashboard" element={<C_Dashboard />} />
+        <Route path="/C_NewReg" element={<C_NewReg />} />
+        <Route path="/C_Chat" element={<C_Chat />} />
+        <Route path="/C_Applicant" element={<C_Aplicant />} />
+        <Route path="/TestMytype" element={<TestMytype />} />
+        {/* お問い合わせ管理 */}
+        <Route path="/Admin/contactus" element={<ContactListPage />} />
+        <Route path="/C_Userlist" element={<C_Userlist />} />
+      </Routes>
+    </BrowserRouter>
+  );
+   
 }
 
-export default App
+export default App;

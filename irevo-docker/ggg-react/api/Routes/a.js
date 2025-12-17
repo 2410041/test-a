@@ -1,82 +1,104 @@
-router.post("/company/login", async (req, res) => {
-    // フロントから送られる email / password を受け取る
-    const { email, password } = req.body;
+const express = require('express');
+const router = express.Router();
 
-    // 入力バリデーション（どちらか欠けていたらエラー）
-    if (!email || !password) {
-        return res.status(400).json({
-            success: false,
-            message: "メールアドレスとパスワードは必須です",
-        });
-    }
+const PREF_LIST = [
+    '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+    '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+    '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県',
+    '岐阜県', '静岡県', '愛知県', '三重県',
+    '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県',
+    '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+    '徳島県', '香川県', '愛媛県', '高知県',
+    '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'
+];
 
+function splitAddress(addr) {
+    if (!addr) return { prefecture: '', city: '', rest: '' };
+    const pref = PREF_LIST.find(p => addr.startsWith(p)) || '';
+    const remain = addr.slice(pref.length).trim();
+    const cityMatch = remain.match(/^.*?(市|区|町|村)/);
+    const city = cityMatch ? cityMatch[0] : '';
+    const rest = city ? remain.slice(city.length).trim() : remain;
+    return { prefecture: pref, city, rest };
+}
+
+router.get('/location', async (req, res) => {
     try {
-        // 入力メールアドレスと一致する企業を DB から取得（大小文字無視）
         const [rows] = await global.db.query(
-            `SELECT * FROM corporations WHERE LOWER(email) = LOWER(?) LIMIT 1`,
-            [email]
+            'SELECT id, location FROM Companies WHERE location IS NOT NULL AND location <> ""'
         );
-
-        // 一致する企業がなければログイン失敗
-        if (!rows || rows.length === 0) {
-            return res.status(401).json({
-                success: false,
-                message: "メールまたはパスワードが違います",
-            });
-        }
-
-        // 取得した企業レコード
-        const company = rows[0];
-
-        // パスワードが「bcryptでハッシュ化されているか」をチェック
-        // bcrypt のハッシュは "$2b$" で始まるため、これで判別できる
-        const passwordIsHashed = company.password.startsWith("$2b$");
-
-        // パスワード検証の結果を入れる変数
-        let isValidPassword;
-
-        // もしハッシュ化されているなら bcrypt で比較する
-        if (passwordIsHashed) {
-            // bcrypt の場合、パスワードはそのままでは比較できない
-            // bcrypt.compare(入力されたパスワード, DBに保存されているハッシュパスワード)
-            isValidPassword = await bcrypt.compare(password, company.password);
-        } else {
-            /* ▼ 平文パスワード（古いデータ用）のチェックユーザーが入力したパスワード（password）と
-                データベースに保存されているパスワード（company.password）をそのまま文字として比較する。
-                完全に一致したら true（正しいパスワード）、一致しなければ false（間違い）。 */
-            isValidPassword = (password === company.password);
-        }
-
-        // パスワード不一致 → 認証失敗
-        if (!isValidPassword) {
-            return res.status(401).json({
-                success: false,
-                message: "メールまたはパスワードが違います",
-            });
-        }
-
-        // セッションに企業情報を保存（ログイン成功）
-        req.session.company = { ...company };
-
-        // パスワードはセッションに保存しないように削除
-        delete req.session.company.password;
-
-        // クライアント側に返す安全な企業情報（password を除外）
-        const safeCompany = { ...company };
-        delete safeCompany.password;
-
-        // ログイン成功レスポンス
-        return res.json({
-            success: true,
-            company: safeCompany,
+        const data = rows.map(r => {
+            const s = splitAddress(r.location);
+            return {
+                id: r.id,
+                prefecture: s.prefecture,
+                city: s.city,
+                address_rest: s.rest,
+                full_address: r.location
+            };
         });
-
-    } catch (error) {
-        // サーバー内部エラー
-        console.error("Error in /company/login:", error);
-        return res.status(500).json({
-            success: false,
-            message: "server error",
-        });
+        res.json(data);
+    } catch (e) {
+        console.error('住所一覧取得エラー:', e);
+        res.status(500).json({ success: false, message: 'サーバーエラー' });
     }
 });
+
+router.get('/:id', async (req, res) => {
+    try {
+        const [rows] = await global.db.query('SELECT id, location FROM Companies WHERE id = ?', [req.params.id]);
+        if (!rows.length) return res.status(404).json({ success: false, message: 'not found' });
+        const s = splitAddress(rows[0].location);
+        res.json({
+            id: rows[0].id,
+            prefecture: s.prefecture,
+            city: s.city,
+            address_rest: s.rest,
+            full_address: rows[0].location
+        });
+    } catch (e) {
+        console.error('住所詳細取得エラー:', e);
+        res.status(500).json({ success: false, message: 'サーバーエラー' });
+    }
+});
+
+// 作成(=既存の会社に住所を設定): { company_id, full_address }
+router.post('/location', async (req, res) => {
+    try {
+        const { company_id, full_address } = req.params || {};
+        if (!company_id || !full_address) return res.status(400).json({ success: false, message: 'company_id/full_address 必須' });
+        const [exist] = await global.db.query('SELECT id FROM Companies WHERE id = ?', [company_id]);
+        if (!exist.length) return res.status(404).json({ success: false, message: 'company not found' });
+        await global.db.query('UPDATE Companies SET location = ? WHERE id = ?', [full_address, company_id]);
+        res.json({ id: Number(company_id), full_address });
+    } catch (e) {
+        console.error('住所作成エラー:', e);
+        res.status(500).json({ success: false, message: 'サーバーエラー' });
+    }
+});
+
+// 更新(=住所文字列の変更): id は company_id
+router.put('/location/:id', async (req, res) => {
+    try {
+        const { full_address } = req.params || {};
+        if (full_address === undefined) return res.status(400).json({ success: false, message: 'full_address 必須' });
+        await global.db.query('UPDATE Companies SET location = ? WHERE id = ?', [full_address, req.params.id]);
+        res.json({ id: Number(req.params.id), full_address });
+    } catch (e) {
+        console.error('住所更新エラー:', e);
+        res.status(500).json({ success: false, message: 'サーバーエラー' });
+    }
+});
+
+// 削除(=住所をNULL化): id は company_id
+router.delete('/location/:id', async (req, res) => {
+    try {
+        await global.db.query('UPDATE Companies SET location = NULL WHERE id = ?', [req.params.id]);
+        res.json({ success: true, id: Number(req.params.id) });
+    } catch (e) {
+        console.error('住所削除エラー:', e);
+        res.status(500).json({ success: false, message: 'サーバーエラー' });
+    }
+});
+
+module.exports = router;

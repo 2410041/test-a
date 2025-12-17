@@ -1,3 +1,28 @@
+.skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-chip {
+    padding: 6px 12px;
+    background-color: #e6f0ff;
+    color: #0047ab;
+    border-radius: 999px;
+    font-size: 0.9rem;
+}
+
+
+.skill-tag {
+    display: inline-block;
+    background: #e8f0ff;
+    color: #0055cc;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin: 3px;
+    font-size: 0.9em;
+}
+
 /* 既存のスタイルを確認・修正 */
 
 /* bodyとhtmlのマージン・パディングをリセット */
@@ -13,13 +38,22 @@ body {
     padding: 0;
 }
 
+/* When a page adds `body.no-scroll` we prevent page scrolling */
+body.no-scroll,
+#root.no-scroll {
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
 /* containerの修正 */
 .container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw; /* 追加: 全幅を確保 */
-    max-width: 100%; /* 追加: はみ出し防止 */
+    width: 100vw;
+    /* 追加: 全幅を確保 */
+    max-width: 100%;
+    /* 追加: はみ出し防止 */
 }
 
 /* myMainの修正 */
@@ -27,7 +61,8 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* 追加: 横スクロール防止 */
+    overflow-x: hidden;
+    /* 追加: 横スクロール防止 */
 }
 
 /* header-filtersの修正 */
@@ -38,32 +73,43 @@ body {
     border-bottom: 1px solid #ddd;
     gap: 10px;
     align-items: center;
-    width: 100%; /* 追加 */
-    margin: 0; /* 追加 */
-    box-sizing: border-box; /* 追加 */
+    width: 100%;
+    /* 追加 */
+    margin: 0;
+    /* 追加 */
+    box-sizing: border-box;
+    /* 追加 */
 }
 
 .dropdown-wrapper {
-    flex-shrink: 0; /* ドロップダウンが縮まないようにする */
+    flex-shrink: 0;
+    /* ドロップダウンが縮まないようにする */
 }
 
 .dropdown {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    min-width: 180px; /* 地域と職種の幅を統一 */
-    width: 180px; /* 固定幅で統一 */
-    box-sizing: border-box; /* 追加 */
+    min-width: 180px;
+    /* 地域と職種の幅を統一 */
+    width: 180px;
+    /* 固定幅で統一 */
+    box-sizing: border-box;
+    /* 追加 */
 }
+
 /* margin-left: auto; 検索ボックスを右に寄せる */
 
 .content {
     display: flex;
     flex: 1;
     overflow: hidden;
-    width: 100%; /* 追加 */
-    margin: 0; /* 追加 */
-    padding: 0; /* 追加 */
+    width: 100%;
+    /* 追加 */
+    margin: 0;
+    /* 追加 */
+    padding: 0;
+    /* 追加 */
 }
 
 .left-panel {
@@ -72,8 +118,11 @@ body {
     background-color: #fff;
     border-right: 1px solid #ddd;
     overflow-y: auto;
-    margin: 0; /* 追加 */
-    box-sizing: border-box; /* 追加 */
+    margin: 0;
+    /* 追加 */
+    box-sizing: border-box;
+    /* 追加 */
+    max-height: 83vh;
 }
 
 .company-card {
@@ -90,7 +139,8 @@ body {
 }
 
 .company-card.selected {
-    background-color: #ffffcc; /* 選択されたカードの背景色 */
+    background-color: #ffffcc;
+    /* 選択されたカードの背景色 */
     border-color: #ffeb3b;
 }
 
@@ -104,12 +154,16 @@ body {
 }
 
 .right-panel {
-    flex: 2; /* 右パネルは左パネルの2倍の幅 */
+    flex: 2;
+    /* 右パネルは左パネルの2倍の幅 */
     padding: 20px;
     background-color: #fff;
     overflow-y: auto;
-    margin: 0; /* 追加 */
-    box-sizing: border-box; /* 追加 */
+    margin: 0;
+    /* 追加 */
+    box-sizing: border-box;
+    /* 追加 */
+    max-height: 83vh;
 }
 
 /* company-detail-cardの修正 */
@@ -119,9 +173,12 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    margin: 0; /* 追加 */
-    width: 100%; /* 追加 */
-    box-sizing: border-box; /* 追加 */
+    margin: 0;
+    /* 追加 */
+    width: 100%;
+    /* 追加 */
+    box-sizing: border-box;
+    /* 追加 */
 }
 
 /* ヘッダー部分 - 会社名とロゴ */
@@ -135,7 +192,8 @@ body {
 .company-header-content {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    justify-content: space-between;
 }
 
 .company-logo {
@@ -181,9 +239,12 @@ body {
 /* メインコンテンツ部分 */
 .company-content {
     padding: 20px;
-    margin: 0; /* 追加 */
-    width: 100%; /* 追加 */
-    box-sizing: border-box; /* 追加 */
+    margin: 0;
+    /* 追加 */
+    width: 100%;
+    /* 追加 */
+    box-sizing: border-box;
+    /* 追加 */
 }
 
 /* 基本情報セクション */
@@ -299,76 +360,197 @@ body {
 @media (max-width: 768px) {
     .company-header-content {
         flex-direction: column;
-        text-align: center;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .header-actions {
+        order: -1;
+        /* ボタンを上に移動 */
+        width: 100%;
+        justify-content: center;
         gap: 16px;
     }
-    
+
     .company-logo {
         width: 60px;
         height: 60px;
     }
-    
+
     .company-name {
         font-size: 1.5em;
     }
-    
+
     .detail-grid {
         grid-template-columns: 1fr;
         gap: 8px;
     }
-    
+
     .detail-label {
         font-size: 0.9em;
         margin-bottom: 4px;
     }
-    
+
     .photo-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .map-container {
         height: 250px;
     }
+
+    .modern-chat-button,
+    .modern-apply-button {
+        flex: 1;
+        max-width: 160px;
+        padding: 14px 18px;
+        font-size: 13px;
+        min-width: 120px;
+    }
 }
 
-.search-form {
+@media (max-width: 480px) {
+    .header-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .modern-chat-button,
+    .modern-apply-button {
+        width: 100%;
+        max-width: none;
+        padding: 16px 24px;
+        font-size: 14px;
+    }
+}
+
+/* 古いボタンスタイルを無効化 */
+.action-buttons-container {
+    display: none;
+}
+
+/* 古いボタンスタイルを削除し、新しいスタイルに変更 */
+
+/* ヘッダー部分の調整 */
+.company-header-content {
     display: flex;
     align-items: center;
-    gap: 0 10px;
+    gap: 24px;
+    justify-content: space-between;
 }
 
-.search-form label {
-    width: 250px;
+.company-title {
+    flex: 1;
 }
 
-.search-form input {
-    width: 100%;
-    height: 34px;
-    padding: 1px 5px 1px 8px;
-    border: 1px solid #999999;
-    box-sizing: border-box;
-    color: #000;
-    outline: none;
-}
-
-.search-form button {
+/* ヘッダー内アクションボタンエリア */
+.header-actions {
     display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* モダンボタンの共通スタイル */
+.modern-chat-button,
+.modern-apply-button {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
-    width: 30%;
-    max-width: 140px;
-    height: 34px;
+    padding: 14px 24px;
     border: none;
-    background-color: #4070ff;
-    color: #fff;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    min-width: 140px;
+    font-family: sans-serif;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
-.search-form button::before {
-    width: 14px;
-    height: 14px;
-    margin-right: 5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z' fill='%23fff'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    content: '';
+/* チャットボタン - グレー系で控えめ */
+.modern-chat-button {
+    background: #f8f9fa;
+    color: #495057;
+    border: 2px solid #dee2e6;
+}
+
+.modern-chat-button:hover {
+    background: #e9ecef;
+    color: #343a40;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 応募ボタン - 青系で目立つ */
+.modern-apply-button {
+    background: #007bff;
+    color: white;
+    border: 2px solid #007bff;
+}
+
+.modern-apply-button:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+}
+
+.modern-chat-button:active,
+.modern-apply-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .company-header-content {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .header-actions {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .modern-chat-button,
+    .modern-apply-button {
+        flex: 1;
+        max-width: 160px;
+        padding: 12px 20px;
+        font-size: 14px;
+        min-width: 130px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .modern-chat-button,
+    .modern-apply-button {
+        width: 100%;
+        max-width: none;
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+}
+
+/* 古い絵文字関連スタイルを削除 */
+.btn-icon,
+.btn-text {
+    display: none;
 }

@@ -13,7 +13,7 @@ import Image3 from '../Mytype/Friendly.png';
 import Image4 from '../Mytype/Creative.png';
 import Image5 from '../Mytype/Competitive.png';
 
-function Mypage() {
+function Mypage({ viewUser = null }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [scores, setScores] = useState(null); // ← 追加（性格スコア）
@@ -26,6 +26,18 @@ function Mypage() {
     // チャート描画部分は不要なので useRef も削除
     const [personalityType, setPersonalityType] = useState(null); // ← 追加（性格タイプ）
     const [loadingChart, setLoadingChart] = useState(true); // データ取得中フラグ
+
+    // 追加: 資格・スキルのマッチング結果を保持するstate
+    const [skillMatches, setSkillMatches] = useState([]);
+    // 追加: スキル情報取得中かどうかのフラグ
+    const [loadingSkills, setLoadingSkills] = useState(false);
+    // 追加: スキル取得に関するエラーメッセージ
+    const [skillError, setSkillError] = useState(null);
+
+    const [compareCompany, setCompareCompany] = useState('');
+
+    // 追加: Company画面で選択した求人IDを比較対象にする（localStorageから取得）
+    const [compareJobOfferId, setCompareJobOfferId] = useState(null);
 
     // 各カテゴリごとの詳細情報
     const typeDescriptions = {
@@ -65,6 +77,7 @@ function Mypage() {
             relationships: "お互いを高め合える関係が理想的です。",
         },
     };
+
     // DBからタイプを取得
     useEffect(() => {
         if (!user?.id) return;
@@ -72,7 +85,7 @@ function Mypage() {
         const fetchPersonality = async () => {
             try {
                 // 変更: サーバー側の /chart/:userId に合わせて取得（返り値は配列 row を想定）
-                const res = await axios.get(`http://15.152.5.110:3030/chart/chart/${user.id}`, { withCredentials: true });
+                const res = await axios.get(`http://localhost:3030/chart/chart/${user.id}`, { withCredentials: true });
                 console.log('[Mypage] chart GET response:', res.data);
 
                 // 安全に rows を取り出す
@@ -118,7 +131,7 @@ function Mypage() {
 
                 // chart_title があればタイプ名として保存（必要なら使う）
                 if (item.chart_title) setPersonalityType(item.chart_title);
-             } catch (err) {
+            } catch (err) {
                 console.error("チャートデータ取得エラー:", err);
             } finally {
                 setLoadingChart(false);
@@ -129,9 +142,17 @@ function Mypage() {
     }, [user]);
 
     useEffect(() => {
+        // If a viewUser prop is provided, show that user's page instead of whoami.
+        if (viewUser) {
+            // Normalize field names that Mypage expects (u_nick etc.)
+            setUser(viewUser);
+            setLoading(false);
+            return;
+        }
+
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://15.152.5.110:3030/log/whoami", {
+                const res = await axios.get("http://localhost:3030/log/whoami", {
                     withCredentials: true
                 });
                 if (res.data.loggedIn) {
@@ -149,12 +170,21 @@ function Mypage() {
             }
         };
         fetchUser();
-    }, [navigate]);
+    }, [navigate, viewUser]);
+
+    // 追加: 企業詳細(Company.jsx)で選択した求人IDを受け取る
+    useEffect(() => {
+        const stored = localStorage.getItem('compareJobOfferId');
+        if (stored) {
+            const n = Number(stored);
+            setCompareJobOfferId(Number.isFinite(n) ? n : stored);
+        }
+    }, []);
 
     // チャート描画
     useEffect(() => {
         if (!user?.id) return;
-        axios.get(`http://15.152.5.110:3030/chart/chart/${user.id}`)
+        axios.get(`http://localhost:3030/chart/chart/${user.id}`)
             .then(res => {
                 const chartData = Array.isArray(res.data) && res.data.length > 0 ? res.data[0].chart_text : null;
                 console.log("チャートデータ取得成功:", chartData);
@@ -165,18 +195,77 @@ function Mypage() {
             });
     }, [user]);
 
+    // 追加: skillMaster / userSkill / companySkill を使ったスキルマッチング結果を取得
+    useEffect(() => {
+        if (!user?.id) return;
+
+        // Company.jsx側で localStorage に保存した compareJobOfferId を優先して使う
+        const jobOfferId = compareJobOfferId;
+
+        // 比較対象が無ければ何もしない（マイページ単体表示時にエラーを出さない）
+        if (!jobOfferId) return;
+
+        const fetchSkillMatches = async () => {
+            // 追加: API呼び出し前にローディング状態とエラーを初期化
+            setLoadingSkills(true);
+            setSkillError(null);
+
+            try {
+                const res = await axios.get(
+                    "http://localhost:3030/mypage/skillMatch", {
+                    params: {
+                        userId: user.id,
+                        jobOfferId: 4,
+                    },
+                    withCredentials: true,
+                });
+
+                console.log("スキルマッチングAPIレスポンス:", res.data);
+
+                // 比較企業名
+                setCompareCompany(res.data.companyName || '');
+
+                // スキル配列（防御）
+                const rows = Array.isArray(res.data?.skills)
+                    ? res.data.skills
+                    : [];
+
+                setSkillMatches(rows);
+
+            } catch (err) {
+                console.error("スキルマッチング取得エラー:", err);
+                setSkillError("スキル情報の取得に失敗しました。");
+                setSkillMatches([]);
+                setCompareCompany('');
+            } finally {
+                setLoadingSkills(false);
+            }
+        };
+
+        fetchSkillMatches();
+    }, [user, compareJobOfferId]);
+
+    // このページのみスクロール禁止（マウント時に body にクラス追加、アンマウント時に削除）
+    useEffect(() => {
+        document.body.classList.add('no-scroll');
+        document.getElementById('root')?.classList.add('no-scroll');
+        return () => {
+            document.body.classList.remove('no-scroll');
+            document.getElementById('root')?.classList.remove('no-scroll');
+        };
+    }, []);
+
     if (loading) {
         return <div>読み込み中...</div>;
     }
 
     return (
-        <>
+        <div className="mypage-root">
             <HamburgerMenu />
-        
             <div className='main_dai'><strong>マイページ</strong></div>
 
-            <div className="mypage_yoko">
-                {/* プロフィールカード */}
+            {/* プロフィールカード */}
+            <div className='my_card_around'>
                 <div className="my_card my_profile_card">
                     <div className="my_icon">
                         <img src="./images/gyo.JPG" alt="" className="my_img" />
@@ -223,20 +312,54 @@ function Mypage() {
 
                 {/* 資格カード */}
                 <div className="my_card my_qualification_card">
-                    <h2 className="my_qu_title">資格・スキル</h2>
-                    <ul className="my_qu_ul">
-                        <li>TOEIC 800</li>
-                        <li>基本情報技術者</li>
-                        <li>日商簿記2級</li>
-                    </ul>
+                    <h2 className="my_qu_title">
+                        資格・スキル
+                        {compareCompany && (
+                            <span className="compare-company">
+                                （{compareCompany}）
+                            </span>
+                        )}
+                    </h2>
+
+                    {/* 追加: スキルマッチング結果の状態に応じて表示を切り替え */}
+                    {loadingSkills ? (
+                        <p className="my_qu_loading">スキル情報を読み込み中です...</p>
+                    ) : skillError ? (
+                        <p className="my_qu_error">{skillError}</p>
+                    ) : skillMatches && skillMatches.length > 0 ? (
+                        <ul className="my_qu_ul">
+                            {skillMatches.flatMap((item, index) =>
+                                String(item.skillName || '')
+                                    .split(',')
+                                    .map((skill, i) => skill.trim())
+                                    .filter(Boolean)
+                                    .map((skill, i) => (
+                                        <li key={`${index}-${i}`}>
+                                            <span className={item.matched ? "skill-ok" : "skill-ng"}>
+                                                {item.matched ? "✔" : "✖"}
+                                            </span>
+                                            {" "}
+                                            {skill}
+                                        </li>
+                                    ))
+                            )}
+                        </ul>
+                    ) : (
+                        <ul className="my_qu_ul">
+                            {/* 追加: マッチング結果がまだない場合は従来の固定資格を表示 */}
+                            <li>TOEIC 800</li>
+                            <li>基本情報技術者</li>
+                            <li>日商簿記2級</li>
+                        </ul>
+                    )}
                 </div>
 
                 {/* タブカード */}
                 <div className="my_card my_tab_card">
-                    <Tabnav user={user}/>
+                    <Tabnav user={user} />
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

@@ -1,0 +1,2 @@
+allow_origin: ''
+cors_policy_mode: all

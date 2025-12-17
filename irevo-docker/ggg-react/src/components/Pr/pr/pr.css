@@ -47,6 +47,12 @@
     color: #0056BB;
 }
 
+/* モーダル内では編集トグルを非表示にする（重要） */
+.cap-modal .edit-toggle-icon,
+.cap-modal-overlay .edit-toggle-icon {
+    display: none !important;
+}
+
 .display-mode .skill-list {
     list-style: none;
     padding: 0;

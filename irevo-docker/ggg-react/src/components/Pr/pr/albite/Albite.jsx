@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../pr.css' // スタイルは別途作成
-const Albite = () => {
+
+// 変更: user を受け取るようにし、user.id を優先して使う（無ければ window.__USER_ID__ をフォールバック）
+const Albite = ({ user }) => {
+    const userId = user?.id ?? (window?.__USER_ID__ ?? null);
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [achievements, setAchievements] = useState([]);
     const [editAchievements, setEditAchievements] = useState([]);
@@ -9,6 +13,35 @@ const Albite = () => {
         // 初期表示時や achievements が変更されたときに編集用実績を同期
         setEditAchievements(JSON.parse(JSON.stringify(achievements)));
     }, [achievements, isEditMode]);
+
+    // --- 追加: server から part_time を取得して初期表示 ---
+    useEffect(() => {
+        if (!userId) return;
+        const fetchPartTime = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/part-time?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const partText = data?.part_time ?? '';
+                if (!partText) {
+                    setAchievements([]);
+                    setEditAchievements([]);
+                    return;
+                }
+                const items = String(partText).split(/\r?\n/).map(s => ({ theme: '', details: s.trim() })).filter(i => i.details !== '');
+                setAchievements(items);
+                setEditAchievements(JSON.parse(JSON.stringify(items)));
+            } catch (err) {
+                console.error('part-time fetch error', err);
+            }
+        };
+        fetchPartTime();
+    }, [userId]);
 
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
@@ -33,10 +66,39 @@ const Albite = () => {
         setEditAchievements(updated);
     };
 
-    const handleRegister = () => {
-        // 空のフィールドを持つ実績を除外して登録
-        const currentAchievements = editAchievements.filter(ach => ach.theme.trim() || ach.details.trim());
-        setAchievements(currentAchievements);
+    // --- 変更: サーバに保存（part_time カラムへ一つの文字列として保存） ---
+    const handleRegister = async () => {
+        const current = editAchievements.map(a => (a.details || '').trim()).filter(Boolean);
+        const partText = current.join('\n');
+
+        if (!userId) {
+            console.warn('userId が無いため送信しません');
+            setAchievements(current.map(s => ({ theme: '', details: s })));
+            setIsEditMode(false);
+            return;
+        }
+
+        const payload = { user_id: userId, part_time: partText };
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/part-time', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            } else {
+                console.log('保存成功:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
+
+        setAchievements(current.map(s => ({ theme: '', details: s })));
         setIsEditMode(false);
     };
 
@@ -45,11 +107,10 @@ const Albite = () => {
     };
 
     return (
-        <div className="experience-container"> {/* 同じコンテナスタイルを再利用 */}
+        <div className="experience-container">
             <div className={`section-header ${isEditMode ? 'edit-mode' : 'display-mode'}`}>
                 <div className="section-title">
                     アルバイト経験
-                    {/* <span className="recommend-badge">入力推奨</span> */}
                 </div>
                 {!isEditMode && (
                     <span className="material-icons edit-toggle-icon" onClick={handleEditToggle}>edit</span>
@@ -64,8 +125,6 @@ const Albite = () => {
                         ) : (
                             achievements.map((achievement, index) => (
                                 <li key={index} className="achievement-item">
-                                    {/* <div className="achievement-theme"><strong>:</strong> {achievement.theme || '未入力'}</div> */}
-                                    <div className="achievement-details-wrapper"><strong>詳細:</strong></div>
                                     <div className="achievement-details">{achievement.details || '未入力'}</div>
                                 </li>
                             ))
@@ -77,17 +136,6 @@ const Albite = () => {
                     <div className="dynamic-achievement-inputs">
                         {editAchievements.map((achievement, index) => (
                             <div key={index} className="achievement-input-row">
-                                {/* <div>
-                                    <label htmlFor={`theme-${index}`}>テーマ:</label>
-                                    <input
-                                        type="text"
-                                        id={`theme-${index}`}
-                                        className="achievement-theme-input"
-                                        placeholder="研究テーマを入力してください"
-                                        value={achievement.theme}
-                                        onChange={(e) => handleAchievementChange(index, 'theme', e.target.value)}
-                                    />
-                                </div> */}
                                 <div>
                                     <label htmlFor={`details-${index}`}>詳細:</label>
                                     <textarea

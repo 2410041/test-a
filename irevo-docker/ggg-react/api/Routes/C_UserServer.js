@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 // POST /newUser
 router.post('/newUser', async (req, res) => {
     try {
-        const payload = req.body || {};
+        const payload = req.params || {};
         // 受信ペイロードを早期にログ（デバッグ用）
         console.log('C_UserServer: received payload keys', Object.keys(payload));
         console.log('C_UserServer: received payload sample', {
@@ -27,16 +27,28 @@ router.post('/newUser', async (req, res) => {
 
         if (!companyName) {
             console.warn('C_UserServer: missing company name. payload keys:', Object.keys(payload));
-            return res.status(400).json({ success: false, message: '必須項目が不足しています: c_name (会社名) が必要です' });
+            return res.status(400).json({
+                success: false,
+                message: '必須項目が不足しています: c_name (会社名) が必要です'
+            });
         }
         if (!passwordRaw) {
-            return res.status(400).json({ success: false, message: '必須項目が不足しています: c_Password (パスワード) が必要です' });
+            return res.status(400).json({
+                success: false,
+                message: '必須項目が不足しています: c_Password (パスワード) が必要です'
+            });
         }
         if (!emailVal) {
-            return res.status(400).json({ success: false, message: '必須項目が不足しています: c_Email (メール) が必要です' });
+            return res.status(400).json({
+                success: false,
+                message: '必須項目が不足しています: c_Email (メール) が必要です'
+            });
         }
         if (!phoneVal) {
-            return res.status(400).json({ success: false, message: '必須項目が不足しています: c_Contact (電話番号) が必要です' });
+            return res.status(400).json({
+                success: false,
+                message: '必須項目が不足しています: c_Contact (電話番号) が必要です'
+            });
         }
 
         const insertCols = ['company_name', 'representative_name', 'phone_number', 'email', 'password'];
@@ -64,10 +76,10 @@ router.post('/newUser', async (req, res) => {
         try {
             [result] = await global.db.query(sql, insertVals);
         } catch (sqlErr) {
-            console.error('C_UserServer SQL error:', sqlErr);
+            console.error('C_UserServer SQL error:', sqlErr && sqlErr.stack ? sqlErr.stack : sqlErr);
             console.error('Failed SQL:', sql);
             console.error('Values:', insertVals);
-            return res.status(500).json({ success: false, message: 'DBエラー', error: sqlErr.message });
+            return res.status(500).json({ success: false, message: 'DBエラー', error: sqlErr && sqlErr.message ? sqlErr.message : String(sqlErr) });
         }
 
         // セッションを作成して登録直後にログイン済みにする
@@ -84,10 +96,18 @@ router.post('/newUser', async (req, res) => {
             // セッション作成に失敗しても登録自体は成功しているため、クライアントには成功を返す
         }
 
-        return res.status(201).json({ success: true, id: result.insertId, message: '登録を受け付けました' });
+        return res.status(201).json({
+            success: true,
+            id: result.insertId,
+            message: '登録を受け付けました'
+        });
     } catch (err) {
         console.error('newUser error:', err);
-        return res.status(500).json({ success: false, message: 'サーバーエラー', error: err.message });
+        return res.status(500).json({
+            success: false,
+            message: 'サーバーエラー',
+            error: err.message
+        });
     }
 });
 

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../pr.css' // スタイルは別途作成
-const Content = () => {
+
+const Content = ({ user }) => {
+    const userId = user?.id ?? null;
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [achievements, setAchievements] = useState([]);
     const [editAchievements, setEditAchievements] = useState([]);
@@ -10,10 +13,49 @@ const Content = () => {
         setEditAchievements(JSON.parse(JSON.stringify(achievements)));
     }, [achievements, isEditMode]);
 
+    // サーバから Research_Contentrch を取得して初期表示する
+    useEffect(() => {
+        if (!userId) return;
+        const fetchResearch = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/Research_Contentrch?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const programs = data?.programs ?? [];
+
+                // programs を [{ theme, details }, ...] の形に正規化
+                const normalized = programs.map(p => {
+                    if (typeof p === 'string') {
+                        try {
+                            const parsed = JSON.parse(p);
+                            if (Array.isArray(parsed)) return parsed[0] || { theme: '', details: '' };
+                            if (parsed && typeof parsed === 'object') return { theme: parsed.research ?? '', details: parsed.content ?? '' };
+                        } catch (e) {
+                            const parts = p.split(',');
+                            return { theme: (parts[0] || '').trim(), details: (parts[1] || '').trim() };
+                        }
+                    }
+                    if (p && typeof p === 'object') return { theme: p.research ?? p.theme ?? '', details: p.content ?? p.details ?? '' };
+                    return { theme: '', details: '' };
+                });
+
+                setAchievements(normalized);
+                setEditAchievements(JSON.parse(JSON.stringify(normalized)));
+            } catch (err) {
+                console.error('Research_Contentrch fetch error', err);
+            }
+        };
+        fetchResearch();
+    }, [userId]);
+
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
         if (!isEditMode) {
-            // 編集モードに入る時、現在の登録実績を編集用にコピー
             setEditAchievements(achievements.length === 0 ? [{ theme: '', details: '' }] : JSON.parse(JSON.stringify(achievements)));
         }
     };
@@ -33,10 +75,53 @@ const Content = () => {
         setEditAchievements(updated);
     };
 
-    const handleRegister = () => {
+    // サーバに保存（空なら削除指示）
+    const handleRegister = async () => {
         // 空のフィールドを持つ実績を除外して登録
-        const currentAchievements = editAchievements.filter(ach => ach.theme.trim() || ach.details.trim());
-        setAchievements(currentAchievements);
+        const current = editAchievements
+            .map(ach => ({ research: (ach.theme || '').trim(), content: (ach.details || '').trim() }))
+            .filter(a => a.research !== '' || a.content !== '');
+
+        const payload = { user_id: userId };
+
+        if (current.length > 0) {
+            // 保存方法: Research カラム = カンマ区切り研究テーマ、Content カラム = カンマ区切り詳細
+            payload.research = current.map(a => a.research).join(',');
+            payload.content = current.map(a => a.content).join(',');
+            payload.programs = current.map(a => ({ research: a.research, content: a.content }));
+        } else {
+            // 空データ送信でサーバ側が該当 user_id のレコードを削除する
+            payload.programs = [];
+            payload.research = '';
+            payload.content = '';
+        }
+
+        if (!userId) {
+            console.warn('userIdが無いため送信しません');
+            setAchievements(current.map(a => ({ theme: a.research, details: a.content })));
+            setIsEditMode(false);
+            return;
+        }
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/Research_Contentrch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            } else {
+                console.log('保存成功:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
+
+        setAchievements(current.map(a => ({ theme: a.research, details: a.content })));
         setIsEditMode(false);
     };
 

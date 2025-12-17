@@ -7,9 +7,15 @@ import Map from '../../pages/Map/Map.jsx'; // Mapコンポーネントをイン�
 
 
 export default function Company() {
+    const [jobOffers, setJobOffers] = useState([]);
+    const [selectedJobOffer, setSelectedJobOffer] = useState(null);
     const navigate = useNavigate(); // 追加：navigate を定義
+    const [requiredSkills, setRequiredSkills] = useState([]);
     const [items, setItems] = useState([]);
-    const [URL, setSearchURL] = useState('http://15.152.5.110:3030/company/company'); // 検索URLを保存するstate
+    const [jobSkills, setJobSkills] = useState([]);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [URL, setSearchURL] = useState('http://localhost:3030/company/company'); // 検索URLを保存するstate
     // console.log(URL, setSearchURL);
     const [filters, setFilters] = useState({
         prefecture: '',
@@ -33,7 +39,7 @@ export default function Company() {
         console.log('検索条件:', { prefecture, job, employee_size, salary, keyword });
 
         // URL に employee_size と salary（および keyword）を含める
-        const URL = `http://15.152.5.110:3030/company/company_filter?prefecture=${encodeURIComponent(prefecture)}&job=${encodeURIComponent(job)}&employee_size=${encodeURIComponent(employee_size)}&salary=${encodeURIComponent(salary)}&keyword=${encodeURIComponent(keyword)}`;
+        const URL = `http://localhost:3030/company/company_filter?prefecture=${encodeURIComponent(prefecture)}&job=${encodeURIComponent(job)}&employee_size=${encodeURIComponent(employee_size)}&salary=${encodeURIComponent(salary)}&keyword=${encodeURIComponent(keyword)}`;
 
         console.log(URL);
 
@@ -41,8 +47,33 @@ export default function Company() {
     }
 
     useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const res = await axios.get("http://localhost:3030/log/whoami", {
+                    withCredentials: true
+                });
+
+                if (res.data.loggedIn) {
+                    setUser(res.data.user);
+                    console.log("ユーザー情報:", res.data);
+                } else {
+                    navigate("/login");
+                }
+            } catch (err) {
+                console.error("ユーザー情報取得エラー:", err);
+                navigate("/login");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
         axios.get(URL)
             .then(response => {
+                console.log("求人一覧 items:", response.data);
                 setItems(response.data);
             })
             .catch(error => {
@@ -64,14 +95,14 @@ export default function Company() {
     // // --- チャットに追加ボタンのonClick例 ---
     // const handleAddChat = async () => {
     //     // 1. チャット開始API
-    //     await axios.post("http://15.152.5.110:3030/user/user_chat/start", {
+    //     await axios.post("http://localhost:3030/user/user_chat/start", {
     //         user_id: user.id,
     //         Companies_id: selectedCompany.id
     //     });
     // 2. 企業一覧再取得（Testchat.jsx側で管理している場合は、
     //    追加後にTestchat.jsxの企業一覧取得useEffectが走るようにしてください）
     //    ここで直接setCompaniesする場合は、下記のように取得できます。
-    //    const res = await axios.get("http://15.152.5.110:3030/user_chat/companies", {
+    //    const res = await axios.get("http://localhost:3030/user_chat/companies", {
     //        params: { user_id: user.id }
     //    });
     //    setCompanies(res.data.map(c => ({ id: c.id, name: c.name })));
@@ -79,28 +110,85 @@ export default function Company() {
     // setSelectedCompany({ id: selectedCompany.id, name: selectedCompany.name });
     // };
 
-    // 選択した会社の詳細をサーバーから取得して selectedCompany にマージする
     useEffect(() => {
         const fetchDetail = async () => {
-            if (!selectedCompany?.id) return;
+            const companyId = selectedCompany?.id;
+            if (!companyId || !user?.id) return;
+
+            console.log('fetching company detail companyId=', companyId);
+
             try {
-                const res = await axios.get('http://15.152.5.110:3030/company/company_detail', { params: { company_id: selectedCompany.id } });
-                const data = res.data || {};
-                // マージして selectedCompany を更新（photo_2 / photo_3 等が含まれる想定）
-                setSelectedCompany(prev => ({ ...(prev || {}), ...data }));
-            } catch (e) {
-                // 詳細ログを出す（response/request/message）
-                if (e.response) {
-                    console.error('company_detail 取得失敗: response', e.response.status, e.response.data);
-                } else if (e.request) {
-                    console.error('company_detail 取得失敗: no response, request sent', e.request);
+                // 会社詳細取得
+                const companyRes = await axios.get(
+                    `http://localhost:3030/company/${companyId}`
+                );
+
+                setSelectedCompany(prev => ({
+                    ...(prev || {}),
+                    ...companyRes.data
+                }));
+
+                // 求人一覧取得（company_id）
+                const jobListRes = await axios.get(
+                    'http://localhost:3030/jobOffer', {
+                    params: {
+                        company_id: companyId
+                    }
+                });
+                const jobOffers = jobListRes.data || [];
+                setJobOffers(jobOffers);
+
+                // 求人が1件もない場合は終了
+                if (jobOffers.length === 0) {
+                    setJobSkills([]);
+                    setRequiredSkills([]);
+                    return;
+                }
+
+                // 表示対象の求人を決定
+                const jobOfferId = jobOffers[0].id;
+                setSelectedJobOffer(jobOffers[0]);
+
+                // 求人スキル取得
+                const skillRes = await axios.get(
+                    `http://localhost:3030/jobOffer/${jobOfferId}/skills`
+                );
+
+                setJobSkills(skillRes.data.skills || []);
+
+                // ユーザー × 求人 スキルマッチ
+                const matchRes = await axios.get(
+                    'http://localhost:3030/mypage/skillMatch', {
+                    params: {
+                        jobOfferId,
+                        userId: user.id
+                    }
+                });
+                setRequiredSkills(matchRes.data.skills || []);
+            } catch (error) {
+                if (error.response) {
+                    console.error(
+                        '詳細取得エラー:',
+                        error.response.status,
+                        error.response.data
+                    );
                 } else {
-                    console.error('company_detail 取得失敗:', e.message);
+                    console.error('通信エラー:', error.message);
                 }
             }
         };
         fetchDetail();
-    }, [selectedCompany?.id]);
+    }, [selectedCompany?.id, user?.id]);
+
+    // このページのみスクロール禁止にする（マウント時に body にクラス追加、アンマウント時に削除）
+    useEffect(() => {
+        document.body.classList.add('no-scroll');
+        document.getElementById('root')?.classList.add('no-scroll');
+        return () => {
+            document.body.classList.remove('no-scroll');
+            document.getElementById('root')?.classList.remove('no-scroll');
+        };
+    }, []);
 
     // ヘルパー: 配列 / JSON配列文字列 / 単一URL のいずれでも受け取り、先頭の画像URLを返す
     const pickFirstImage = (v) => {
@@ -130,6 +218,18 @@ export default function Company() {
         const withComma = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         return dec ? `${withComma}.${dec}` : withComma;
     };
+
+    // 必要なスキルを配列化（カンマ区切り対応）
+    const skillsArray =
+        typeof selectedCompany?.required_skills === "string"
+            ? selectedCompany.required_skills
+                .split(", ")
+                .map(skill => skill.trim())
+                .filter(Boolean)
+            : [];
+
+    // console.log("selectedCompany.required_skills =", selectedCompany?.required_skills);
+    // console.log("selectedCompany keys =", selectedCompany ? Object.keys(selectedCompany) : null);
 
     return (
         <>
@@ -321,10 +421,10 @@ export default function Company() {
 
                 <div style={{ marginLeft: "auto" }}>
                     <div className="search-form">
-                        <label>
+                        {/* <label>
                             <input type="text" placeholder="キーワードを入力" />
-                        </label>
-                        <button type="button" onClick={handleSearch}>検索</button>
+                        </label> */}
+                        {/* <button type="button" onClick={handleSearch}>検索</button> */}
                     </div>
                 </div>
             </div>
@@ -353,21 +453,14 @@ export default function Company() {
                         <div className='right-panel'>
                             {selectedCompany ? (
                                 <div className="company-detail-card">
-                                    {/* ここに赤文字ボタンを追加 */}
-                                    <div style={{ margin: "16px 0" }}>
+                                    {/* ボタン部分を改善 */}
+                                    <div className="action-buttons-container">
                                         <button
-                                            style={{
-                                                color: "red",
-                                                background: "none",
-                                                border: "none",
-                                                fontWeight: "bold",
-                                                fontSize: "1.1em",
-                                                cursor: "pointer"
-                                            }}
+                                            className="chat-button"
                                             onClick={async () => {
                                                 try {
                                                     // ユーザー情報取得
-                                                    const userRes = await axios.get("http://15.152.5.110:3030/log/whoami", { withCredentials: true });
+                                                    const userRes = await axios.get("http://localhost:3030/log/whoami", { withCredentials: true });
                                                     if (!userRes.data.loggedIn) {
                                                         alert("ログインしてください");
                                                         return;
@@ -375,7 +468,7 @@ export default function Company() {
                                                     const user = userRes.data.user;
 
                                                     // 既存チャット企業を取得
-                                                    const companiesRes = await axios.get("http://15.152.5.110:3030/user/user_chat/companies", {
+                                                    const companiesRes = await axios.get("http://localhost:3030/user/user_chat/companies", {
                                                         params: { user_id: user.id },
                                                     });
                                                     const existingCompanies = companiesRes.data.map(c => c.id);
@@ -384,12 +477,14 @@ export default function Company() {
                                                         alert("この企業は既に追加されています");
                                                         return;
                                                     }
-                                                    
+
                                                     // チャット追加API呼び出し
-                                                    await axios.post('http://15.152.5.110:3030/user/user_chat/start', {
-                                                        user_id: user.id,
-                                                        Companies_id: selectedCompany.id,
-                                                        // message_text: ''  // 初期メッセージ（空でもOK）
+                                                    await axios.post('http://localhost:3030/user/user_chat/start', {
+                                                        params: {
+                                                            user_id: user.id,
+                                                            Companies_id: selectedCompany.id,
+                                                            // message_text: ''  // 初期メッセージ（空でもOK）
+                                                        }
                                                     });
                                                     alert("チャットに追加しました");
                                                 } catch (e) {
@@ -397,25 +492,19 @@ export default function Company() {
                                                 }
                                             }}
                                         >
+                                            <span className="button-icon">💬</span>
                                             チャットに追加
                                         </button>
+
                                         <button
-                                            type="button"
+                                            className="apply-button"
                                             onClick={() => {
                                                 // company 全体を state に入れて遷移（id と state を両方送る）
                                                 console.log(selectedCompany);
-
                                                 navigate(`/apply/${selectedCompany.id}`, { state: { company: selectedCompany } });
                                             }}
-                                            style={{
-                                                background: '#007bff',
-                                                color: '#fff',
-                                                border: 'none',
-                                                padding: '8px 12px',
-                                                borderRadius: 4,
-                                                cursor: 'pointer'
-                                            }}
                                         >
+                                            <span className="button-icon">📝</span>
                                             応募する
                                         </button>
                                     </div>
@@ -430,8 +519,42 @@ export default function Company() {
                                                 )}
                                             </div>
                                             <div className="company-title">
-                                                <h1 className="company-name">{selectedCompany.name}</h1>
+                                                <h1 className="company-name">{selectedCompany.c_name}</h1>
                                                 <p className="company-industry">IT・ソフトウェア</p>
+                                            </div>
+                                            {/* ボタンをヘッダー内に配置 */}
+                                            <div className="header-actions">
+                                                <button
+                                                    className="modern-chat-button"
+                                                    onClick={async () => {
+                                                        try {
+                                                            const userRes = await axios.get("http://localhost:3030/log/whoami", { withCredentials: true });
+                                                            if (!userRes.data.loggedIn) {
+                                                                alert("ログインしてください");
+                                                                return;
+                                                            }
+                                                            const user = userRes.data.user;
+                                                            await axios.post('http://localhost:3030/user/user_chat/start', {
+                                                                user_id: user.id,
+                                                                Companies_id: selectedCompany.id,
+                                                            });
+                                                            alert("チャットに追加しました");
+                                                        } catch (e) {
+                                                            alert("追加に失敗しました");
+                                                        }
+                                                    }}
+                                                >
+                                                    チャット追加
+                                                </button>
+
+                                                <button
+                                                    className="modern-apply-button"
+                                                    onClick={() => {
+                                                        navigate(`/apply/${selectedCompany.id}`, { state: { company: selectedCompany } });
+                                                    }}
+                                                >
+                                                    今すぐ応募
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -487,6 +610,21 @@ export default function Company() {
                                                 <div className="detail-value">{selectedCompany.employment_type}</div>
                                                 <div className="detail-label">募集人数</div>
                                                 <div className="detail-value">{selectedCompany.number_of_hires}</div>
+
+                                                <div className="detail-label">必要なスキル</div>
+                                                <div className="detail-value">
+                                                    {jobSkills && jobSkills.length > 0 ? (
+                                                        <div className="skill-list">
+                                                            {jobSkills.map((skill, index) => (
+                                                                <span key={index} className="skill-chip">
+                                                                    {skill.skillName}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <span>言語情報なし</span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 

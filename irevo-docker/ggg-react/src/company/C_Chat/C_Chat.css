@@ -71,7 +71,7 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 90vh;
     overflow-y: auto;
     box-sizing: border-box;
 }
@@ -179,28 +179,7 @@
     box-sizing: border-box;
 }
 
-/* バブル内のレイアウトを縦方向にして時刻を末尾に配置 */
-.bubble {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.75rem;
-    border-radius: 1rem;
-    max-width: 60%;
-    box-sizing: border-box;
-}
 
-/* 左バブルは左寄せ、右バブルは右寄せ（時刻含む） */
-.bubble-left {
-    background-color: #ebf8ff;
-    align-items: flex-start;
-}
-
-.bubble-right {
-    background-color: #4299e1;
-    color: #fff;
-    align-items: flex-end; /* 内部要素を右寄せ */
-}
 
 /* 共通タイムスタイル */
 .timestamp {
@@ -217,7 +196,7 @@
 
 /* 右メッセージの時刻（バブル内で右寄せ・白系） */
 .bubble-right .timestamp {
-    color: rgba(255,255,255,0.85);
+    color: rgba(61, 61, 61, 0.85);
     align-self: flex-end;
 }
 
@@ -252,8 +231,7 @@
 
 
 .bubble-right {
-    background-color: #4299e1;
-    color: white;
+    border-color: #4299e1;
     margin-left: auto; /* 右寄せ */
     text-align: left;
 }
@@ -267,7 +245,7 @@
 
 
 .timestamp-right {
-    color: #e2e8f0;
+    color: rgba(61, 61, 61, 0.85);
 }
 
 
@@ -301,7 +279,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: 100vh;
+    height: 90vh;
     overflow-y: auto; /* ここで右側だけスクロール可能 */
     position: relative;
     box-sizing: border-box; /* 追加: パディング込みで高さ制御 */
@@ -347,96 +325,6 @@
     padding: 0.5rem;
     border: 1px solid #cbd5e0;
     border-radius: 0.5rem;
-}
-
-/* react-calendar カスタムデザイン */
-.custom-calendar {
-    border: 1px solid #4299e1;
-    border-radius: 0.75rem;
-    background: #f7fafc;
-    font-family: inherit;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(66, 153, 225, 0.08);
-}
-
-.custom-calendar .react-calendar__tile--active {
-    background: #0077d8;
-    color: #fff; /* ここが選択日の文字色 */
-    border-radius: 0.5rem;
-}
-
-.custom-calendar .react-calendar__tile--now {
-    background: #bee3f8;
-    color: #2b6cb0;
-    border-radius: 0.5rem;
-}
-
-.custom-calendar .react-calendar__tile {
-    padding: 0.5em 0;
-    font-size: 1rem;
-}
-
-.custom-calendar .react-calendar__navigation button {
-    color: #4299e1;
-    font-weight: bold;
-    background: none;
-    border: none;
-}
-
-/* react-calendarのナビゲーション（年月変更部分）を中央揃えにする */
-.custom-calendar .react-calendar__navigation {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-/* 土曜日を青色、日曜日を赤色にする */
-.custom-calendar .react-calendar__month-view__days__day--weekend {
-    color: #e53e3e; /* 日曜日を赤 */
-}
-.custom-calendar .react-calendar__month-view__days__day--weekend:nth-child(7n+6) {
-    color: #4299e1; /* 土曜日を青 */
-}
-
-/* react-calendarの曜日（日・月・火...）を中央揃えにする */
-.custom-calendar .react-calendar__month-view__weekdays {
-    display: flex;
-}
-.custom-calendar .react-calendar__month-view__weekdays__weekday {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 0.5em 0;
-}
-
-/* react-calendarの曜日下の破線（デフォルトのborder）を消す */
-.custom-calendar .react-calendar__month-view__weekdays__weekday {
-    border-bottom: none;
-}
-
-/* 次月・前月の日付（react-calendar__tile--neighboringMonth）を薄い色にする */
-.custom-calendar .react-calendar__tile--neighboringMonth {
-    color: #a0aec0;
-    opacity: 0.6;
-}
-
-/* 曜日表示の色を変更（日曜：赤、土曜：青、他：標準色） */
-.custom-calendar .react-calendar__month-view__weekdays__weekday {
-    color: #2d3748; /* 平日は標準色（ダークグレー） */
-}
-
-/* 日曜日（最初の曜日）を赤色に */
-.custom-calendar .react-calendar__month-view__weekdays__weekday:last-child {
-    color: #e53e3e;
-}
-
-/* 土曜日（最後の曜日）を青色に */
-.custom-calendar .react-calendar__month-view__weekdays__weekday:nth-last-child(2) {
-    color: #4299e1;
 }
 
 /* この画面（Testchat）だけで全体スクロールを防止 */

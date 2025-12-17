@@ -107,12 +107,12 @@ const TabNav = ({ user }) => {
           aria-labelledby="profile-tab"
         >
         {/* スキルPRの内容 */}
-        <Skill />
-        <FrameWork />
-        <DB />
-        <Cloud />
-        <Support />
-        <Other />
+        <Skill user={user} />
+        <FrameWork user={user} />
+        <DB user={user} />
+        <Cloud user={user} />
+        <Support user={user} />
+        <Other user={user} />
         </div>
         <div
           className={`tab-pane fade ${activeTab === 'contact' ? 'show active' : ''} p-3`}
@@ -122,9 +122,9 @@ const TabNav = ({ user }) => {
         >
         {/* 経歴情報の内容 */}
         {/* <Study /> */}
-        <Content />
-        <Albite />
-        <Intern />
+        <Content user={user} />
+        <Albite user={user} />
+        <Intern user={user} />
         </div>
         <div
           className={`tab-pane fade ${activeTab === 'test' ? 'show active' : ''} p-3`}
@@ -132,13 +132,13 @@ const TabNav = ({ user }) => {
           role="tabpanel"
           aria-labelledby="test-tab"
         >
-        <Choose />
-        <Type />
-        <Location />
-        <JobType />
-        <Industry />
-        <Desiredskill />
-        <DesiredOther />
+        <Choose user={user} />
+        <Type user={user} />
+        <Location user={user} />
+        <JobType user={user} />
+        <Industry user={user} />
+        <Desiredskill user={user} />
+        <DesiredOther user={user} />
         </div>
       </div>
     </div>

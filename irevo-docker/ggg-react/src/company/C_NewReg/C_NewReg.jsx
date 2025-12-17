@@ -22,8 +22,8 @@ const C_Newreg = () => {
   const [password, setPassword] = useState('');
   // 新規登録送信処理
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     console.log({
       company_name: name1,
@@ -34,7 +34,7 @@ const C_Newreg = () => {
     });
 
     try {
-      const res = await axios.post('http://15.152.5.110:3030/newUser', {
+      const res = await axios.post('http://localhost:3030/newUser', {
         company_name: name1,
         representative_name: representative,
         phone_number: phone,
@@ -55,12 +55,12 @@ const C_Newreg = () => {
     const passwordToggle = document.querySelector('.password__toggle2');
 
     // イベントハンドラーを関数として定義
-    const handleToggleClick = (e) => {
+    const handleToggleClick = (clickEvent) => {
       console.log("クリックされました");
-      const input = e.target.previousElementSibling;
+      const input = clickEvent.target.previousElementSibling;
       const type = input.getAttribute('type');
       input.setAttribute('type', type === 'password' ? 'text' : 'password');
-      e.target.classList.toggle('is-visible');
+      clickEvent.target.classList.toggle('is-visible');
     };
 
     // passwordToggleが存在する場合のみリスナーを追加
@@ -97,12 +97,12 @@ const C_Newreg = () => {
                   <label className="cnewreg-name">会社名</label>
                   <div className="cnewreg-input_group">
                     <input type="text" name="name" className="cnewreg-name1" required="" value={name1}
-                      onChange={(e) => setName1(e.target.value)} />
+                      onChange={(event) => setName1(event.target.value)} />
                   </div>
                 </div>
                 <div className='cnewreg-form_row'>
                   <label>代表者名</label>
-                  <input type="text" name="representative" className="cnewreg-textbox-3" value={representative} onChange={(e) => setRepresentative(e.target.value)} />
+                  <input type="text" name="representative" className="cnewreg-textbox-3" value={representative} onChange={(event) => setRepresentative(event.target.value)} />
                 </div>
                 <div className="cnewreg-form_row">
                   <label>電話番号</label>
@@ -113,12 +113,12 @@ const C_Newreg = () => {
                     placeholder="電話番号"
                     required=""
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(event) => setPhone(event.target.value)}
                   />
                 </div>
                 <div className='cnewreg-form_row'>
                   <label>メールアドレス</label>
-                  <input type="text" name="mail" className="cnewreg-textbox-3" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input type="text" name="mail" className="cnewreg-textbox-3" value={email} onChange={(event) => setEmail(event.target.value)} />
                 </div>
                 <div className='cnewreg-form_row'>
                   <Password value={password} onChange={setPassword} />

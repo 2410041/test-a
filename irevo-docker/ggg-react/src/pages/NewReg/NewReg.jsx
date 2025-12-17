@@ -45,8 +45,8 @@ const Resumeform = () => {
     else if (gender === '女性') GenderNum = 2;
 
     console.log({
-      u_Fname: name1,
-      u_Lname: name2,
+      u_Fname: name2,
+      u_Lname: name1,
       u_kana: hurigana,
       u_nick: nickname,
       Birthday: birthYear && birthMonth && birthDay ? Birthday : '',
@@ -59,18 +59,18 @@ const Resumeform = () => {
     });
 
     try {
-      const res = await axios.post('http://15.152.5.110:3030/user/user', {
-        u_Fname: name1,
-        u_Lname: name2,
-        u_kana: hurigana,
-        u_nick: nickname,
-        Birthday: birthYear && birthMonth && birthDay ? Birthday : '',
-        Gender: GenderNum,
-        u_Contact: phone,
-        u_Address: u_Address,
-        u_Password: password,
-        u_Email: email,
-        Employment: Employment,
+      const res = await axios.post('http://localhost:3030/log/newRegistration', {
+          u_Fname: name2,
+          u_Lname: name1,
+          u_kana: hurigana,
+          u_nick: nickname,
+          Birthday: birthYear && birthMonth && birthDay ? Birthday : '',
+          Gender: GenderNum,
+          u_Contact: phone,
+          u_Address: u_Address,
+          u_Password: password,
+          u_Email: email,
+          Employment: Employment,
       });
       alert(res.data.message);
       if (res.data.success) {

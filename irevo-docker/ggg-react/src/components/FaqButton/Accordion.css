@@ -1,85 +1,137 @@
-/* アコーディオン1つの要素 */
+:root{
+  --primary: #005bcc;
+  --muted: #5b6b7a;
+  --bg: #ffffff;
+  --card-shadow: rgba(2,6,23,0.06);
+  --radius: 10px;
+  --gap: 14px;
+  --max-width: 1100px;
+  font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+}
+
+.accordion {
+  max-width: var(--max-width);
+  margin: 12px auto;
+  padding: 8px;
+}
+
+/* 個別カード */
 .accordion-item {
-  border: 2px solid #005bcc;
-  margin: 0px auto 5px auto;
-  max-width: 1100px;
-  border-radius: 10px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 20px var(--card-shadow);
+  margin-bottom: var(--gap);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
-/* アコーディオンのタイトルの部分 */
+/* ヘッダーをボタンにしてフォーカスしやすく */
 .accordion-header {
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+.accordion-btn {
+  width: 100%;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:18px;
+  background: transparent;
+  border:0;
+  text-align:left;
+  cursor:pointer;
+  outline: none;
 }
 
-/* 開いたときにタイトルのところに下線が出る */
-.open {
-  border-bottom: 1px solid #005bcc;
+/* タイトル */
+.accordion-title{
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+  flex: 1;
 }
 
-/* Qのマーク */
-/* ↓ デザイン変になってたらいじってね */
+/* Qバッジ */
 .question {
   display: inline-flex;
-  justify-content: center;
   align-items: center;
-  min-width: 40px;
-  height: 35px;
-  padding-bottom: 5px;
-  color: white;
-  font-size: 24px;
-  font-weight: normal;
-  border: 2px solid #005bcc;
-  background-color: #005bcc;
-  border-radius: 5px;
+  justify-content: center;
+  min-width: 42px;
+  height: 36px;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 8px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,91,204,0.12);
+  flex-shrink: 0;
 }
 
-/* 三角 */
-.triangle {
-  color: #005bcc;
-  font-size: 28px;
-  margin-left: auto;
-  transition: transform 0.3s ease;
+/* 回転する矢印（三角） */
+.triangle{
+  font-size: 20px;
+  color: var(--primary);
+  transition: transform 0.25s ease;
+  transform-origin: center;
+  margin-left: 12px;
+  flex-shrink: 0;
 }
 
-/* 三角の動き */
-.accordion-header.open .triangle {
-  transform: rotate(90deg); /* ▶を下向きに（右→下） */
+/* 回転アニメーション（open時） */
+.accordion-header.open .triangle,
+.accordion-btn[aria-expanded="true"] .triangle {
+  transform: rotate(90deg);
 }
 
-/* 中身の部分 */
-.accordion-content {
-  display: flex;
-  align-items: baseline;
+/* コンテンツ領域（アニメーション：max-height） */
+.accordion-content{
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: max-height 0.32s cubic-bezier(.2,.9,.2,1), opacity 0.22s ease;
+  max-height: 0;
+  background: linear-gradient(180deg, rgba(247,250,252,0.6), transparent);
 }
 
-/* Aのマーク */
-/* ↓ デザイン変になってたらいじってね */
-.answer {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 40px;
-  height: 35px;
-  padding-bottom: 5px;
-  color: #005bcc;
-  background-color: white;
-  font-size: 24px;
-  font-weight: normal;
-  border: 2px solid #005bcc;
-  border-radius: 5px;
-  margin: 20px 0 0 20px;
-}
-
-/* 文字 */
+/* 内側の余白 */
 .accordion-inner {
-  padding: 0 20px;
-  font-size: 18px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  padding: 16px 20px 20px 20px;
+  color: var(--muted);
+}
+
+/* Aバッジ */
+.answer {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:42px;
+  height:36px;
+  color: var(--primary);
+  background: #fff;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  font-weight:700;
+  flex-shrink: 0;
+}
+
+/* 本文 */
+.accordion-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #334155;
+}
+
+/* フォーカス表示 */
+.accordion-btn:focus {
+  box-shadow: 0 0 0 4px rgba(0,91,204,0.08);
+  border-radius: 8px;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 720px) {
+  .accordion-btn { padding: 14px; gap:12px; }
+  .accordion-title { font-size: 1rem; }
+  .question, .answer { min-width:34px; height:32px; font-size:14px; }
+  .accordion-inner { padding: 12px; gap:12px; }
 }

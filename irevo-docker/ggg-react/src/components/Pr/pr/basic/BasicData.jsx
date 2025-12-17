@@ -47,7 +47,7 @@ const Data = ({ user }) => {
         const g = currentInfo.gender;
         if (g === 1 || g === '1') return '男性';
         if (g === 2 || g === '2') return '女性';
-        if (g === 3 || g === '3') return '回答なし'; // 回答なし（空表示）
+        if (g === 3 || g === '3') return '記入しない'; // 回答なし（空表示）
         // 文字列で既に "男性"/"女性" 等が入っている場合はそのまま返す
         if (typeof g === 'string' && g.trim() !== '') return g;
         return undefined;
@@ -64,9 +64,19 @@ const Data = ({ user }) => {
         setErrorMessage('');
 
         try {
-            const payload = { ...currentInfo, originalEmail: user && user.u_Email ? user.u_Email : undefined };
+            // 住所文字列の先頭にある「〒1234567」や「123-4567」を取り除いて送る
+            const cleanAddress = (addr) => {
+                if (!addr) return addr;
+                return String(addr).trim()
+                    .replace(/^〒\s*\d{3}-?\d{4}\s*/, '')
+                    .replace(/^\d{3}-?\d{4}\s*/, '');
+            };
 
-            const res = await fetch('http://15.152.5.110:3030/user/user_update', {
+            const payload = { ...currentInfo, originalEmail: user && user.u_Email ? user.u_Email : undefined };
+            // 上書きで address をクリーンにする
+            payload.address = cleanAddress(payload.address);
+
+            const res = await fetch('http://localhost:3030/mypage/user_update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include', // ← セッション（クッキー）を送るため必須
@@ -83,22 +93,28 @@ const Data = ({ user }) => {
             // サーバーが返した最新 user で表示を更新（セッションと同期）
             if (data.user) {
                 const u = data.user;
-                setCurrentInfo({
+                // サーバー戻り値から表示用オブジェクトを組み立て（u_Address 優先）
+                const newInfo = {
                     name: u.u_Fname && u.u_Lname ? `${u.u_Fname} ${u.u_Lname}` : (u.u_nick || ''),
                     kana: u.u_kana || '',
                     dob: u.Birthday || '',
                     gender: u.Gender || '未選択',
+                    // 個別カラムがある場合はそれを、なければ u_Address を address に入れる
                     zipCode: u.u_zip || '',
                     prefecture: u.u_prefecture || '',
                     city: u.u_city || '',
                     street: u.u_street || '',
                     building: u.u_building || '',
+                    // DB 仕様によっては都道府県等が無く u_Address のみの場合があるため両方対応
+                    address: (u.u_Address || u.u_address) ? (u.u_prefecture || u.u_city || u.u_street || u.u_building ? (u.u_Address || u.u_address || '') : (u.u_Address || u.u_address)) : '',
                     phone: u.u_Contact || '',
                     email: u.u_Email || '',
                     employmentStatus: u.Employment || '未選択'
-                });
-                setOriginalInfoBackup({ ...currentInfo });
-                console.log(data);
+                };
+                setCurrentInfo(newInfo);
+                // 編集キャンセル用バックアップは新しい表示情報で上書きする
+                setOriginalInfoBackup({ ...newInfo });
+                console.log('user_update response:', data);
             }
 
         } catch (err) {
@@ -243,16 +259,7 @@ const Data = ({ user }) => {
                                 value="3"
                                 checked={currentInfo.gender === 3 || currentInfo.gender === '3'}
                                 onChange={handleInputChange}
-                            />回答なし
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="未選択"
-                                checked={currentInfo.gender === '未選択'}
-                                onChange={handleInputChange}
-                            />未選択
+                            />記入しない
                         </label>
                     </div>
 

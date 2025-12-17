@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../pr.css'; // スタイルは別途作成
 
 
-const Location = () => {
+const Location = ({ user }) => {
+    const userId = user?.id ?? (window?.__USER_ID__ ?? null);
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [registeredSkills, setRegisteredSkills] = useState([]);
     const [editingSkills, setEditingSkills] = useState([]);
@@ -13,50 +15,99 @@ const Location = () => {
         setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
     }, [registeredSkills, isEditMode]); // isEditModeが切り替わったときも同期
 
+    // サーバーから Location を取得して初期表示
+    useEffect(() => {
+        if (!userId) return;
+        const fetchLocation = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/location?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const txt = data?.Location ?? '';
+                if (!txt) {
+                    setRegisteredSkills([]);
+                    setEditingSkills([]);
+                    return;
+                }
+                const parts = String(txt)
+                    .split(/\s*,\s*/)
+                    .map(s => s.trim())
+                    .filter(Boolean)
+                    .map(p => ({ language: p }));
+                setRegisteredSkills(parts);
+                setEditingSkills(JSON.parse(JSON.stringify(parts)));
+            } catch (err) {
+                console.error('location fetch error', err);
+            }
+        };
+        fetchLocation();
+    }, [userId]);
+
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
         if (!isEditMode) {
-            // 編集モードに入る時、現在の登録スキルを編集用にコピー
+            // 編集モードに入る時、現在の登録を編集用にコピー
             setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
         }
     };
 
     const handleMainLanguageSelectChange = (event) => {
         const lang = event.target.value;
-        setMainLanguageSelectValue(''); // 選択後、セレクトボックスをリセット
+        setMainLanguageSelectValue(''); // 選択後リセット
 
         if (!lang) return;
 
-        // 既に選択されているかチェック
         const exists = editingSkills.some(skill => skill.language === lang);
         if (!exists) {
-            setEditingSkills(prevSkills => [
-                ...prevSkills,
-                { language: lang}
-            ]);
-        } else {
-            console.log(`${lang} は既に選択されています。`);
+            setEditingSkills(prev => [...prev, { language: lang }]);
         }
     };
 
-    const handleDurationChange = (index, newDuration) => {
-        const updatedSkills = [...editingSkills];
-        updatedSkills[index].duration = newDuration;
-        setEditingSkills(updatedSkills);
-    };
-
     const handleRemoveLanguage = (index) => {
-        const updatedSkills = editingSkills.filter((_, i) => i !== index);
-        setEditingSkills(updatedSkills);
+        const updated = editingSkills.filter((_, i) => i !== index);
+        setEditingSkills(updated);
     };
 
-    const handleRegister = () => {
-        const currentSkills = [];
-        editingSkills.forEach(skill => {
-            currentSkills.push({ language: skill.language, duration: skill.duration });
-        });
+    // サーバへ保存（カンマ区切り）
+    const handleRegister = async () => {
+        // userId 必須
+        const currentSkills = editingSkills
+            .map(s => (s.language || '').toString().trim())
+            .filter(Boolean)
+            .map(s => ({ language: s }));
+
         setRegisteredSkills(currentSkills);
         setIsEditMode(false);
+
+        const locationText = currentSkills.map(s => s.language.trim()).filter(Boolean).join(',');
+
+        if (!userId) {
+            console.warn('userId が無いため送信しません');
+            return;
+        }
+
+        const payload = { user_id: userId, Location: locationText };
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/location', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
     };
 
     const handleCancel = () => {
@@ -78,13 +129,12 @@ const Location = () => {
             {!isEditMode ? (
                 <div className="display-mode">
                     <ul className="skill-list">
-                        {/* {console.log(registeredSkills)}                         */}
                         {registeredSkills.length === 0 ? (
                             <li>未入力</li>
                         ) : (
                             registeredSkills.map((skill, index) => (
                                 <li key={index} className="skill-item">
-                                    {skill.language} {skill.duration}
+                                    {skill.language}
                                 </li>
                             ))
                         )}
@@ -165,17 +215,6 @@ const Location = () => {
                         {editingSkills.map((skill, index) => (
                             <div key={index} className="language-input-row" data-language={skill.language}>
                                 <span className="language-name">{skill.language}</span>
-                                {/* <select
-                                    className="duration-select-button"
-                                    value={skill.duration}
-                                    onChange={(e) => handleDurationChange(index, e.target.value)}
-                                >
-                                    {skillData.map(opt => (
-                                        <option key={opt.value} value={opt.value}>
-                                            {opt.text}
-                                        </option>
-                                    ))}
-                                </select> */}
                                 <button className="remove-language-button" aria-label="削除" onClick={() => handleRemoveLanguage(index)}>
                                     <span className="material-icons">remove_circle_outline</span>
                                 </button>

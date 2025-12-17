@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function useOffer() {
+    const navigate = useNavigate();
     useEffect(() => {
     // 主要なDOM要素の取得
     const pageIndicator = document.getElementById('page_indicator'); // ページインジケータ全体
@@ -260,12 +262,14 @@ function useOffer() {
             try {
                 const formData = new FormData(multiStepForm);
                 // 例: サーバー側で受け取るエンドポイントを '/newOffer' にしています。必要に応じて変更してください。
-                const res = await axios.post('http://15.152.5.110:3030/newOffer', formData, {
+                const res = await axios.post('http://localhost:3030/newOffer', formData, {
                     withCredentials: true,
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 alert(res.data?.message || '送信完了');
                 console.log('送信結果', res.data);
+                // 送信成功後、企業ダッシュボードへ遷移
+                try { navigate('/C_Dashboard'); } catch (navErr) { console.warn('navigate failed', navErr); }
             } catch (err) {
                 console.error(err);
                 alert('送信中にエラーが発生しました: ' + (err.response?.data?.message || err.message));

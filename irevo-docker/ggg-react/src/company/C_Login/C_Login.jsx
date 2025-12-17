@@ -9,6 +9,11 @@ import axios from "axios";
 // 画面遷移用フック
 import { useNavigate } from "react-router-dom";
 
+// axios 共通設定
+const api = axios.create({
+  baseURL: "http://localhost:3030",
+  withCredentials: true
+});
 
 // ログイン画面コンポーネント
 export default function Login() {
@@ -38,29 +43,29 @@ export default function Login() {
     setLoading(true);
     try {
       // APIへログインリクエスト
-      // 企業向けログインは /company/login を使う
-      const res = await axios.post(
-        "http://15.152.5.110:3030/company/login",
-        { email, password },
-        { withCredentials: true }
-      );
+      const res = await api.post("/company/login", { email, password });
 
-      // ログイン成功時は企業ダッシュボードへ遷移
-      if (res.data && res.data.success) {
-        navigate("/C_Dashboard");
+      if (res.data?.success) {
+        // セッションが本当に入っているか確認
+        const whoami = await api.get("/company/whoami");
+
+        if (whoami.data?.loggedIn) {
+          navigate("/C_Dashboard");
+        } else {
+          setError("ログイン状態を確認できませんでした");
+        }
       } else {
         setError(res.data?.message || "ログインに失敗しました");
       }
     } catch (err) {
-      console.error('C_Login error:', err);
-      // サーバーエラー時
-      setError("サーバーエラーが発生しました");
+      console.error("C_Login error:", err);
+      setError(
+        err.response?.data?.message ||
+        "サーバーエラーが発生しました"
+      );
     }
     setLoading(false);
   };
-
-  // デバッグ用ログ（本番では削除）
-  // デバッグログは不要
 
   // 画面描画部分
   return (
@@ -75,14 +80,7 @@ export default function Login() {
         <form onSubmit={handleSubmit}>
           <div style={{ paddingTop: 30 }}>
             <div style={{ textAlign: "center", marginTop: 30 }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: 650,
-                  margin: "auto"
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", width: 650, margin: "auto" }}>
                 {/* メールアドレス入力欄 */}
                 <label style={{ marginRight: 40, width: 200 }}>
                   メールアドレス
@@ -99,16 +97,7 @@ export default function Login() {
               </div>
             </div>
             <div style={{ marginTop: 30 }}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  width: "fit-content",
-                  margin: "auto",
-                  minWidth: 650,
-                  maxWidth: 650
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", minWidth: 650, maxWidth: 650, margin: "auto" }}>
                 {/* パスワード入力欄 */}
                 <label style={{ marginRight: 40, width: 200, textAlign: "center" }}>
                   パスワード
@@ -134,15 +123,13 @@ export default function Login() {
           <div style={{ textAlign: "center" }}>
             {/* ログインボタン */}
             <button type="submit" className="submit_button" disabled={loading}>
-              {loading ? 'ログイン中...' : 'ログイン'}
+              {loading ? "ログイン中..." : "ログイン"}
             </button>
             {/* エラーメッセージ表示 */}
             {error && <div style={{ color: "red", marginTop: 10 }}>{error}</div>}
             <p>
               {/* 新規登録ページへのリンク */}
-              <a href="C_NewReg" className="new">
-                新規登録
-              </a>
+              <a href="C_NewReg" className="new">新規登録</a>
             </p>
           </div>
         </form>

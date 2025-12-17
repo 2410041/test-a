@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../pr.css' // スタイルは別途作成
-const DesiredOther = () => {
+const DesiredOther = ({ user }) => {
+    const userId = user?.id ?? (window?.__USER_ID__ ?? null);
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [achievements, setAchievements] = useState([]);
     // 編集モード時、初期値として1つ分の入力欄を表示
@@ -15,10 +17,42 @@ const DesiredOther = () => {
         }
     }, [achievements, isEditMode]);
 
+    // サーバーから DesiredOther を取得して初期表示
+    useEffect(() => {
+        if (!userId) return;
+        const fetchDesiredOther = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/desiredother?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const txt = data?.DesiredOther ?? '';
+                if (!txt) {
+                    setAchievements([]);
+                    setEditAchievements([{ theme: '', details: '' }]);
+                    return;
+                }
+                // カンマ区切りを分解して配列化
+                const items = String(txt)
+                    .split(/\s*,\s*/)
+                    .map(s => ({ theme: '', details: s.trim() }))
+                    .filter(i => i.details !== '');
+                setAchievements(items);
+                setEditAchievements(JSON.parse(JSON.stringify(items)));
+            } catch (err) {
+                console.error('desiredother fetch error', err);
+            }
+        };
+        fetchDesiredOther();
+    }, [userId]);
+
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
         if (!isEditMode) {
-            // 編集モードに入る時、現在の登録実績を編集用にコピー
             setEditAchievements(achievements.length === 0 ? [{ theme: '', details: '' }] : JSON.parse(JSON.stringify(achievements)));
         }
     };
@@ -38,11 +72,38 @@ const DesiredOther = () => {
         setEditAchievements(updated.length === 0 ? [{ theme: '', details: '' }] : updated);
     };
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         // 空のフィールドを持つ実績を除外して登録
         const currentAchievements = editAchievements.filter(ach => ach.theme.trim() || ach.details.trim());
         setAchievements(currentAchievements);
         setIsEditMode(false);
+
+        // カンマ区切りで保存（例: "項目A,項目B"）
+        const current = currentAchievements.map(a => (a.details || '').trim()).filter(Boolean);
+        const DesiredOtherText = current.join(',');
+
+        if (!userId) {
+            console.warn('userId が無いため送信しません');
+            return;
+        }
+
+        const payload = { user_id: userId, DesiredOther: DesiredOtherText };
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/desiredother', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
     };
 
     const handleCancel = () => {
@@ -96,10 +157,10 @@ const DesiredOther = () => {
                             </div>
                         ))}
                     </div>
-                    {/* <button className="add-achievement-button" onClick={handleAddAchievement}>
+                    <button className="add-achievement-button" onClick={handleAddAchievement}>
                         <span className="material-icons">add_circle_outline</span>
                         情報を追加
-                    </button> */}
+                    </button>
                     <div className="action-buttons">
                         <button className="cancel-button" onClick={handleCancel}>キャンセル</button>
                         <button className="register-button" onClick={handleRegister}>登録</button>

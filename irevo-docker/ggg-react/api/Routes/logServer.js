@@ -1,12 +1,60 @@
 const express = require('express');
 const router = express.Router();
 // パスワードハッシュ化
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcrypt');
+
+// 新規登録API
+router.post('/newRegistration', async (req, res) => {
+    try {
+        const { u_Lname, u_Fname, u_kana, u_nick, u_Password, u_Email, Gender, Birthday, u_Contact, u_Address, Employment } = req.body;
+
+        // 入力チェック
+        if ( !u_Lname || !u_Fname || !u_kana || !u_nick || !u_Email || !u_Password ) {
+            return res.status(400).json({
+                success: false,
+                message: '必須項目が未入力です'
+            });
+        }
+
+        // メールアドレスの重複チェック
+        const [checkEmail] = await global.db.query(
+            `SELECT id FROM User WHERE LOWER(u_Email) = LOWER(?)`,
+            [u_Email]
+        );
+
+        if (checkEmail.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'このメールアドレスは既に登録されています'
+            });
+        }
+
+        // パスワードのハッシュ化
+        const hashedPassword = await bcrypt.hash(u_Password, 10);
+
+        // ユーザー情報登録
+        await global.db.query(
+            `INSERT INTO User (u_Lname, u_Fname, u_kana, u_nick, u_Password, u_Email, Gender, Birthday, u_Contact, u_Address, Employment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [u_Lname, u_Fname, u_kana, u_nick, hashedPassword, u_Email, Gender, Birthday, u_Contact, u_Address, Employment]
+        );
+
+        return res.json({
+            success: true,
+            message: 'ユーザー登録が完了しました'
+        });
+    } catch (error) {
+        console.error(`Error in /newRegistration: ${error}`);
+        return res.status(500).json({
+            success: false,
+            message: 'サーバーエラー'
+        });
+    }
+});
 
 // ログイン処理
 router.post('/login', async (req, res) => {
     // フロント側キーに合わせる
-    const { email, password } = req.body; 
+    const { email, password } = req.body;
 
     // 入力チェック
     if (!email || !password) {

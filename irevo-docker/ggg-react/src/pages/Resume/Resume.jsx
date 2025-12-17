@@ -1,459 +1,645 @@
-import './resume.css';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-import HamburgerMenu from '../../components/HamburgerMenu/HamburgerMenu';
-// import { fontFamily } from 'html2canvas/dist/types/css/property-descriptors/font-family';
+import './school/sheet.css'; 
 
+const RESUME_WRAPPER_CLASS = 'resume-print-wrapper';
 
-const Resume = () => {
-    const captureRef = useRef(null);
-    const getWidthRef = useRef(null);
+const ResumeA3 = () => {
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (getWidthRef.current) {
-                const updatedWidth = getWidthRef.current.offsetWidth;
-                if (updatedWidth < 1300) {
-                    console.log('小さい');
-                } else {
-                    console.log('いい感じ');
-                    if (captureRef.current) {
-                        captureRef.current.style.marginLeft = `${(updatedWidth - 1350) / 2}px`;
-                    }
-                }
-            }
-        };
+    // ... (A3_WIDTH_MMとA3_HEIGHT_MMはそのまま使用)
+    const A3_WIDTH_MM = 297;
+    const A3_HEIGHT_MM = 420;
 
-        handleResize(); // 初期レンダリング時に実行
-        window.addEventListener('resize', handleResize);
+    // 修正1: targetElementをラッパー要素に変更
+    const generatePdf = async () => {
+        // キャプチャ対象を、余白を設定したラッパー要素に変更します
+        const targetElement = document.querySelector(`.${RESUME_WRAPPER_CLASS}`);
 
-        // クリーンアップ関数
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []); // マウント時とアンマウント時にのみ実行
-
-    const capture = () => {
-        if (!captureRef.current) {
+        if (!targetElement) {
+            alert('PDFにしたい要素が見つかりませんでした。');
             return;
         }
 
-        const element = captureRef.current;
-        const pdfWidth = 1350;
-        const pdfHeight = 1000;
+        try {
+            const canvas = await html2canvas(targetElement, {
+                scale: 2,
+                useCORS: true,
+                logging: false
+            });
 
-        html2canvas(element, { width: pdfWidth, height: pdfHeight }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({
-                orientation: (pdfWidth > pdfHeight) ? 'landscape' : 'portrait',
-                unit: 'px',
-                format: [pdfWidth, pdfHeight]
+                // 横長の履歴書に合わせるため 'l' (Landscape) を維持
+                orientation: 'l', 
+                unit: 'mm',
+                format: 'a3'
             });
-            console.log(pdfWidth);
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save('konnichiwa.pdf');
-        });
+
+            // 横長A3のサイズ (420mm x 297mm) に固定
+            let imgWidth = A3_HEIGHT_MM;   
+            let imgHeight = A3_WIDTH_MM;  
+            
+            const x = 0; 
+            const y = 0; 
+
+            pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+            pdf.save('履歴書_ResumeA3.pdf');
+
+        } catch (error) {
+            console.error('PDF生成中にエラーが発生しました:', error);
+            alert('PDFの保存に失敗しました。');
+        }
     };
 
+    // PNGとして保存（こちらもキャプチャ対象をラッパー要素に変更）
+    const saveAsPng = async () => {
+        // キャプチャ対象を、余白を設定したラッパー要素に変更します
+        const targetElement = document.querySelector(`.${RESUME_WRAPPER_CLASS}`);
+
+        if (!targetElement) {
+            alert('PNGにしたい要素が見つかりませんでした。');
+            return;
+        }
+
+        try {
+            const canvas = await html2canvas(targetElement, {
+                scale: 3,
+                useCORS: true,
+                logging: false
+            });
+
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '履歴書_ResumeA3.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            }, 'image/png');
+        } catch (error) {
+            console.error('PNG生成中にエラーが発生しました:', error);
+            alert('PNGの保存に失敗しました。');
+        }
+    };
+    
+    // ... (handlePdfClick と handlePngClick は変更なし)
+
+    const handlePdfClick = useCallback(() => {
+        generatePdf();
+    }, []);
+
+    const handlePngClick = useCallback(() => {
+        saveAsPng();
+    }, []);    // JSXコンポーネントの返り値
     return (
         <>
-        <HamburgerMenu />
-            {/* ボタンはReactのイベントハンドラに置き換え */}
-            <div className="capture_btn_center">
-                <button className="capture_btn" onClick={capture}>
-                    画像として保存
-                </button>
+            {/* HTMLの<head>内の要素は、すべてルートのindex.htmlに移動するか、
+                CSS Importに置き換えることが推奨されます。
+                ここではすべてimportに置き換えられたと仮定し、要素を削除しています。
+            */}
+
+            <div className={RESUME_WRAPPER_CLASS}>
+            {/* A3.html の <body> タグ内のコンテンツ */}
+            <div className="ritz grid-container" dir="ltr">
+                <table className="waffle no-grid" cellSpacing="0" cellPadding="0">
+                    <thead>
+                        <tr>
+                            <th className="row-header freezebar-origin-ltr" style={{ width: '0px' }}></th>
+                            <th id="147173032C0" style={{ width: '66px' }} className="column-headers-background"></th>
+                            <th id="147173032C1" style={{ width: '46px' }} className="column-headers-background"></th>
+                            <th id="147173032C2" style={{ width: '423px' }} className="column-headers-background"></th>
+                            <th id="147173032C3" style={{ width: '73px' }} className="column-headers-background"></th>
+                            <th id="147173032C4" style={{ width: '56px' }} className="column-headers-background"></th>
+                            <th id="147173032C5" style={{ width: '40px' }} className="column-headers-background"></th>
+                            <th id="147173032C6" style={{ width: '17px' }} className="column-headers-background"></th>
+                            <th id="147173032C7" style={{ width: '15px' }} className="column-headers-background"></th>
+                            <th id="147173032C8" style={{ width: '57px' }} className="column-headers-background"></th>
+                            <th id="147173032C9" style={{ width: '101px' }} className="column-headers-background"></th>
+                            <th id="147173032C10" style={{ width: '45px' }} className="column-headers-background"></th>
+                            <th id="147173032C11" style={{ width: '52px' }} className="column-headers-background"></th>
+                            <th id="147173032C12" style={{ width: '219px' }} className="column-headers-background"></th>
+                            <th id="147173032C13" style={{ width: '213px' }} className="column-headers-background"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style={{ height: '34px' }}>
+                            <th id="147173032R0" style={{ height: '34px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '34px' }}></div>
+                            </th>
+                            <td className="s0" colSpan="3">履　歴　書</td>
+                            <td className="s1" colSpan="3">年月日　現在</td>
+                            <td className="s2"></td>
+                            <td className="s3"></td>
+                            <td className="s4"></td>
+                            <td className="s4"></td>
+                            <td className="s5"></td>
+                            <td className="s5"></td>
+                            <td className="s5"></td>
+                            <td className="s6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R1" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s7">フリガナ</td>
+                            <td className="s8" dir="ltr" colSpan="2"></td>
+                            <td className="s9"></td>
+                            <td className="s9"></td>
+                            <td className="s10"></td>
+                            <td className="s11"></td>
+                            <td className="s12" dir="ltr" colSpan="7"> 【志望動機】</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R2" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s13" rowSpan="2">氏 名</td>
+                            <td className="s14" dir="ltr" colSpan="2" rowSpan="2"></td>
+                            <td className="s15" colSpan="3">写真を貼る位置</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R3" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s18" colSpan="3">縦40～45mm</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R4" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s19">生年月日</td>
+                            <td className="s17" dir="ltr" colSpan="2"></td>
+                            <td className="s18" colSpan="3">横30～35mm</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R5" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s19">携帯番号</td>
+                            <td className="s17" dir="ltr" colSpan="2"></td>
+                            <td className="s18" colSpan="3">本人単身胸から上</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R6" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s19">E-mail</td>
+                            <td className="s17" dir="ltr" colSpan="2"></td>
+                            <td className="s1" colSpan="3">写真裏に氏名記入</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R7" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s13">Portfolio</td>
+                            <td className="s20" colSpan="2"></td>
+                            <td className="s21"></td>
+                            <td className="s21"></td>
+                            <td className="s22"></td>
+                            <td className="s23"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R8" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s7">フリガナ</td>
+                            <td className="s8" dir="ltr" colSpan="5"></td>
+                            <td className="s23"></td>
+                            <td className="s24"></td>
+                            <td className="s20" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R9" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s19" rowSpan="3">現住所</td>
+                            <td className="s17" dir="ltr" colSpan="5">〒</td>
+                            <td className="s25"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R10" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s17" colSpan="5"></td>
+                            <td className="s11"></td>
+                            <td className="s12" dir="ltr" colSpan="7"> 【自己紹介】</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R11" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s8" colSpan="5"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R12" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s27">連絡先</td>
+                            <td className="s20" dir="ltr" colSpan="5"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R13" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28">フリガナ</td>
+                            <td className="s17" dir="ltr" colSpan="5"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R14" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s19">帰省先</td>
+                            <td className="s17" dir="ltr" colSpan="5">〒</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '27px' }}>
+                            <th id="147173032R15" style={{ height: '27px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '27px' }}></div>
+                            </th>
+                            <td className="s27">連絡先</td>
+                            <td className="s20" dir="ltr" colSpan="5"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R16" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s13">年</td>
+                            <td className="s13">月</td>
+                            <td className="s29" dir="ltr" colSpan="4">学　歴　・　職　歴</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R17" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s30" colSpan="2">学歴</td>
+                            <td className="s16"></td>
+                            <td className="s17"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R18" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s12" colSpan="7"> 【趣味・特技】</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R19" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" dir="ltr" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R20" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R21" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s17" colSpan="6"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R22" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s31 softmerge">
+                                <div className="softmerge-inner" style={{ width: '70px', left: '-1px' }}> 【希望職種・勤務地】</div>
+                            </td>
+                            <td className="s32"></td>
+                            <td className="s32"></td>
+                            <td className="s33"></td>
+                            <td className="s33"></td>
+                            <td className="s33"></td>
+                            <td className="s12"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R23" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28"></td>
+                            <td className="s28"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s24" dir="ltr" colSpan="6"> 希望職種:</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R24" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s35"></td>
+                            <td className="s35"></td>
+                            <td className="s16" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s24"></td>
+                            <td className="s20" dir="ltr" colSpan="6">希望勤務地:</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R25" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s35"></td>
+                            <td className="s35"></td>
+                            <td className="s30" colSpan="2">職歴</td>
+                            <td className="s16"></td>
+                            <td className="s17"></td>
+                            <td className="s25"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R26" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s36"></td>
+                            <td className="s36" dir="ltr"></td>
+                            <td className="s24">なし</td>
+                            <td className="s24"></td>
+                            <td className="s24"></td>
+                            <td className="s37" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s12" dir="ltr" colSpan="7"> 【主な履修科目】</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R27" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s13">年</td>
+                            <td className="s13">月</td>
+                            <td className="s29" dir="ltr" colSpan="4">免　許　・　資　格</td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s16"></td>
+                            <td className="s16"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s16"></td>
+                            <td className="s12"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R28" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s30" colSpan="2">資格</td>
+                            <td className="s16"></td>
+                            <td className="s17"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s16"></td>
+                            <td className="s16"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s16"></td>
+                            <td className="s12"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R29" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s16"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s16"></td>
+                            <td className="s16"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s16"></td>
+                            <td className="s12"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R30" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s24"></td>
+                            <td className="s24" dir="ltr"></td>
+                            <td className="s24"></td>
+                            <td className="s24"></td>
+                            <td className="s24" dir="ltr"></td>
+                            <td className="s24"></td>
+                            <td className="s20"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R31" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s25"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                            <td className="s26"></td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R32" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" colSpan="2"></td>
+                            <td className="s16"></td>
+                            <td className="s34" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s28" dir="ltr" colSpan="2">健康状態</td>
+                            <td className="s38" dir="ltr" colSpan="2"></td>
+                            <td className="s28" dir="ltr">配偶者</td>
+                            <td className="s17" colSpan="2">　無　　　（配偶者を除く扶養家族数　　　0　人）</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R33" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}>
+                                </div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s30" dir="ltr" colSpan="2">受賞</td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s17" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s27" dir="ltr" colSpan="2">通勤時間</td>
+                            <td className="s39" dir="ltr" colSpan="2">　約　　時間　　分 </td>
+                            <td className="s20" dir="ltr" colSpan="3">経路：乗車駅(　　　　　　　　　　）　～　降車駅（　　　　　　　　　　　）</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R34" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s35" dir="ltr"></td>
+                            <td className="s35" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s40 softmerge" colSpan="5">
+                                <div className="softmerge-inner" style={{ width: '171px', left: '-1px' }}>　保護者（本人が未成年の場合のみ記入）</div>
+                            </td>
+                            <td className="s44"></td>
+                            <td className="s45">電話番号</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R35" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s46" colSpan="6">ふりがな</td>
+                            <td className="s17">（　　 　　）　-</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R36" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s28" dir="ltr"></td>
+                            <td className="s16" dir="ltr" colSpan="2"></td>
+                            <td className="s16" dir="ltr"></td>
+                            <td className="s34"></td>
+                            <td className="s11"></td>
+                            <td className="s47" colSpan="3"> 氏 名</td>
+                            <td className="s48" colSpan="4">住所　〒</td>
+                        </tr>
+                        <tr style={{ height: '26px' }}>
+                            <th id="147173032R37" style={{ height: '26px' }} className="row-headers-background">
+                                <div className="row-header-wrapper" style={{ lineHeight: '26px' }}></div>
+                            </th>
+                            <td className="s27" dir="ltr"></td>
+                            <td className="s27" dir="ltr"></td>
+                            <td className="s24" dir="ltr" colSpan="2"></td>
+                            <td className="s24" dir="ltr"></td>
+                            <td className="s37" dir="ltr"></td>
+                            <td className="s11"></td>
+                            <td className="s27" colSpan="3"></td>
+                            <td className="s49" colSpan="4"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        <div id="getwidht" ref={getWidthRef}>
-            <div id="capture" ref={captureRef}>
-                <div className="r_photo" />
-                <div className="r_title">
-                </div>
-                <div className="r_day">
-                    <p>2025年1月1日現在</p>
-                </div>
-                {/* 名前・生年月日などの基本情報部分 */}
-                <div style={{ verticalAlign: 'middle', position: 'absolute', top: '26mm', left: '10mm', width: '88.5mm', height: '5.2mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '25mm', left: '11mm', width: '88.5mm', height: '5.2mm' }}>
-                    <font className="furi">ふりがな</font>
-                </div>
-                <div style={{ position: 'absolute', top: '25mm', left: '10mm', width: '88.5mm', height: '5.2mm', textAlign: 'center' }}>
-                    <font className="furix3">せいふう　たろう</font>
-                </div>
-                <div style={{ position: 'absolute', top: '26mm', left: '97.7mm', width: '12mm', height: '5.2mm', borderWidth: '0.5mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '25mm', left: '98.5mm', width: '12mm', height: '5.2mm' }}>
-                    <font className="idx">※男･女</font>
-                </div>
-                <div style={{ position: 'absolute', top: '25.7mm', left: '100.6mm', width: '12mm', height: '5mm' }}>
-                    <font style={{ fontSize: '12pt' }}>○</font>
-                </div>
-                {/* <div style={{ position: 'absolute', top: '25.7mm', left: '104.6mm', width: '12mm', height: '5mm' }}>
-                    <font style={{ fontSize: '12pt' }}>○</font>
-                </div> */}
-                <div style={{ position: 'absolute', top: '31mm', left: '10mm', width: '99.8mm', height: '16.5mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '32mm', left: '11mm', width: '88.5mm', height: '16.5mm' }}>
-                    <font className="idx">氏　　名</font>
-                </div>
-                <div style={{ position: 'absolute', top: '36mm', left: '10mm', width: '88.5mm', height: '16.5mm', textAlign: 'center' }}>
-                    <font className="shimei">清風　太郎</font>
-                </div>
-                <div style={{ position: 'absolute', top: '47mm', left: '10mm', width: '99.8mm', height: '10mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '51mm', left: '11mm', width: '100mm', height: '10mm' }}>
-                    <font className="idx">生年月日　</font>
-                    &nbsp;
-                    <font className="idx">平成　</font>
-                    <font className="furix">17</font>
-                    <font className="idx">　年　　</font>
-                    <font className="furix">&nbsp;1</font>
-                    <font className="idx">　月　</font>
-                    <font className="furix">&nbsp;1</font>
-                    <font className="idx">　日生 (満 </font>
-                    <font className="furix">20</font>
-                    <font className="idx">才)</font>
-                </div>
-                {/* 住所・電話番号部分 */}
-                <div style={{ position: 'absolute', top: '57mm', left: '10mm', width: '100mm', height: '5mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid none none solid' }} />
-                <div style={{ position: 'absolute', top: '55.5mm', left: '11mm', width: '100mm', height: '5mm' }}>
-                    <font className="furi">ふりがな</font>
-                </div>
-                <div style={{ position: 'absolute', top: '55.5mm', left: '29mm', width: '100mm', height: '5mm' }}>
-                    <font className="furix2">おおさかふおおさかしあべのくまるやまどおり１ちょうめ６−３</font>
-                </div>
-                <div style={{ position: 'absolute', top: '62mm', left: '10mm', width: '120mm', height: '11.3mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid none solid solid' }} />
-                <div style={{ position: 'absolute', top: '60mm', left: '11mm', width: '120mm', height: '11.5mm' }}>
-                    <font className="idx">現住所　〒</font>
-                    <font className="furix">545-0042</font>
-                </div>
-                <div style={{ position: 'absolute', top: '67.5mm', left: '12mm', width: '120mm', height: '11.5mm' }}>
-                    <font className="adr">大阪府大阪市阿倍野区丸山通１丁目６−３</font>
-                </div>
-                <div style={{ position: 'absolute', top: '56.9mm', left: '110mm', width: '52.3mm', height: '5mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid solid none none' }} />
-                <div style={{ position: 'absolute', top: '56.9mm', left: '129.7mm', width: '32.5mm', height: '5.2mm', borderWidth: '0.5mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                {/* <div style={{ position: 'absolute', top: '56mm', left: '131mm', width: '32mm', height: '5.5mm' }}>
-                    <font className="idx">電話市外(　　　　)</font>
-                </div> */}
-                {/* <div style={{ position: 'absolute', top: '56mm', left: '142mm', width: '16.5mm', height: '5.55mm', textAlign: 'center' }}>
-                    <font className="furix">06</font>
-                </div> */}
-
-                <div style={{ position: 'absolute', top: '54.4mm', left: '118.5mm', width: '32mm', height: '5.5mm', textAlign: 'center' }}>
-                    <font style={{fontSize: '6pt',fontFamily: 'MS 明朝'}}>携帯電話</font>
-                </div>
-                <div style={{ position: 'absolute', top: '57.2mm', left: '130mm', width: '32mm', height: '5.5mm', textAlign: 'center' }}>
-                    <font style={{fontSize: '7pt',fontFamily: 'MS 明朝'}}>06&nbsp;－&nbsp;2369&nbsp;－&nbsp;2369</font>
-                </div>
-                <div style={{ position: 'absolute', top: '62.0mm', left: '129.7mm', width: '32.5mm', height: '5.5mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid', textAlign: 'center' }} />
-                <div style={{ position: 'absolute', top: '59.4mm', left: '118.5mm', width: '32mm', height: '5.5mm', textAlign: 'center' }}>
-                    <font style={{fontSize: '6pt',fontFamily: 'MS 明朝'}}>固定電話</font>
-                </div>
-                <div style={{ position: 'absolute', top: '62mm', left: '130mm', width: '32mm', height: '5.5mm', textAlign: 'center' }}>
-                    <font style={{fontSize: '7pt',fontFamily: 'MS 明朝'}}>06&nbsp;－&nbsp;2369&nbsp;－&nbsp;2369</font>
-                </div>
-                <div style={{ position: 'absolute', top: '67.3mm', left: '129.7mm', width: '32.5mm', height: '6mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                {/* <div style={{ textAlign: 'center', position: 'absolute', top: '67mm', left: '130mm', width: '32mm', height: '6mm' }}>
-                    <font className="idx">(　　　　　　方呼出)</font>
-                </div> */}
-                <div style={{ position: 'absolute', top: '64.7mm', left: '121.5mm', width: '32mm', height: '5.5mm', textAlign: 'center' }}>
-                    <font style={{fontSize: '6pt',fontFamily: 'MS 明朝'}}>メールアドレス</font>
-                </div>
-
-                <div style={{ position: 'absolute', top: '68mm', left: '126mm', width: '22mm', height: '5.5mm', textAlign: 'right' }}>
-                    <font className="furix_n">i-seifu.jp</font>
-                </div>
-                <div style={{ position: 'absolute', top: '73.1mm', left: '10mm', width: '152.2mm', height: '5mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.5mm', borderStyle: 'solid solid none solid' }} />
-                <div style={{ position: 'absolute', top: '73mm', left: '11mm', width: '152.2mm', height: '5mm' }}>
-                    <font className="furi">ふりがな</font>
-                </div>
-                <div style={{ position: 'absolute', top: '73mm', left: '29mm', width: '152.2mm', height: '5mm' }}>
-                    <font className="furix2">おおさかふおおさかしてんのうじくいしがつつじちょう１２−１６</font>
-                </div>
-                <div style={{ position: 'absolute', top: '78.1mm', left: '10mm', width: '152.2mm', height: '11.5mm', borderWidth: '0.2mm 0.5mm 0.5mm 0.5mm', borderStyle: 'solid', textAlign: 'right' }} />
-                <div style={{ position: 'absolute', top: '77mm', left: '10mm', width: '152.2mm', height: '11.5mm', textAlign: 'right' }}>
-                    <font className="idx">　　　　　　　　　　(現住所以外の連絡を希望する場合のみ記入)&nbsp;</font>
-                </div>
-                <div style={{ position: 'absolute', top: '77mm', left: '11mm', width: '152.2mm', height: '11.5mm' }}>
-                    <font className="idx">連絡先　〒 </font>
-                    <font className="furix">543-0031</font>
-                </div>
-                <div style={{ verticalAlign: 'middle', textAlign: 'right', position: 'absolute', top: '84.5mm', left: '100mm', width: '60mm', height: '6.5mm', borderWidth: '0.2mm', borderStyle: 'none' }} />
-                <div style={{ verticalAlign: 'middle', textAlign: 'right', position: 'absolute', top: '84.5mm', left: '100mm', width: '60mm', height: '6.5mm', borderWidth: '0.2mm', borderStyle: 'none' }}>
-                    <font className="furix"> 06-6771-5757</font>
-                </div>
-                <div style={{ position: 'absolute', top: '84mm', left: '12mm', width: '120mm', height: '11.5mm' }}>
-                    <font className="adr">大阪府大阪市天王寺区石ケ辻町１２−１６</font>
-                </div>
-                {/* 学歴・経歴のテーブル部分 */}
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '92mm', left: '10mm', width: '16.4mm', height: '7.1mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '94mm', left: '10mm', width: '16.4mm', height: '7.1mm' }}>
-                    <font className="idx">年</font>
-                </div>
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '92mm', left: '26mm', width: '8.2mm', height: '7.1mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '94mm', left: '26mm', width: '8.2mm', height: '7.1mm' }}>
-                    <font className="idx">月</font>
-                </div>
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '92mm', left: '34mm', width: '128.5mm', height: '7.1mm', borderWidth: '0.5mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '94mm', left: '34mm', width: '128mm', height: '7.1mm' }}>
-                    <font className="idx">学歴・職歴(各別まとめて書く)</font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '99mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '99mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '99mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '108mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '108mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '108mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '117mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '117mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '117mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '126mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '126mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '126mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '135mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '135mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '135mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '144mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '144mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '144mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '153mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '153mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '153mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '162mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '162mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '162mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '171mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '171mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '171mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '180mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '180mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '180mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '189mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '189mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '189mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '198mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '198mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '198mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '207mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '207mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '207mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '216mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '216mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '216mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '225mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '225mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '225mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '99.8mm', left: '11mm', width: '20mm', height: '143mm'}}>
-                    <font className="textlist">
-                        令和3<br />令和6 <br />令和6<br />令和10<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-                    </font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '99.8mm', left: '26.5mm', width: '7.2mm', height: '143mm'}}>
-                    <font className="textlist">
-                        4<br />3 <br />4<br />3<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-                    </font>
-                </div>
-                <div style={{ position: 'absolute', top: '99.8mm', left: '35mm', width: '125.8mm', height: '143mm' }}>
-                    <font className="textlist">
-                        清風高等学校　　入学<br />清風高等学校　　卒業 <br />清風情報工科学院　　入学<br />清風情報工科学院　　卒業見込み<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-                    </font>
-                </div>
-
-                <div style={{ textAlign: 'center', position: 'absolute', top: '234mm', left: '10mm', width: '16.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.5mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '234mm', left: '26mm', width: '8.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.5mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', verticalAlign: 'middle', position: 'absolute', top: '234mm', left: '34mm', width: '128.5mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.5mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '243.1mm', left: '10mm', width: '125mm', height: '8mm' }}>
-                    <font className="pic">
-                        記入注意　　数字はアラビア数字で、半角２文字または全角１文字で収める
-                    </font>
-                </div>
-                {/* 右側部分 */}
-                <div style={{ textAlign: 'center', position: 'absolute', top: '20mm', left: '189mm', width: '16.2mm', height: '7.1mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '22mm', left: '189mm', width: '16.2mm', height: '7.1mm' }}>
-                    <font className="idx">年</font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '20mm', left: '205mm', width: '8.4mm', height: '7.1mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '22mm', left: '205.5mm', width: '8.4mm', height: '7.1mm' }}>
-                    <font className="idx">月</font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '20mm', left: '213.5mm', width: '128mm', height: '7.1mm', borderWidth: '0.5mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '22mm', left: '214mm', width: '128mm', height: '7.1mm' }}>
-                    <font className="idx">免 許・資 格</font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '27mm', left: '189mm', width: '16.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '27mm', left: '205mm', width: '8.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '27mm', left: '213.5mm', width: '128mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '36mm', left: '189mm', width: '16.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '36mm', left: '205mm', width: '8.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '36mm', left: '213.5mm', width: '128mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '45mm', left: '189mm', width: '16.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '45mm', left: '205mm', width: '8.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '45mm', left: '213.5mm', width: '128mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '54mm', left: '189mm', width: '16.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '54mm', left: '205mm', width: '8.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '54mm', left: '213.5mm', width: '128mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '63mm', left: '189mm', width: '16.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '63mm', left: '205mm', width: '8.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '63mm', left: '213.5mm', width: '128mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '28mm', left: '189mm', width: '20mm', height: '52mm' }}>
-                    <font className="textlist">
-                        令和7<br /> 令和7<br />令和7<br />令和7<br />令和7<br />令和7<br />
-                    </font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '28mm', left: '205.5mm', width: '8mm', height: '52mm' }}>
-                    <font className="textlist">
-                        1<br />1 <br />1<br />1<br />1<br />1<br />
-                    </font>
-                </div>
-                <div style={{ position: 'absolute', top: '28mm', left: '214mm', width: '126mm', height: '52mm' }}>
-                    <font className="textlist">
-                        第一種普通自動車免許取得<br />ITパスポート試験 合格 <br />基本情報技術者試験 合格<br />AWS Certified Cloud Practitioner<br />AWS Certified Solutions Architect – Associate<br />Oracle Certified Java Programmer, Silver SE 11認定資格
-                    </font>
-                </div>
-                <div style={{ textAlign: 'center', position: 'absolute', top: '72mm', left: '189mm', width: '16.2mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.5mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '72mm', left: '205mm', width: '8.4mm', height: '9.2mm', borderWidth: '0.2mm 0.2mm 0.5mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ textAlign: 'center', position: 'absolute', top: '72mm', left: '213.5mm', width: '128mm', height: '9.2mm', borderWidth: '0.2mm 0.5mm 0.5mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '82mm', left: '189mm', width: '76.1mm', height: '36.6mm', borderWidth: '0.5mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '83mm', left: '190mm', width: '76.1mm', height: '37.2mm' }}>
-                    <font className="idx">得意な科目・分野</font>
-                </div>
-                <div style={{ position: 'absolute', top: '78mm', left: '190mm', width: '76mm', height: '36mm' }}>
-                    <table style={{ border: '0', width: '100%', height: '100%' }}>
-                        <tbody>
-                            <tr>
-                                <td align="center">
-                                    <table width="80%">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <font className="textlist">
-                                                        国語<br />数学<br />英語<br />
-                                                    </font>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{ position: 'absolute', top: '82mm', left: '265mm', width: '76.1mm', height: '36.6mm', borderWidth: '0.5mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid' }} />
-                <div style={{ position: 'absolute', top: '83mm', left: '266mm', width: '76.1mm', height: '37.2mm' }}>
-                    <font className="idx">健康状態</font>
-                </div>
-                <div style={{ position: 'absolute', top: '78mm', left: '266mm', width: '76mm', height: '36mm' }}>
-                    <table width="100%" height="100%">
-                        <tbody>
-                            <tr>
-                                <td align="center">
-                                    <table width="80%">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <font className="textlist">
-                                                        良好<br /><br /><br />
-                                                    </font>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{ position: 'absolute', top: '118mm', left: '189mm', width: '76.1mm', height: '36.2mm', borderWidth: '0.2mm 0.2mm 0.2mm 0.5mm', borderStyle: 'solid solid solid solid' }} />
-                <div style={{ position: 'absolute', top: '119mm', left: '190mm', width: '76.1mm', height: '36.2mm' }}>
-                    <font className="idx">スポーツ・クラブ活動・文化活動など</font>
-                </div>
-                <div style={{ position: 'absolute', top: '113mm', left: '190mm', width: '76.1mm', height: '36.2mm' }}>
-                    <table border="0" width="100%" height="100%">
-                        <tbody>
-                            <tr>
-                                <td align="center">
-                                    <table width="80%">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <font className="textlist">
-                                                        サッカー<br />バドミントン<br />空手<br />
-                                                    </font>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{ position: 'absolute', top: '118mm', left: '265mm', width: '76.1mm', height: '36.2mm', borderWidth: '0.2mm 0.5mm 0.2mm 0.2mm', borderStyle: 'solid solid solid solid' }} />
-                <div style={{ position: 'absolute', top: '119mm', left: '266mm', width: '76.1mm', height: '36.2mm' }}>
-                    <font className="idx">趣味・特技</font>
-                </div>
-                <div style={{ position: 'absolute', top: '113mm', left: '266mm', width: '76.1mm', height: '36.2mm' }}>
-                    <table border="0" width="100%" height="100%">
-                        <tbody>
-                            <tr>
-                                <td align="center">
-                                    <table width="80%">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <font className="textlist">
-                                                        A<br />B<br />C<br />
-                                                    </font>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{ position: 'absolute', top: '154mm', left: '189mm', width: '152.3mm', height: '35.3mm', borderWidth: '0.2mm 0.5mm 0.5mm 0.5mm', borderStyle: 'solid solid solid solid' }} />
-                <div style={{ position: 'absolute', top: '153mm', left: '190mm', width: '152.1mm', height: '35.3mm' }}>
-                    <font className="idx">志望の動機</font>
-                </div>
-                <div style={{ position: 'absolute', top: '154mm', left: '190mm', width: '152.1mm', height: '35.3mm' }}>
-                    <table border="0" width="100%" height="100%" cellPadding="16">
-                        <tbody>
-                            <tr>
-                                <td valign="top">
-                                    <font className="textlist3">
-                                        {/* 264文字がマックス */}
-                                        貴社が掲げる「顧客に寄り添う」という経営理念に強く共感し、システムエンジニアとして貢献したいと思い志望いたしました。
-                                        入社後は、これまでの営業経験で培った課題発見能力とコミュニケーション能力を活かし、お客様の潜在的なニーズを汲み取り、より良いシステムを提案することで貴社に貢献したいと考えております。
-                                        将来的には、プロジェクトマネージャーとして、チームを牽引し、より大きなプロジェクトを成功に導きたいです。
-                                    </font>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style={{ position: 'absolute', top: '189mm', left: '189mm', width: '152.1mm', height: '56mm', borderWidth: '0.2mm 0.5mm 0.5mm 0.5mm', borderStyle: 'solid solid solid solid' }} />
-                <div style={{ position: 'absolute', top: '190mm', left: '190mm', width: '152.1mm', height: '56mm' }}>
-                    <font className="idx">
-                        本人希望記入欄（特に給料・職種・勤務時間・勤務地・その他について希望があれば記入）
-                    </font>
-                </div>
-                <div style={{position: 'absolute', top: '191mm', left: '191mm', width: '152.1mm', height: '56mm' }}>
-                    <table border="0" width="100%" height="100%" cellPadding="16">
-                        <tbody>
-                            <tr>
-                                <td valign="top">
-                                    <font className="textlist3">
-                                        特にありません<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-                                    </font>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
-        </div>
+            {/* onclick属性はReactのonClickハンドラに変更 */}
+            <div className='resume_bun_position'>
+                <button className='btn_position_pdf' onClick={handlePdfClick}>pdfで保存</button>
+                <button className='btn_position_png' onClick={handlePngClick}>pngで保存</button>
+            </div>
+
+           
         </>
     );
 };
 
-export default Resume;
+export default ResumeA3;

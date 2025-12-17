@@ -12,7 +12,10 @@ const skillData = [
     { value: '実務 5年以上', text: '実務 5年以上' }
 ];
 
-const Other = () => {
+// 変更: user を受け取り user.id を優先して使用（無ければ window.__USER_ID__ をフォールバック）
+const Other = ({ user }) => {
+    const userId = user?.id ?? (window?.__USER_ID__ ?? null);
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [registeredSkills, setRegisteredSkills] = useState([]);
     const [editingSkills, setEditingSkills] = useState([]);
@@ -21,23 +24,62 @@ const Other = () => {
     useEffect(() => {
         // 初期表示時や registeredSkills が変更されたときに編集用スキルを同期
         setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
-    }, [registeredSkills, isEditMode]); // isEditModeが切り替わったときも同期
+    }, [registeredSkills, isEditMode]);
+
+    // userId がある場合、サーバから Other_ExperiencePR（ルートは other_experience_skill のまま）を取得して初期表示する
+    useEffect(() => {
+        if (!userId) return;
+        const fetchPrograms = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/other_experience_skill?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) {
+                    console.error('OtherExperience取得失敗', resp.status);
+                    return;
+                }
+                const data = await resp.json();
+                const programs = data?.programs ?? [];
+
+                // programs を [{ language, duration }, ...] の形に正規化
+                const normalized = programs.map(p => {
+                    if (typeof p === 'string') {
+                        try {
+                            const parsed = JSON.parse(p);
+                            if (Array.isArray(parsed)) return parsed[0] || { language: '', duration: '' };
+                            if (parsed && typeof parsed === 'object') return { language: parsed.language ?? '', duration: parsed.duration ?? '' };
+                        } catch (e) {
+                            const parts = p.split(',');
+                            return { language: (parts[0] || '').trim(), duration: (parts[1] || '').trim() };
+                        }
+                    }
+                    if (p && typeof p === 'object') return { language: p.language ?? '', duration: p.duration ?? '' };
+                    return { language: '', duration: '' };
+                });
+
+                setRegisteredSkills(normalized);
+                setEditingSkills(JSON.parse(JSON.stringify(normalized)));
+            } catch (err) {
+                console.error('OtherExperience取得エラー', err);
+            }
+        };
+        fetchPrograms();
+    }, [userId]);
 
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
         if (!isEditMode) {
-            // 編集モードに入る時、現在の登録スキルを編集用にコピー
             setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
         }
     };
 
     const handleMainLanguageSelectChange = (event) => {
         const lang = event.target.value;
-        setMainLanguageSelectValue(''); // 選択後、セレクトボックスをリセット
-
+        setMainLanguageSelectValue(''); // 選択後リセット
         if (!lang) return;
-
-        // 既に選択されているかチェック
         const exists = editingSkills.some(skill => skill.language === lang);
         if (!exists) {
             setEditingSkills(prevSkills => [
@@ -60,11 +102,45 @@ const Other = () => {
         setEditingSkills(updatedSkills);
     };
 
-    const handleRegister = () => {
-        const currentSkills = [];
-        editingSkills.forEach(skill => {
-            currentSkills.push({ language: skill.language, duration: skill.duration });
-        });
+    // 編集内容をサーバに送信（空なら削除指示）
+    const handleRegister = async () => {
+        const currentSkills = editingSkills.map(skill => ({ language: skill.language, duration: skill.duration }));
+        const payload = { user_id: userId };
+
+        if (currentSkills.length > 0) {
+            payload.skill = currentSkills.map(s => s.language).join(',');
+            payload.years = currentSkills.map(s => s.duration).join(',');
+            payload.programs = currentSkills;
+        } else {
+            // 空データ送信でサーバ側が該当 user_id のレコードを削除する
+            payload.programs = [];
+            payload.skill = '';
+            payload.years = '';
+        }
+
+        if (!userId) {
+            console.warn('userIdが無いため送信しません');
+            return;
+        }
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/other_experience_skill', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            } else {
+                console.log('保存成功:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
+
         setRegisteredSkills(currentSkills);
         setIsEditMode(false);
     };
@@ -78,7 +154,6 @@ const Other = () => {
             <div className={`section-header ${isEditMode ? 'edit-mode' : 'display-mode'}`}>
                 <div className="section-title">
                     その他経験開発環境
-                    {/* <span className="recommend-badge">入力推奨</span> */}
                 </div>
                 {!isEditMode && (
                     <span className="material-icons edit-toggle-icon" onClick={handleEditToggle}>edit</span>
@@ -88,7 +163,6 @@ const Other = () => {
             {!isEditMode ? (
                 <div className="display-mode">
                     <ul className="skill-list">
-                        {/* {console.log(registeredSkills)}                         */}
                         {registeredSkills.length === 0 ? (
                             <li>スキルはまだ登録されていません。</li>
                         ) : (

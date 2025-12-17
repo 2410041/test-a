@@ -71,7 +71,7 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 90vh;
     overflow-y: auto;
     box-sizing: border-box;
 }
@@ -192,8 +192,8 @@
 }
 
 .bubble-right {
-    background-color: #4299e1;
-    color: #fff;
+    border-color: #4299e1;
+    border:solid 1px;
     align-items: flex-end; /* 内部要素を右寄せ */
 }
 
@@ -212,7 +212,7 @@
 
 /* 右メッセージの時刻（バブル内で右寄せ・白系） */
 .bubble-right .timestamp {
-    color: rgba(255,255,255,0.85);
+    color: rgba(61, 61, 61, 0.85);
     align-self: flex-end;
 }
 
@@ -231,27 +231,6 @@
     justify-content: flex-end;
 }
 
-
-.bubble {
-    padding: 0.75rem;
-    border-radius: 1rem;
-    max-width: 60%;
-    display: inline-block; /* inline-block にして margin:auto を効かせる */
-    box-sizing: border-box;
-}
-
-
-.bubble-left {
-    background-color: #ebf8ff;
-}
-
-
-.bubble-right {
-    background-color: #4299e1;
-    color: white;
-    margin-left: auto; /* 右寄せ */
-    text-align: left;
-}
 
 
 .timestamp {
@@ -296,7 +275,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: 100vh;
+    height: 90vh;
     overflow-y: auto; /* ここで右側だけスクロール可能 */
     position: relative;
     box-sizing: border-box; /* 追加: パディング込みで高さ制御 */
@@ -371,6 +350,49 @@
     font-size: 1rem;
 }
 
+/* タイル内にイベントマーカーを下部中央に配置するための調整 */
+.custom-calendar .react-calendar__tile {
+    position: relative; /* 子要素を絶対配置できるようにする */
+}
+
+/* 複数マーカーを下部中央に横並びで配置するコンテナ */
+.custom-calendar .event-indicators {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6px; /* 日付の下に配置 */
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* 各ドット */
+.custom-calendar .event-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00bfc5; /* マーカーの色 */
+    box-shadow: 0 0 0 2px rgba(0,191,197,0.08);
+    display: inline-block;
+}
+
+/* ドットの代わりに件数表示（+N） */
+.custom-calendar .event-indicator.more {
+    min-width: 18px;
+    height: 18px;
+    border-radius: 10px;
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.65rem;
+    background: #00bfc5;
+}
+
 .custom-calendar .react-calendar__navigation button {
     color: #4299e1;
     font-weight: bold;
@@ -386,13 +408,6 @@
     margin-bottom: 1rem;
 }
 
-/* 土曜日を青色、日曜日を赤色にする */
-.custom-calendar .react-calendar__month-view__days__day--weekend {
-    color: #e53e3e; /* 日曜日を赤 */
-}
-.custom-calendar .react-calendar__month-view__days__day--weekend:nth-child(7n+6) {
-    color: #4299e1; /* 土曜日を青 */
-}
 
 /* react-calendarの曜日（日・月・火...）を中央揃えにする */
 .custom-calendar .react-calendar__month-view__weekdays {
@@ -425,13 +440,13 @@
 }
 
 /* 日曜日（最初の曜日）を赤色に */
-.custom-calendar .react-calendar__month-view__weekdays__weekday:last-child {
+.custom-calendar .react-calendar__month-view__weekdays__weekday:first-child {
     color: #e53e3e;
 }
 
 /* 土曜日（最後の曜日）を青色に */
-.custom-calendar .react-calendar__month-view__weekdays__weekday:nth-last-child(2) {
-    color: #4299e1;
+.custom-calendar .react-calendar__month-view__weekdays__weekday:nth-last-child(1) {
+    color: #0011ad;
 }
 
 /* この画面（Testchat）だけで全体スクロールを防止 */
@@ -509,3 +524,22 @@ body.no-scroll, #root.no-scroll {
   display: block;
 }
 
+.sunday {
+    color: #e53e3e;
+}
+
+.saturday {
+    color: #0011ad;
+}
+
+.holiday {
+    color: #e53e3e;
+}
+
+.btn3 {
+    padding: 5px 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    background-color: #ce1717;
+    color: white;
+}

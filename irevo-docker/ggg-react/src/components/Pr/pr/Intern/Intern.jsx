@@ -1,19 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import '../pr.css' // スタイルは別途作成
-const Intern = () => {
+
+// user を受け取るようにし、user.id を優先（無ければ window.__USER_ID__ をフォールバック）
+const Intern = ({ user }) => {
+    const userId = user?.id ?? (window?.__USER_ID__ ?? null);
+
     const [isEditMode, setIsEditMode] = useState(false);
     const [achievements, setAchievements] = useState([]);
     const [editAchievements, setEditAchievements] = useState([]);
 
     useEffect(() => {
-        // 初期表示時や achievements が変更されたときに編集用実績を同期
         setEditAchievements(JSON.parse(JSON.stringify(achievements)));
     }, [achievements, isEditMode]);
+
+    // サーバーから Intern を取得して初期表示
+    useEffect(() => {
+        if (!userId) return;
+        const fetchIntern = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/intern?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) return;
+                const data = await resp.json();
+                const internText = data?.intern ?? '';
+                if (!internText) {
+                    setAchievements([]);
+                    setEditAchievements([]);
+                    return;
+                }
+                // CHANGED: カンマ区切りで分割して配列化（例: "30日行った,25日行った"）
+                const items = String(internText)
+                    .split(/\s*,\s*/) // カンマで分割、前後の空白を除去
+                    .map(s => ({ theme: '', details: s.trim() }))
+                    .filter(i => i.details !== '');
+                setAchievements(items);
+                setEditAchievements(JSON.parse(JSON.stringify(items)));
+            } catch (err) {
+                console.error('intern fetch error', err);
+            }
+        };
+        fetchIntern();
+    }, [userId]);
 
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
         if (!isEditMode) {
-            // 編集モードに入る時、現在の登録実績を編集用にコピー
             setEditAchievements(achievements.length === 0 ? [{ theme: '', details: '' }] : JSON.parse(JSON.stringify(achievements)));
         }
     };
@@ -33,10 +68,39 @@ const Intern = () => {
         setEditAchievements(updated);
     };
 
-    const handleRegister = () => {
-        // 空のフィールドを持つ実績を除外して登録
-        const currentAchievements = editAchievements.filter(ach => ach.theme.trim() || ach.details.trim());
-        setAchievements(currentAchievements);
+    const handleRegister = async () => {
+        const current = editAchievements.map(a => (a.details || '').trim()).filter(Boolean);
+        // CHANGED: カンマ区切りで保存する（例: "30日行った,25日行った"）
+        const internText = current.join(',');
+
+        if (!userId) {
+            console.warn('userId が無いため送信しません');
+            setAchievements(current.map(s => ({ theme: '', details: s })));
+            setIsEditMode(false);
+            return;
+        }
+
+        const payload = { user_id: userId, intern: internText };
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/intern', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            } else {
+                console.log('保存成功:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
+
+        setAchievements(current.map(s => ({ theme: '', details: s })));
         setIsEditMode(false);
     };
 
@@ -45,11 +109,10 @@ const Intern = () => {
     };
 
     return (
-        <div className="experience-container"> {/* 同じコンテナスタイルを再利用 */}
+        <div className="experience-container">
             <div className={`section-header ${isEditMode ? 'edit-mode' : 'display-mode'}`}>
                 <div className="section-title">
                     インターン経験
-                    {/* <span className="recommend-badge">入力推奨</span> */}
                 </div>
                 {!isEditMode && (
                     <span className="material-icons edit-toggle-icon" onClick={handleEditToggle}>edit</span>
@@ -64,8 +127,6 @@ const Intern = () => {
                         ) : (
                             achievements.map((achievement, index) => (
                                 <li key={index} className="achievement-item">
-                                    {/* <div className="achievement-theme"><strong>:</strong> {achievement.theme || '未入力'}</div> */}
-                                    <div className="achievement-details-wrapper"><strong>詳細:</strong></div>
                                     <div className="achievement-details">{achievement.details || '未入力'}</div>
                                 </li>
                             ))
@@ -77,17 +138,6 @@ const Intern = () => {
                     <div className="dynamic-achievement-inputs">
                         {editAchievements.map((achievement, index) => (
                             <div key={index} className="achievement-input-row">
-                                {/* <div>
-                                    <label htmlFor={`theme-${index}`}>テーマ:</label>
-                                    <input
-                                        type="text"
-                                        id={`theme-${index}`}
-                                        className="achievement-theme-input"
-                                        placeholder="研究テーマを入力してください"
-                                        value={achievement.theme}
-                                        onChange={(e) => handleAchievementChange(index, 'theme', e.target.value)}
-                                    />
-                                </div> */}
                                 <div>
                                     <label htmlFor={`details-${index}`}>詳細:</label>
                                     <textarea

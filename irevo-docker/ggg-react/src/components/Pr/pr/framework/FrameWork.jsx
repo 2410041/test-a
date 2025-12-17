@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../pr.css';
 
-// 経験年数
 const Data = [
     { value: '趣味or実務 1年未満', text: '趣味or実務 1年未満' },
     { value: '趣味or実務 1年〜3年', text: '趣味or実務 1年〜3年' },
@@ -13,7 +12,10 @@ const Data = [
     { value: '実務 5年以上', text: '実務 5年以上' }
 ];
 
-const FrameWork = () => {
+// 変更: user を受け取り user.id を使用
+const FrameWork = ({ user }) => {
+    const userId = user?.id ?? null;
+
     const [isEditMode, setIsEditMode] = useState(false); // 編集モードかどうか
     const [registeredSkills, setRegisteredSkills] = useState([]); // 登録済みのスキル一覧
     const [editingSkills, setEditingSkills] = useState([]); // 編集中のスキル一覧（登録前）
@@ -24,31 +26,67 @@ const FrameWork = () => {
         setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
     }, [registeredSkills, isEditMode]);
 
+    // userId がある場合、サーバから framework データを取得して初期表示する
+    useEffect(() => {
+        if (!userId) return;
+        const fetchFrameworks = async () => {
+            try {
+                // 送受信先を /user から /mypage に変更
+                const resp = await fetch(`http://localhost:3030/mypage/userframework?user_id=${userId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!resp.ok) {
+                    console.error('framework取得失敗', resp.status);
+                    return;
+                }
+                const data = await resp.json();
+                const programs = data && data.programs ? data.programs : [];
+
+                // programs を [{ language, duration }, ...] の形に正規化
+                const normalized = programs.map(p => {
+                    if (typeof p === 'string') {
+                        try {
+                            const parsed = JSON.parse(p);
+                            if (Array.isArray(parsed)) return parsed[0] || { language: '', duration: '' };
+                            if (parsed && typeof parsed === 'object') return { language: parsed.language ?? '', duration: parsed.duration ?? '' };
+                        } catch (e) {
+                            const parts = p.split(',');
+                            return { language: (parts[0] || '').trim(), duration: (parts[1] || '').trim() };
+                        }
+                    }
+                    if (p && typeof p === 'object') return { language: p.language ?? '', duration: p.duration ?? '' };
+                    return { language: '', duration: '' };
+                });
+
+                setRegisteredSkills(normalized);
+                setEditingSkills(JSON.parse(JSON.stringify(normalized)));
+            } catch (err) {
+                console.error('framework取得エラー', err);
+            }
+        };
+        fetchFrameworks();
+    }, [userId]);
+
     // 編集と表示の切り替え
     const handleEditToggle = () => {
         setIsEditMode(prev => !prev);
-
-        // 切り替える時に編集用データをコピー
         if (!isEditMode) {
             setEditingSkills(JSON.parse(JSON.stringify(registeredSkills)));
         }
     };
 
-    // セレクトボックスで言語を選択したときの処理
+    // セレクトボックスでフレームワークを選択したときの処理
     const handleMainLanguageSelectChange = (event) => {
         const lang = event.target.value;
-
-        // 選択後、セレクトボックスをリセット
         setMainLanguageSelectValue('');
-
         if (!lang) return;
-
-        // 重複チェック：すでにリストにある言語は追加しない
         const exists = editingSkills.some(skill => skill.language === lang);
         if (!exists) {
             setEditingSkills(prevSkills => [
                 ...prevSkills,
-                { language: lang, duration: Data[0].value } // デフォルト経験年数で追加
+                { language: lang, duration: Data[0].value }
             ]);
         } else {
             console.log(`${lang} は既に選択されています。`);
@@ -68,14 +106,44 @@ const FrameWork = () => {
         setEditingSkills(updatedSkills);
     };
 
-    // 編集内容を登録
-    const handleRegister = () => {
-        const currentSkills = [];
-        editingSkills.forEach(skill => {
-            currentSkills.push({ language: skill.language, duration: skill.duration });
-        });
+    // 編集内容をサーバに送信（空なら削除指示）
+    const handleRegister = async () => {
+        const currentSkills = editingSkills.map(skill => ({ language: skill.language, duration: skill.duration }));
+        const payload = { user_id: userId };
 
-        // 登録データを更新し、編集モードを終了
+        if (currentSkills.length > 0) {
+            payload.skill = currentSkills.map(s => s.language).join(',');
+            payload.years = currentSkills.map(s => s.duration).join(',');
+            payload.programs = currentSkills;
+        } else {
+            payload.programs = [];
+            payload.skill = '';
+            payload.years = '';
+        }
+
+        if (!userId) {
+            console.warn('userIdが無いため送信しません');
+            return;
+        }
+
+        try {
+            // 送受信先を /user から /mypage に変更
+            const resp = await fetch('http://localhost:3030/mypage/userframework', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const result = await resp.json();
+            if (!resp.ok) {
+                console.error('保存に失敗しました:', result);
+            } else {
+                console.log('保存成功:', result);
+            }
+        } catch (err) {
+            console.error('通信エラー:', err);
+        }
+
         setRegisteredSkills(currentSkills);
         setIsEditMode(false);
     };

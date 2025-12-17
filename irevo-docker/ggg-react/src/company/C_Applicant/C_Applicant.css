@@ -9,7 +9,8 @@
 .cap-title {
   margin: 0 0 16px 0;
   font-size: 1.6rem;
-  color: #1f3c88;
+  color: #0b63d6; /* タイトルをより明確なボタン色に */
+  font-weight: 700;
 }
 .cap-controls {
   display: flex;
@@ -23,11 +24,40 @@
   border-radius: 6px;
   font-size: 0.95rem;
 }
+
+/* 統一されたプルダウンスタイル */
+.cap-select {
+  height: 36px;
+  line-height: 18px;
+  min-width: 140px;
+  background: #fff;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid #0b63d6;
+  padding-right: 36px; /* 右側にアイコン用スペース */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%230b63d6'><path d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.cap-select:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  background: #f3f4f6;
+}
 .cap-table_wrap { overflow-x: auto; }
 .cap-table { width: 100%; border-collapse: collapse; }
 .cap-table th, .cap-table td { padding: 10px 12px; border-bottom: 1px solid #eef2f7; text-align: left; }
-.cap-table thead th { background: #f8fafc; color: #374151; font-weight: 600; }
+.cap-table thead th { background: #edf5fd; color: #374151; font-weight: 600; }
 .cap-loading { padding: 40px; text-align: center; color: #6b7280; }
+.cap-table thead th:first-child {
+  border-top-left-radius: 8px;
+}
+.cap-table thead th:last-child {
+  border-top-right-radius: 8px;
+}
 .cap-error { padding: 10px; background: #fff3f2; color: #b02a37; border-radius: 6px; margin-bottom: 12px; }
 .cap-button { background: #0b63d6; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 .cap-button:hover { opacity: 0.95; }
@@ -56,6 +86,7 @@
   padding: 20px;
   box-shadow: 0 12px 40px rgba(2,6,23,0.2);
   position: relative;
+  margin-top: 100px
 }
 .cap-modal-close {
   position: absolute;

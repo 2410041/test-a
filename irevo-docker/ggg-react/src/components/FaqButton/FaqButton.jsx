@@ -8,25 +8,30 @@ function FaqButton() {
 
     return (
         <>
-            <details className="details js-details">
-                <summary className="details-summary js-details-summary">
-                    <span className="btn"></span>1つ目のアコーディオンのタイトル
-                </summary>
-                <div className="details-content js-details-content">
-                    <p>ここは、1つ目のアコーディオンの中身です。</p>
-                    <p>ここは、1つ目のアコーディオンの中身です。</p>
-                    <p>ここは、1つ目のアコーディオンの中身です。</p>
-                    <p>ここは、1つ目のアコーディオンの中身です。</p>
-                </div>
-            </details>
-            <details className="details js-details">
-                <summary className="details-summary js-details-summary">
-                    <span className="btn"></span>2つ目のアコーディオンのタイトル
-                </summary>
-                <div className="details-content js-details-content">
-                    <p>ここは、2つ目のアコーディオンの中身です。</p>
-                </div>
-            </details>
+            <div className="faq-accordion">
+                <details className="details js-details">
+                    <summary className="details-summary js-details-summary" role="button" aria-expanded="false">
+                        <span className="summary-title">1つ目のアコーディオンのタイトル</span>
+                        <span className="btn" aria-hidden="true"></span>
+                    </summary>
+                    <div className="details-content js-details-content" aria-hidden="true">
+                        <p>ここは、1つ目のアコーディオンの中身です。</p>
+                        <p>ここは、1つ目のアコーディオンの中身です。</p>
+                        <p>ここは、1つ目のアコーディオンの中身です。</p>
+                        <p>ここは、1つ目のアコーディオンの中身です。</p>
+                    </div>
+                </details>
+
+                <details className="details js-details">
+                    <summary className="details-summary js-details-summary" role="button" aria-expanded="false">
+                        <span className="summary-title">2つ目のアコーディオンのタイトル</span>
+                        <span className="btn" aria-hidden="true"></span>
+                    </summary>
+                    <div className="details-content js-details-content" aria-hidden="true">
+                        <p>ここは、2つ目のアコーディオンの中身です。</p>
+                    </div>
+                </details>
+            </div>
         </>
 
     );

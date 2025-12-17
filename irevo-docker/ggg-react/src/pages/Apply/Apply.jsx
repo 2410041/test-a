@@ -46,7 +46,7 @@ export default function ApplyPage() {
 
         if (!company && id) {
             // state が無ければ ID で取得
-            axios.get(`http://15.152.5.110:3030/company/${id}`)
+            axios.get(`http://localhost:3030/company/${id}`)
                 .then(res => setCompany(res.data))
                 .catch(() => { });
         }
@@ -63,11 +63,20 @@ export default function ApplyPage() {
 
     const handleApply = async () => {
         try {
-            await axios.post('http://15.152.5.110:3030/apply', { companyId: company.id, email: emailInput, contact: contactInput }, { withCredentials: true });
+            await axios.post('http://localhost:3030/apply', { companyId: company.id, email: emailInput, contact: contactInput }, { withCredentials: true });
             alert('応募しました');
         } catch (e) {
             alert('応募に失敗しました');
         }
+    };
+
+    // 追加: 給与を3桁カンマ区切りで整形
+    const formatSalary = (value) => {
+        if (value === null || value === undefined || value === '') return '未設定';
+        // 既にカンマが入っている可能性があるので除去して数値化
+        const num = Number(String(value).replace(/,/g, '').replace(/[^\d.-]/g, ''));
+        if (Number.isNaN(num)) return String(value);
+        return num.toLocaleString();
     };
 
     if (!company) return <div style={{ padding: 32 }}>企業情報を取得できませんでした。</div>;
@@ -130,7 +139,7 @@ export default function ApplyPage() {
                                     </div>
                                     <div>
                                         <div className="secondary">給与</div>
-                                        <div>{company.salary}</div>
+                                        <div>{formatSalary(company.salary)}</div>
                                     </div>
                                 </div>
 
