@@ -295,6 +295,7 @@ const connectAndStartServer = async () => {
         const myServer = require('./Routes/mypageServer.js');
         const newOfferServer = require('./Routes/newOfferServer.js');
         const contactServer = require('./Routes/contactServer.js');
+        const newOfferServer = require('./Routes/newOfferServer.js');
 
         // cRoutes
         const clogServer = require('./cRoutes/clogServer.js');
